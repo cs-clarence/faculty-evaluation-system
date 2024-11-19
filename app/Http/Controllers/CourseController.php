@@ -115,14 +115,19 @@ class CourseController extends Controller
         $request->validate([
             'year_level' => 'required|string|max:255',
             'semester' => 'required|string|max:255',
+            'subjects' => 'required|array|min:1',
+            'subjects.*' => 'exists:subjects,id',
         ]);
 
         // Store the new semester for the course
-        CourseSemester::create([
+        $semester = CourseSemester::create([
             'course_id' => $course->id,
             'year_level' => $request->year_level,
             'semester' => $request->semester,
         ]);
+
+         // Attach selected subjects to the semester
+        $semester->subjects()->sync($request->subjects);
 
 
         return redirect()->route('courses.showSemesters', $course->id)
@@ -134,7 +139,8 @@ class CourseController extends Controller
     {
         // Get all the semesters associated with the course
         $courseSemesters = $course->courseSemesters;
+        $subjects = Subject::all();
 
-        return view('/admin/semester', compact('course', 'courseSemesters'));
+        return view('/admin/semester', compact('course', 'courseSemesters', 'subjects'));
     }
 }

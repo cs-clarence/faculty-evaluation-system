@@ -46,6 +46,18 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::create('course_semester_subject', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('course_semester_id');
+            $table->unsignedInteger('subject_id');
+
+            $table->foreign('course_semester_id')->references('id')->on('course_semester')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->timestamps();
+            $table->unique(['course_semester_id', 'subject_id']);
+        });
     }
 
     /**

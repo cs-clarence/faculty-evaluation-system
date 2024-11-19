@@ -150,6 +150,43 @@
                     <input type="text" name="semester" id="semester" required class="w-full px-3 py-2 border rounded-lg">
                 </div>
 
+                <!-- Multi-Select Dropdown for Subjects -->
+<div class="mb-4">
+    <label for="subject" class="block text-gray-700">Select Subjects</label>
+    <div id="subjectDropdownContainer" class="relative">
+        <!-- Dropdown button -->
+        <div id="subjectDropdownButton" class="w-full px-3 py-2 border rounded-lg bg-white cursor-pointer">
+            <span id="subjectDropdownPlaceholder" class="text-gray-500">Select subjects</span>
+        </div>
+
+        <!-- Dropdown items (hidden by default) -->
+        <div id="subjectDropdownMenu" class="absolute left-0 right-0 z-10 mt-2 bg-white border rounded-lg shadow-lg hidden max-h-48 overflow-y-auto">
+            @foreach ($subjects as $subject)
+            <div 
+                class="px-4 py-2 hover:bg-gray-200 cursor-pointer subject-item" 
+                data-subject-id="{{ $subject->id }}" 
+                data-subject-name="{{ $subject->subject_name }}"
+            >
+                {{ $subject->subject_name }}
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<!-- Display Selected Subjects -->
+<div class="mb-4">
+    <label for="selectedSubjects" class="block text-gray-700">Selected Subjects</label>
+    <div id="selectedSubjectsContainer" class="w-full px-3 py-2 border rounded-lg bg-gray-100 min-h-[50px] flex flex-wrap gap-2">
+        <!-- Selected subjects will be displayed as tags -->
+    </div>
+</div>
+
+<!-- Hidden input field to store selected subject IDs -->
+<input type="hidden" name="subjects[]" id="subjectsInput">
+
+
+
                 <div class="flex justify-end">
                     <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
@@ -193,6 +230,84 @@
     document.getElementById('cancelBtn').addEventListener('click', function() {
         document.getElementById('addSemesterModal').classList.add('hidden');
     });
+
+
+    //Course Subject
+    document.addEventListener('DOMContentLoaded', () => {
+    const subjectDropdownButton = document.getElementById('subjectDropdownButton');
+    const subjectDropdownMenu = document.getElementById('subjectDropdownMenu');
+    const subjectDropdownPlaceholder = document.getElementById('subjectDropdownPlaceholder');
+    const selectedSubjectsContainer = document.getElementById('selectedSubjectsContainer');
+    const subjectsInput = document.getElementById('subjectsInput');
+
+    const selectedSubjects = []; // Array to hold selected subjects
+
+    // Toggle dropdown menu visibility
+    subjectDropdownButton.addEventListener('click', () => {
+        subjectDropdownMenu.classList.toggle('hidden');
+    });
+
+    // Handle subject selection
+    subjectDropdownMenu.addEventListener('click', (event) => {
+        const subjectItem = event.target.closest('.subject-item');
+        if (subjectItem) {
+            const subjectId = subjectItem.dataset.subjectId;
+            const subjectName = subjectItem.dataset.subjectName;
+
+            // Check if subject is already selected
+            const alreadySelected = selectedSubjects.some((sub) => sub.id === subjectId);
+
+            if (!alreadySelected) {
+                // Add subject to selected list
+                selectedSubjects.push({ id: subjectId, name: subjectName });
+
+                // Create a tag to display the selected subject
+                const tag = document.createElement('div');
+                tag.className = 'px-3 py-1 bg-blue-200 text-gray-700 rounded-lg flex items-center gap-2';
+                tag.dataset.subjectId = subjectId;
+                tag.innerHTML = `
+                    <span>${subjectName}</span>
+                    <button type="button" class="remove-tag text-gray-500 hover:text-red-500">
+                        &times;
+                    </button>
+                `;
+
+                selectedSubjectsContainer.appendChild(tag);
+
+                // Add event listener for removing the tag
+                tag.querySelector('.remove-tag').addEventListener('click', () => {
+                    // Remove from selectedSubjects array
+                    const index = selectedSubjects.findIndex((sub) => sub.id === subjectId);
+                    if (index !== -1) selectedSubjects.splice(index, 1);
+
+                    // Remove the tag from the UI
+                    tag.remove();
+
+                    // Update hidden input
+                    updateSubjectsInput();
+                });
+
+                // Update the dropdown placeholder
+                updateSubjectsInput();
+            }
+        }
+    });
+
+    // Update the hidden input field with selected subject IDs
+    function updateSubjectsInput() {
+        const selectedSubjectIds = selectedSubjects.map((sub) => sub.id);
+        subjectsInput.value = selectedSubjectIds.join(',');
+
+        // Update placeholder if no subjects are selected
+        if (selectedSubjectIds.length === 0) {
+            subjectDropdownPlaceholder.textContent = 'Select subjects';
+        } else {
+            subjectDropdownPlaceholder.textContent = `${selectedSubjectIds.length} subject(s) selected`;
+        }
+    }
+});
+
+
 </script>
 
 </body>
