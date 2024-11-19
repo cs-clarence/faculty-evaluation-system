@@ -110,22 +110,31 @@ class CourseController extends Controller
         return redirect()->route('department')->with('success', 'Subject added successfully!');
     }
 
-    public function course_semester_store(Request $request){
+    public function storeSemester(Request $request, Course $course){
 
-        $validatedData = $request->validate([
-            'course_id' => 'required|exists:courses,id',
+        $request->validate([
             'year_level' => 'required|string|max:255',
-            'semester' => 'required|string|max:255',    
+            'semester' => 'required|string|max:255',
         ]);
 
-        // Step 1: Create a new course
-        $course_semester = new CourseSemester();
-        $course_semester->year_level = $validatedData['year_level'];
-        $course_semester->semester = $validatedData['semester'];
-        $course_semester->course_id = $validatedData['course_id'];
-        $course_semester->save();
+        // Store the new semester for the course
+        CourseSemester::create([
+            'course_id' => $course->id,
+            'year_level' => $request->year_level,
+            'semester' => $request->semester,
+        ]);
 
 
-        return redirect()->route('course');
+        return redirect()->route('courses.showSemesters', $course->id)
+            ->with('success', 'Semester added successfully');
+    }
+
+    // Show the course semesters page for a specific course
+    public function showSemesters(Course $course)
+    {
+        // Get all the semesters associated with the course
+        $courseSemesters = $course->courseSemesters;
+
+        return view('/admin/semester', compact('course', 'courseSemesters'));
     }
 }

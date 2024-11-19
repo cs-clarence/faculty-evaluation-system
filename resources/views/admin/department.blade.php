@@ -43,7 +43,7 @@
         
         <!-- Navigation Links -->
         <ul class="flex-1 space-y-4">
-            <li><a href="home" class="flex items-center space-x-2 hover:text-gray-300">
+            <li><a href="{{route('home')}}" class="flex items-center space-x-2 hover:text-gray-300">
                 <i class='bx bx-user'></i>
                 <span>Home</span>
             </a></li>

@@ -43,7 +43,7 @@
         
         <!-- Navigation Links -->
         <ul class="flex-1 space-y-4">
-            <li><a href="home" class="flex items-center space-x-2 hover:text-gray-300">
+            <li><a href="{{route('home')}}" class="flex items-center space-x-2 hover:text-gray-300">
                 <i class='bx bx-user'></i>
                 <span>Home</span>
             </a></li>
@@ -124,7 +124,10 @@
                     <tbody class="text-gray-700">
                         @forelse($courses as $course)
                             <tr class="cursor-pointer hover:bg-gray-100" data-course-id="{{ $course->id }}" onclick="showModal(this)">
-                                <td class="py-3 px-4 border-b">{{ $course->course_code }}</td>
+                                <td class="py-3 px-4 border-b">
+                                    <a href="{{ route('courses.showSemesters', $course->id) }}" class="text-blue-600 hover:underline">
+                                        {{ $course->course_name }}
+                                    </a></td>
                                 <td class="py-3 px-4 border-b">{{ $course->course_name }}</td>
                                 <td class="py-3 px-4 border-b">{{ $course->department->department_name ?? 'N/A' }}</td>
                             </tr>
@@ -135,29 +138,6 @@
                         @endforelse
                     </tbody>
 
-                        <!-- Modal For CourseSemester -->
-                        <div id="courseModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-                            <div class="bg-white p-6 rounded shadow-lg w-1/3">
-                                <h2 class="text-lg font-bold mb-4">Course Details</h2>
-                                <form id="courseForm" method="POST" action="{{ route('coursesemester.store') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    <input type="hidden" name="course_id" id="course_id" />
-                                    <div class="mb-4">
-                                        <label for="year_level" class="block text-gray-700">Year Level</label>
-                                        <input type="text" name="year_level" id="year_level" class="w-full px-3 py-2 border rounded" placeholder="Enter year level" required />
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="semester" class="block text-gray-700">Semester</label>
-                                        <input type="text" name="semester" id="semester" class="w-full px-3 py-2 border rounded" placeholder="Enter semester" required />
-                                    </div>
-                                    <div class="flex justify-end">
-                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeModal()">Cancel</button>
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
-                                    </div>
-                                </form>
-
-                            </div>
-                        </div>
                 </table>
             </div>
             
@@ -302,18 +282,6 @@
             dropdown.selectedIndex = 0;
         });
     });
-
-    // Function to show the modal and set the course ID
-    function showModal(row) {
-        const courseId = row.getAttribute("data-course-id");
-        document.getElementById("course_id").value = courseId;
-        document.getElementById("courseModal").classList.remove("hidden");
-    }
-
-    // Function to hide the modal
-    function closeModal() {
-        document.getElementById("courseModal").classList.add("hidden");
-    }
 
     
 </script>

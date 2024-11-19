@@ -34,7 +34,14 @@ Route::get('/course', [CourseController::class, 'index'])->name('course');
 Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
 
 //Route Course Semester
-Route::post('/coursesemester', [CourseController::class, 'course_semester_store'])->name('coursesemester.store');
+
+// Route to store a new semester for a specific course
+Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
+
+// Route to show the semesters for a specific course
+Route::get('/courses/{course}/semesters', [CourseController::class, 'showSemesters'])->name('courses.showSemesters');
+// Route to store a new semester for a specific course
+Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
 
 //Route Evaluation Form
 Route::get('/evaluation-form',[EvaluationFormController::class, 'index'])->name('evaluation.form');

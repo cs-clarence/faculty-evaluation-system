@@ -36,7 +36,7 @@
         <!-- Logo and Name -->
         <div class="flex items-center space-x-4 mb-8">
             <div class="logo-image">
-                <img src="images/logo.png" alt="Logo" class="w-12 h-12">
+                <img src="/images/logo.png" alt="Logo" class="w-12 h-12">
             </div>
             <span class="font-semibold text-xl">Evaluation System</span>
         </div>
@@ -98,69 +98,66 @@
 </div>
 
 <!-- Main Content -->
-<div class="flex">
-    <!-- Dashboard Section -->
-    <section id="mainContent" class="main-content flex-1 p-6 transition-all duration-300 ml-0">
-        <div class="top flex justify-end mb-4">
-            <button id="addSubjectBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                Add Subject
+<div id="mainContent" class="p-6">
+    <!-- Course Semesters Page -->
+    <div class="container mx-auto p-4">
+
+        <div class="flex justify-between mb-4">
+            <h1 class="text-xl font-bold">{{ $course->course_name }} - Course Semesters</h1>
+            <button id="addSemesterBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                Add Semester
             </button>
         </div>
 
-        <!-- Main Dashboard Content -->
-        <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Total Users and Completed Tasks -->
+        <!-- Course Semesters Table -->
+        <table class="min-w-full bg-white shadow-md rounded-lg">
+            <thead class="bg-gray-200 text-gray-600">
+                <tr>
+                    <th class="py-3 px-4 text-left">Year Level</th>
+                    <th class="py-3 px-4 text-left">Semester</th>
+                    <th class="py-3 px-4 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($courseSemesters as $semester)
+                    <tr class="hover:bg-gray-100">
+                        <td class="py-3 px-4">{{ $semester->year_level }}</td>
+                        <td class="py-3 px-4">{{ $semester->semester }}</td>
+                        <td class="py-3 px-4">
+                            <!-- You can add delete/edit actions here -->
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-            <!-- Responsive Table -->
-            <div class="col-span-1 md:col-span-3 overflow-auto">
-                <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-                    <thead class="bg-gray-200 text-gray-600">
-                        <tr>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Code</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Name</th>
-                        </tr>
-                    </thead>
-                        <tbody class="text-gray-700">
-                            @forelse($subjects as $subject)
-                                <tr>
-                                    <td class="py-3 px-4 border-b">{{ $subject->subject_code }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $subject->subject_name }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="py-3 px-4 text-center text-gray-500">No subjects found</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                </table>
-            </div>
-            
-        </div>
+    </div>
 
-        <!-- Add Subject Modal -->
-            <div id="addSubjectModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center hidden">
-                <div class="bg-white p-6 rounded-lg w-96">
-                    <h3 class="text-lg font-semibold mb-4">Add New Subject</h3>
-            
-                    <!-- Add Subject Form -->
-                    <form id="addSubjectForm" method="POST" action="{{ route('subjects.store') }}">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="subject_code" class="block text-gray-700">Subject Code</label>
-                            <input type="text" name="subject_code" id="subjectID" required class="w-full px-3 py-2 border rounded-lg">
-                        </div>
-                        <div class="mb-4">
-                            <label for="subject_name" class="block text-gray-700">Subject Name</label>
-                            <input type="text" name="subject_name" id="subjectName" required class="w-full px-3 py-2 border rounded-lg">
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
-                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
-                        </div>
-                    </form>
+    <!-- Add Semester Modal -->
+    <div id="addSemesterModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-lg font-semibold mb-4">Add New Semester</h3>
+
+            <form id="addSemesterForm" method="POST" action="{{ route('courses.storeSemester', $course->id) }}">
+                @csrf
+                <div class="mb-4">
+                    <label for="year_level" class="block text-gray-700">Year Level</label>
+                    <input type="text" name="year_level" id="year_level" required class="w-full px-3 py-2 border rounded-lg">
                 </div>
-            </div>
-    </section>
+
+                <div class="mb-4">
+                    <label for="semester" class="block text-gray-700">Semester</label>
+                    <input type="text" name="semester" id="semester" required class="w-full px-3 py-2 border rounded-lg">
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 <!-- JavaScript for Sidebar Toggle -->
@@ -188,13 +185,13 @@
         }
     });
 
-    //Toggle modal for add subject
-    document.getElementById('addSubjectBtn').addEventListener('click', function() {
-        document.getElementById('addSubjectModal').classList.remove('hidden');
+    // Toggle modal for adding semester
+    document.getElementById('addSemesterBtn').addEventListener('click', function() {
+        document.getElementById('addSemesterModal').classList.remove('hidden');
     });
 
     document.getElementById('cancelBtn').addEventListener('click', function() {
-        document.getElementById('addSubjectModal').classList.add('hidden');
+        document.getElementById('addSemesterModal').classList.add('hidden');
     });
 </script>
 
