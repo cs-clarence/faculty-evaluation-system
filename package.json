@@ -8,7 +8,11 @@
         "migrate:install": "with-env -- php artisan migrate:install --env=local",
         "migrate:refresh": "with-env -- php artisan migrate:refresh --env=local",
         "migrate:fresh": "with-env -- php artisan migrate:fresh --env=local",
-        "migrate": "with-env -- php artisan migrate --env=local"
+        "migrate": "with-env -- php artisan migrate --env=local",
+        "codegen:ide-helper-models": "with-env -- php artisan ide-helper:model --env=local -n -M -R",
+        "codegen:ide-helper-facades": "with-env -- php artisan ide-helper:generate --env=local -n",
+        "codegen:ide-helper-meta": "with-env -- php artisan ide-helper:meta --env=local",
+        "codegen:ide-helper": "bun run codegen:ide-helper-models && bun run codegen:ide-helper-facades && bun run codegen:ide-helper-meta"
     },
     "devDependencies": {
         "@biomejs/biome": "^1.9.4",

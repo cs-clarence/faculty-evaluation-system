@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperCourseSemester
+ */
 class CourseSemester extends Model
 {
     use HasFactory;
 
-    protected $table = 'course_semester';
+    protected $table = 'course_semesters';
 
     protected $fillable = ['course_id', 'year_level', 'semester'];
 

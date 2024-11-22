@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -23,6 +26,7 @@ class User extends Authenticatable
         'role_id',
         'password',
     ];
+    protected $table = 'users';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,7 +48,8 @@ class User extends Authenticatable
     ];
 
     //Relationship for the role
-    public function roles(){
+    public function roles()
+    {
         return $this->belongsToMany(Role::class);
     }
 

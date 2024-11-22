@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Subject;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
@@ -36,7 +36,6 @@ class SubjectController extends Controller
             'subject_name' => 'required',
         ]);
 
-        // Create a new subject
         Subject::create([
             'subject_code' => $request->subject_code,
             'subject_name' => $request->subject_name,
@@ -78,5 +77,4 @@ class SubjectController extends Controller
         //
     }
 
-    
 }
