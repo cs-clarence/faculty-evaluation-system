@@ -1,0 +1,68 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+        volumes:
+            - ./:/var/www/html
+            - ./docker/app/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - ./docker/app/config/php-fpm/php-fpm.conf:/etc/php-fpm.d/php-fpm.conf
+        expose:
+            - 9000
+        depends_on:
+            - db
+
+    db:
+        image: mysql:8.3
+        expose:
+            - 3306
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./docker/db/config/mysql/my.cnf:/etc/my.cnf.d/my.cnf
+
+    migration-dev-db:
+        image: mysql:8.3
+        expose:
+            - 3306
+        ports:
+            - 3307:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+            - migration-dev-db-data:/var/lib/mysql
+            - ./docker/db/config/mysql/my.cnf:/etc/my.cnf.d/my.cnf
+
+    db-admin-ui:
+        image: adminer:latest
+        ports:
+            - 8080:8080
+        depends_on:
+            - db
+
+    mail-server:
+        image: mailhog/mailhog:latest
+        ports:
+            - 1025:1025
+            - 8025:8025
+
+    nginx:
+        image: nginx:latest
+        entrypoint:
+            - nginx
+        command:
+            - -g
+            - "daemon off;"
+        volumes:
+            - ./docker/nginx/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+        ports:
+            - 8000:80
+        depends_on:
+            - app
+
+volumes:
+    db-data:
+    migration-dev-db-data:

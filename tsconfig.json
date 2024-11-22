@@ -1,0 +1,11 @@
+{
+	"extends": ["@rencedm112/tsconfig/base.json"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"allowSyntheticDefaultImports": true,
+		"moduleResolution": "bundler",
+		"esModuleInterop": true
+	},
+	"include": ["./resources/js/**/*.ts"],
+	"exclude": []
+}
