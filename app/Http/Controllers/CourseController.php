@@ -36,15 +36,15 @@ class CourseController extends Controller
     {
         // Validate the form data
         $validatedData = $request->validate([
-            'course_code' => 'required|string|max:255',
-            'course_name' => 'required|string|max:255',
+            'code' => ['required', 'string', 'max:255', 'unique:courses,code'],
+            'name' => 'required|string|max:255',
             'department_id' => 'required|exists:departments,id',
         ]);
 
         // Step 1: Create a new course
         $course = new Course();
-        $course->course_code = $validatedData['course_code'];
-        $course->course_name = $validatedData['course_name'];
+        $course->code = $validatedData['code'];
+        $course->name = $validatedData['name'];
         $course->department_id = $validatedData['department_id'];
         $course->save();
 
@@ -95,14 +95,14 @@ class CourseController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'department_code' => 'required|unique:departments,department_code',
-            'department_name' => 'required',
+            'code' => 'required|unique:courses,code',
+            'name' => 'required',
         ]);
 
         // Create a new subject
         Department::create([
-            'department_code' => $request->department_code,
-            'department_name' => $request->department_name,
+            'code' => $request->code,
+            'name' => $request->name,
         ]);
 
         // Redirect back with a success message

@@ -32,13 +32,13 @@ class SubjectController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'subject_code' => 'required|unique:subjects,subject_code',
-            'subject_name' => 'required',
+            'code' => 'required|unique:subjects,code',
+            'name' => 'required',
         ]);
 
         Subject::create([
-            'subject_code' => $request->subject_code,
-            'subject_name' => $request->subject_name,
+            'code' => $request->code,
+            'name' => $request->name,
         ]);
 
         // Redirect back with a success message

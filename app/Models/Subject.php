@@ -15,8 +15,8 @@ class Subject extends Model
     protected $table = 'subjects';
 
     protected $fillable = [
-        'subject_code',
-        'subject_name',
+        'code',
+        'name',
     ];
 
     public function courses()

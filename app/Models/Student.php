@@ -26,9 +26,4 @@ class Student extends Model
         return $this->belongsTo(User::class);
 
     }
-
-    public function courseSubject()
-    {
-        return $this->belongsTo(CourseSubject::class, 'course_subject_id');
-    }
 }

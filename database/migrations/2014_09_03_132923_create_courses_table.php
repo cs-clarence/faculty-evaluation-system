@@ -11,17 +11,40 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('school_years', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('year_start');
+            $table->unsignedInteger('year_end');
+
+            $table->unique('year_start', 'year_end');
+        });
+
+        Schema::create('school_year_semesters', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('school_year_id');
+            $table->unsignedInteger('semester');
+
+            $table->foreign('school_year_id')
+                ->references('id')
+                ->on('school_years')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->unique('school_year_id', 'semester');
+        });
+
         Schema::create('departments', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('department_name')->unique();
-            $table->string('department_code');
+            $table->string('name')->unique();
+            $table->string('code');
+
             $table->timestamps();
         });
 
         Schema::create('subjects', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('subject_code')->unique();
-            $table->string('subject_name');
+            $table->string('code')->unique();
+            $table->string('name');
             $table->timestamps();
         });
 
@@ -29,8 +52,8 @@ return new class extends Migration
             $table->increments('id');
             $table->unsignedInteger('department_id');
 
-            $table->string('course_code');
-            $table->string('course_name');
+            $table->string('code')->unique();
+            $table->string('name');
 
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
@@ -43,6 +66,8 @@ return new class extends Migration
 
             $table->unsignedInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->unique(['course_id', 'year_level', 'semester']);
 
             $table->timestamps();
         });
@@ -70,5 +95,7 @@ return new class extends Migration
         Schema::dropIfExists('courses');
         Schema::dropIfExists('subjects');
         Schema::dropIfExists('departments');
+        Schema::dropIfExists('school_year_semesters');
+        Schema::dropIfExists('school_years');
     }
 };

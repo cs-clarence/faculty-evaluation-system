@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EvaluationFormController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\SubjectController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,13 +17,13 @@ use App\Http\Controllers\HomeController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
+ */
 
 Route::get('/', function () {
     return view('auth/login');
 });
 
-Route::get('/home', [HomeController::class,'index'])->middleware('auth')->name('home');
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 
 //Route Subject
 Route::get('/subject', [SubjectController::class, 'index'])->name('subject');
@@ -44,7 +44,7 @@ Route::get('/courses/{course}/semesters', [CourseController::class, 'showSemeste
 Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
 
 //Route Evaluation Form
-Route::get('/evaluation-form',[EvaluationFormController::class, 'index'])->name('evaluation.form');
+Route::get('/evaluation-form', [EvaluationFormController::class, 'index'])->name('evaluation.form');
 
 //Route for department
 Route::get('/department', [CourseController::class, 'department_index'])->name('department');
@@ -56,4 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-year.index');
+Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-year.show');
+Route::get('/admin/school-years/{schoolYear}/create', [SchoolYearController::class, 'create'])->name('school-year.create');
+Route::post('/admin/school-years/{schoolYear}/store', [SchoolYearController::class, 'store'])->name('school-year.store');
+Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-year.edit');
+Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-year.update');
+Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-year.destroy');
+
+require __DIR__ . '/auth.php';

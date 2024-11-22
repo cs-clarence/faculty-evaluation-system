@@ -132,8 +132,8 @@
                         <tbody class="text-gray-700">
                             @forelse($subjects as $subject)
                                 <tr>
-                                    <td class="py-3 px-4 border-b">{{ $subject->subject_code }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $subject->subject_name }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $subject->code }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $subject->name }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -157,13 +157,13 @@
                     <form id="addSubjectForm" method="POST" action="{{ route('subjects.store') }}">
                         @csrf
                         <div class="mb-4">
-                            <label for="subject_code" class="block text-gray-700">Subject Code</label>
-                            <input type="text" name="subject_code" id="subjectID" required
+                            <label for="code" class="block text-gray-700">Subject Code</label>
+                            <input type="text" name="code" id="subjectID" required
                                 class="w-full px-3 py-2 border rounded-lg">
                         </div>
                         <div class="mb-4">
-                            <label for="subject_name" class="block text-gray-700">Subject Name</label>
-                            <input type="text" name="subject_name" id="subjectName" required
+                            <label for="name" class="block text-gray-700">Subject Name</label>
+                            <input type="text" name="name" id="subjectName" required
                                 class="w-full px-3 py-2 border rounded-lg">
                         </div>
                         <div class="flex justify-end">

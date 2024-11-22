@@ -112,7 +112,7 @@
         <div class="container mx-auto p-4">
 
             <div class="flex justify-between mb-4">
-                <h1 class="text-xl font-bold">{{ $course->course_name }} - Course Semesters</h1>
+                <h1 class="text-xl font-bold">{{ $course->name }} - Course Semesters</h1>
                 <button id="addSemesterBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
                     Add Semester
                 </button>
@@ -177,8 +177,8 @@
                                 @foreach ($subjects as $subject)
                                     <div class="px-4 py-2 hover:bg-gray-200 cursor-pointer subject-item"
                                         data-subject-id="{{ $subject->id }}"
-                                        data-subject-name="{{ $subject->subject_name }}">
-                                        {{ $subject->subject_name }}
+                                        data-subject-name="{{ $subject->name }}">
+                                        {{ $subject->name }}
                                     </div>
                                 @endforeach
                             </div>

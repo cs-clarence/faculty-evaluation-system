@@ -137,11 +137,11 @@
                                     <td class="py-3 px-4 border-b">
                                         <a href="{{ route('courses.showSemesters', $course->id) }}"
                                             class="text-blue-600 hover:underline">
-                                            {{ $course->course_name }}
+                                            {{ $course->name }}
                                         </a>
                                     </td>
-                                    <td class="py-3 px-4 border-b">{{ $course->course_name }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $course->department->department_name ?? 'N/A' }}
+                                    <td class="py-3 px-4 border-b">{{ $course->name }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $course->department->name ?? 'N/A' }}
                                     </td>
                                 </tr>
                             @empty
@@ -168,8 +168,8 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
-                            <label for="subject_code" class="block text-gray-700">Course Code</label>
-                            <input type="text" name="course_code" id="course_code" required
+                            <label for="code" class="block text-gray-700">Course Code</label>
+                            <input type="text" name="code" id="code" required
                                 class="w-full px-3 py-2 border rounded-lg">
                         </div>
 
@@ -196,8 +196,8 @@
 
 
                         <div class="mb-4">
-                            <label for="subject_name" class="block text-gray-700">Course Name</label>
-                            <input type="text" name="course_name" id="course_name" required
+                            <label for="name" class="block text-gray-700">Course Name</label>
+                            <input type="text" name="name" id="name" required
                                 class="w-full px-3 py-2 border rounded-lg">
                         </div>
 
@@ -207,7 +207,10 @@
                                 class="w-full px-3 py-2 border rounded-lg">
                                 <option value="" disabled selected>Select a department</option>
                                 @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->department_code }}</option>
+                                    <option value="{{ $department->id }}">
+                                        {{ $department->name }}
+                                        ({{ $department->code }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>

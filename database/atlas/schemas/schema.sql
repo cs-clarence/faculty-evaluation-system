@@ -127,8 +127,8 @@ ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
 
 CREATE TABLE public.departments (
     id integer NOT NULL,
-    department_name character varying(255) NOT NULL,
-    department_code character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    code character varying(255) NOT NULL,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone
 );
@@ -341,8 +341,8 @@ ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
 
 CREATE TABLE public.subjects (
     id integer NOT NULL,
-    subject_code character varying(255) NOT NULL,
-    subject_name character varying(255) NOT NULL,
+    code character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
     created_at timestamp(0) without time zone,
     updated_at timestamp(0) without time zone
 );
@@ -515,11 +515,11 @@ ALTER TABLE ONLY public.courses
 
 
 --
--- Name: departments departments_department_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: departments departments_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.departments
-    ADD CONSTRAINT departments_department_name_unique UNIQUE (department_name);
+    ADD CONSTRAINT departments_name_unique UNIQUE (name);
 
 
 --
@@ -611,11 +611,11 @@ ALTER TABLE ONLY public.subjects
 
 
 --
--- Name: subjects subjects_subject_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: subjects subjects_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.subjects
-    ADD CONSTRAINT subjects_subject_code_unique UNIQUE (subject_code);
+    ADD CONSTRAINT subjects_code_unique UNIQUE (code);
 
 
 --
