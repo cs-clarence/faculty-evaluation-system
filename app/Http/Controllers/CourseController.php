@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Subject;
 use App\Models\Course;
 use App\Models\CourseSemester;
 use App\Models\Department;
-use Illuminate\Support\Facades\Log;
+use App\Models\Subject;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -19,7 +18,7 @@ class CourseController extends Controller
         $subjects = Subject::all();
         $courses = Course::with('department')->get();
         $departments = Department::all();
-        return view('/admin/course', compact('subjects','courses','departments'));
+        return view('/admin/course', compact('subjects', 'courses', 'departments'));
     }
 
     /**
@@ -35,21 +34,19 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-         // Validate the form data
-         $validatedData = $request->validate([
+        // Validate the form data
+        $validatedData = $request->validate([
             'course_code' => 'required|string|max:255',
             'course_name' => 'required|string|max:255',
-            'department_id' => 'required|exists:departments,id'
+            'department_id' => 'required|exists:departments,id',
         ]);
 
-    
         // Step 1: Create a new course
         $course = new Course();
         $course->course_code = $validatedData['course_code'];
         $course->course_name = $validatedData['course_name'];
         $course->department_id = $validatedData['department_id'];
         $course->save();
-
 
         return redirect()->route('course');
     }
@@ -87,13 +84,15 @@ class CourseController extends Controller
     }
 
     //department controller
-    public function department_index(){
+    public function department_index()
+    {
 
         $departments = Department::all();
-        return view ('/admin/department', compact('departments'));
+        return view('/admin/department', compact('departments'));
     }
 
-    public function department_store(Request $request){
+    public function department_store(Request $request)
+    {
         // Validate the request data
         $request->validate([
             'department_code' => 'required|unique:departments,department_code',
@@ -110,8 +109,8 @@ class CourseController extends Controller
         return redirect()->route('department')->with('success', 'Subject added successfully!');
     }
 
-    public function storeSemester(Request $request, Course $course){
-
+    public function storeSemester(Request $request, Course $course)
+    {
         $request->validate([
             'year_level' => 'required|string|max:255',
             'semester' => 'required|string|max:255',
@@ -126,9 +125,8 @@ class CourseController extends Controller
             'semester' => $request->semester,
         ]);
 
-         // Attach selected subjects to the semester
+        // Attach selected subjects to the semester
         $semester->subjects()->sync($request->subjects);
-
 
         return redirect()->route('courses.showSemesters', $course->id)
             ->with('success', 'Semester added successfully');
@@ -138,9 +136,9 @@ class CourseController extends Controller
     public function showSemesters(Course $course)
     {
         // Get all the semesters associated with the course
-        $courseSemesters = $course->courseSemesters;
+        $course_semesters = $course->course_semesters;
         $subjects = Subject::all();
 
-        return view('/admin/semester', compact('course', 'courseSemesters', 'subjects'));
+        return view('/admin/semester', compact('course', 'course_semesters', 'subjects'));
     }
 }

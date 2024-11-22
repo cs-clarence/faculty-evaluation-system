@@ -6,8 +6,9 @@
 /storage/*.key
 /vendor
 .env
-.env.backup
-.env.production
+.env.**
+!.env.example
+!.env.**.example
 Homestead.json
 Homestead.yaml
 auth.json
@@ -16,3 +17,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+_ide_helper*.php

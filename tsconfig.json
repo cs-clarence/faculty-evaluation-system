@@ -6,6 +6,6 @@
 		"moduleResolution": "bundler",
 		"esModuleInterop": true
 	},
-	"include": ["./resources/js/**/*.ts"],
-	"exclude": []
+	"include": ["./resources/js/**/*.ts", "./**.config.ts"],
+	"exclude": ["node_modules"]
 }

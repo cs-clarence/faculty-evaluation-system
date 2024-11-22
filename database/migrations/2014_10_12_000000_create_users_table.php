@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
         });
-        
+
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
@@ -37,11 +37,11 @@ return new class extends Migration
             $table->unsignedInteger('course_id')->nullable();
 
             $table->string('student_id')->unique()->nullable();
-            $table->string('studentName');
+            $table->string('student_name');
             $table->string('address');
             // Add other student-specific fields here
             $table->timestamps();
-    
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
         });
@@ -52,6 +52,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('students');
         Schema::dropIfExists('users');
+        Schema::dropIfExists('roles');
     }
 };

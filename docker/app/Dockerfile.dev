@@ -1,0 +1,7 @@
+FROM php:fpm-alpine
+LABEL authors="rencema"
+
+RUN set -ex \
+    && apk --no-cache add postgresql-dev \
+    && docker-php-ext-install pdo pdo_mysql \
+    && apk del postgresql-dev

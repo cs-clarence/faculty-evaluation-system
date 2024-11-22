@@ -7,6 +7,9 @@
         "./node_modules/@rencedm112/biome-config/javascript.json",
         "./node_modules/@rencedm112/biome-config/vcs.json"
     ],
+    "linter": {
+        "ignore": ["**/*.config.js", "**/*.config.cjs", "**/*.config.mjs"]
+    },
     "files": {
         "ignore": [
             "**/gen/**",
@@ -38,8 +41,7 @@
             "**/lerna.json",
             "**/tsconfig.json",
             "**/tsconfig.tsbuildinfo",
-            "**/*.tsbuildinfo",
-            "**/*.config.js"
+            "**/*.tsbuildinfo"
         ]
     }
 }

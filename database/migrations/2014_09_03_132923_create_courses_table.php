@@ -36,7 +36,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('course_semester', function (Blueprint $table) {
+        Schema::create('course_semesters', function (Blueprint $table) {
             $table->increments('id');
             $table->string('year_level');
             $table->string('semester');
@@ -47,12 +47,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('course_semester_subject', function (Blueprint $table) {
+        Schema::create('course_semester_subjects', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('course_semester_id');
             $table->unsignedInteger('subject_id');
 
-            $table->foreign('course_semester_id')->references('id')->on('course_semester')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('course_semester_id')->references('id')->on('course_semesters')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade')->onUpdate('cascade');
 
             $table->timestamps();
@@ -65,6 +65,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('course_semester_subjects');
+        Schema::dropIfExists('course_semesters');
         Schema::dropIfExists('courses');
+        Schema::dropIfExists('subjects');
+        Schema::dropIfExists('departments');
     }
 };
