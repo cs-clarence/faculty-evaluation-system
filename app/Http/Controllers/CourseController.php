@@ -95,7 +95,7 @@ class CourseController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'code' => 'required|unique:courses,code',
+            'code' => 'required|unique:department,code',
             'name' => 'required',
         ]);
 
