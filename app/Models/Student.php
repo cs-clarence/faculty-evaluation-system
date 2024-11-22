@@ -14,8 +14,8 @@ class Student extends Model
 
     protected $fillable = [
         'user_id',
-        'student_id',
-        'student_name',
+        'student_number',
+        'name',
         'address',
     ];
     protected $table = 'students';
