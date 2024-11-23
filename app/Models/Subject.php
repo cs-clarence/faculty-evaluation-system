@@ -21,6 +21,18 @@ class Subject extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'course_subject', 'subject_id', 'course_id');
+        return $this->belongsTo(CourseSubject::class);
+    }
+
+    public function archive()
+    {
+        $this->archived_at = now();
+        $this->save();
+    }
+
+    public function unarchive()
+    {
+        $this->archived_at = null;
+        $this->save();
     }
 }
