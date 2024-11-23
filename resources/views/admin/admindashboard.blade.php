@@ -1,5 +1,4 @@
-@extends('layouts.admin')
-@section('content')
+<x-layouts.admin>
     <div class="top flex justify-end mb-4">
         <button class="text-2xl text-gray-600">
 
@@ -37,4 +36,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-layouts.admin>

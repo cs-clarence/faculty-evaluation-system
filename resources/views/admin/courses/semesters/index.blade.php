@@ -1,6 +1,4 @@
-@extends('layouts.admin')
-
-@section('content')
+<x-layouts.admin>
     <div class="container mx-auto p-4">
 
         <div class="flex justify-between mb-4">
@@ -21,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($course_semesters as $semester)
+                @foreach ($courseSemesters as $semester)
                     @php
                         $subjects = $semester->subjects;
                         $subjectsText = implode(', ', $subjects->pluck('name')->toArray());
@@ -64,7 +62,8 @@
                     <label for="subject" class="block text-gray-700">Select Subjects</label>
                     <div id="subjectDropdownContainer" class="relative">
                         <!-- Dropdown button -->
-                        <div id="subjectDropdownButton" class="w-full px-3 py-2 border rounded-lg bg-white cursor-pointer">
+                        <div id="subjectDropdownButton"
+                            class="w-full px-3 py-2 border rounded-lg bg-white cursor-pointer">
                             <span id="subjectDropdownPlaceholder" class="text-gray-500">Select subjects</span>
                         </div>
 
@@ -192,4 +191,4 @@
             }
         });
     </script>
-@endsection
+</x-layouts.admin>

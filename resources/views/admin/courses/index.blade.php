@@ -1,5 +1,4 @@
-@extends('layouts.admin')
-@section('content')
+<x-layouts.admin>
     <div class="top flex justify-end mb-4">
         <button id="addCourseBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
             Add Course
@@ -53,38 +52,41 @@
             <h3 class="text-lg font-semibold mb-4">Add New Course</h3>
 
             <!-- Add Subject Form -->
-            <form id="addSubjectForm" method="POST" action="{{ route('courses.store') }}" enctype="multipart/form-data">
+            <form id="addSubjectForm" method="POST" action="{{ route('courses.store') }}"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
                     <label for="code" class="block text-gray-700">Course Code</label>
-                    <input type="text" name="code" id="code" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" name="code" id="code" required
+                        class="w-full px-3 py-2 border rounded-lg">
                 </div>
 
                 <!-- INPUT MULTIPLE SUBJECTS
-                                <div class="mb-4">
-                                <label for="subject" class="block text-gray-700">Course Subject</label>
-                                    <select id="subjectDropdown" class="w-full px-3 py-2 border rounded-lg">
-                                        <option value="" disabled selected>Select a subject</option>
-                                        @foreach ($subjects as $subject)
-    <option value="{{ $subject->id }}">{{ $subject->subjectID }}</option>
-    @endforeach
-                                    </select>
-                                </div> -->
+                                    <div class="mb-4">
+                                    <label for="subject" class="block text-gray-700">Course Subject</label>
+                                        <select id="subjectDropdown" class="w-full px-3 py-2 border rounded-lg">
+                                            <option value="" disabled selected>Select a subject</option>
+                                            @foreach ($subjects as $subject)
+<option value="{{ $subject->id }}">{{ $subject->subjectID }}</option>
+@endforeach
+                                        </select>
+                                    </div> -->
 
                 <!-- Display Selected Subjects
-                                <div class="mb-4">
-                                    <label for="selectedSubjects" class="block text-gray-700">Selected Subjects</label>
-                                    <div id="selectedSubjectsContainer" class="w-full px-3 py-2 border rounded-lg bg-gray-100 min-h-[50px]">
+                                    <div class="mb-4">
+                                        <label for="selectedSubjects" class="block text-gray-700">Selected Subjects</label>
+                                        <div id="selectedSubjectsContainer" class="w-full px-3 py-2 border rounded-lg bg-gray-100 min-h-[50px]">
 
-                                    </div>
-                                </div> -->
+                                        </div>
+                                    </div> -->
 
                 <!-- <input type="hidden" name="subjects[]" id="subjectsInput">   -->
 
 
                 <div class="mb-4">
                     <label for="name" class="block text-gray-700">Course Name</label>
-                    <input type="text" name="name" id="name" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" name="name" id="name" required
+                        class="w-full px-3 py-2 border rounded-lg">
                 </div>
 
                 <div class="mb-4">
@@ -167,4 +169,4 @@
             });
         });
     </script>
-@endsection
+</x-layouts.admin>

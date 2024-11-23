@@ -1,5 +1,4 @@
-@extends('layouts.admin')
-@section('content')
+<x-layouts.admin>
     <div class="top flex justify-end mb-4">
         <button id="addSubjectBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
             Add Subject
@@ -47,7 +46,8 @@
                 @csrf
                 <div class="mb-4">
                     <label for="code" class="block text-gray-700">Subject Code</label>
-                    <input type="text" name="code" id="subjectID" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" name="code" id="subjectID" required
+                        class="w-full px-3 py-2 border rounded-lg">
                 </div>
                 <div class="mb-4">
                     <label for="name" class="block text-gray-700">Subject Name</label>
@@ -73,4 +73,4 @@
             document.getElementById('addSubjectModal').classList.add('hidden');
         });
     </script>
-@endsection
+</x-layouts.admin>

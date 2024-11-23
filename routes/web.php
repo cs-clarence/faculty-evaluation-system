@@ -4,7 +4,6 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EvaluationFormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +25,7 @@ Route::get('/', function () {
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 
 //Route Subject
-Route::get('/admin/subject', [SubjectController::class, 'index'])->name('subjects.index');
+Route::get('/admin/subjects', [SubjectController::class, 'index'])->name('subjects.index');
 Route::post('/admin/subjects/store', [SubjectController::class, 'store'])->name('subjects.store');
 
 //Route Course
@@ -56,12 +55,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin/school-years/create', [SchoolYearController::class, 'create'])->name('school-years.create');
-Route::post('/admin/school-years/store', [SchoolYearController::class, 'store'])->name('school-years.store');
-Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-years.index');
-Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-years.show');
-Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-years.edit');
-Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-years.update');
-Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-years.destroy');
+// Route::get('/admin/school-years/create', [SchoolYearController::class, 'create'])->name('school-years.create');
+// Route::post('/admin/school-years/store', [SchoolYearController::class, 'store'])->name('school-years.store');
+// Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-years.index');
+// Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-years.show');
+// Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-years.edit');
+// Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-years.update');
+// Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-years.destroy');
+Route::get('/admin/school-years', App\Livewire\Pages\Admin\SchoolYears\Index::class)->name('school-years.index');
 
 require __DIR__ . '/auth.php';

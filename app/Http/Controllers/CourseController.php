@@ -149,9 +149,9 @@ class CourseController extends Controller
     public function showSemesters(Course $course)
     {
         // Get all the semesters associated with the course
-        $course_semesters = $course->course_semesters;
+        $courseSemesters = $course->courseSemesters;
         $subjects = Subject::all();
 
-        return view('admin.courses.semesters.index', compact('course', 'course_semesters', 'subjects'));
+        return view('admin.courses.semesters.index', compact('course', 'courseSemesters', 'subjects'));
     }
 }

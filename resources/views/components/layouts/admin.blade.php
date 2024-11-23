@@ -1,42 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+@props(['title' => 'SPCF-TES Admin'])
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <title>@yield('title', 'Teacher\'s Evaluation System')</title>
+<x-layouts.app :title="$title">
+    <x-slot:head>
+        <style>
+            /* Additional CSS for sidebar positioning and transitions */
+            #sidebar {
+                transition: transform 0.3s ease;
+            }
 
-    <!-- Tailwind CSS -->
-    @vite(['resources/css/app.css', 'resources/js/app.ts'])
-    <style>
-        /* Additional CSS for sidebar positioning and transitions */
-        #sidebar {
-            transition: transform 0.3s ease;
-        }
+            .sidebar-open {
+                transform: translateX(0);
+            }
 
-        .sidebar-open {
-            transform: translateX(0);
-        }
+            .sidebar-closed {
+                transform: translateX(-100%);
+            }
 
-        .sidebar-closed {
-            transform: translateX(-100%);
-        }
+            .main-content {
+                transition: margin-left 0.1s ease, width 0.3s ease;
+            }
 
-        .main-content {
-            transition: margin-left 0.1s ease, width 0.3s ease;
-        }
+            .nav-link-open {
+                margin-left: 256px;
+                /* Same width as the sidebar */
+            }
+        </style>
+    </x-slot:head>
 
-        .nav-link-open {
-            margin-left: 256px;
-            /* Same width as the sidebar */
-        }
-    </style>
-    @livewireStyles
-</head>
-
-<body class="bg-gray-100">
 
     <!-- Sidebar -->
     <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-blue-900 text-white p-4 sidebar-closed">
@@ -114,7 +104,11 @@
 
     <div class="flex">
         <section id="mainContent" class="main-content flex-1 p-6 transition-all duration-300 ml-0">
-            @yield('content')
+            @isset($slot)
+                {{ $slot }}
+            @else
+                Blank Page
+            @endisset
         </section>
     </div>
     <!-- JavaScript for Sidebar Toggle -->
@@ -142,7 +136,4 @@
             }
         });
     </script>
-    @livewireScripts
-</body>
-
-</html>
+</x-layouts.app>
