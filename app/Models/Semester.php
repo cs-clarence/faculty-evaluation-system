@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Semester extends Model
 {
     protected $table = 'semesters';
+    protected $fillable = ['semester', 'school_year_id'];
 
     public function school_year(): BelongsTo
     {
