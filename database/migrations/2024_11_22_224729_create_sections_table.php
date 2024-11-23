@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Course;
-use App\Models\SchoolYearSemester;
 use App\Models\Section;
+use App\Models\Semester;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('school_year_semester_sections', function (Blueprint $table) {
+        Schema::create('semester_sections', function (Blueprint $table) {
             $table->id();
 
             $table->foreignIdFor(Section::class)
@@ -33,7 +33,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(SchoolYearSemester::class)
+            $table->foreignIdFor(Semester::class)
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -47,7 +47,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('school_year_semester_sections');
+        Schema::dropIfExists('semester_sections');
         Schema::dropIfExists('sections');
     }
 };

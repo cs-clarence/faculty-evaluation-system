@@ -26,6 +26,6 @@ class CourseSemester extends Model
 
     public function subjects()
     {
-        return $this->hasManyThrough(Subject::class, CourseSemesterSubject::class);
+        return $this->hasManyThrough(Subject::class, CourseSubject::class);
     }
 }

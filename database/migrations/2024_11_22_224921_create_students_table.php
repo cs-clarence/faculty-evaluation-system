@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\CourseSemesterSubject;
-use App\Models\SchoolYearSemester;
-use App\Models\SchoolYearSemesterSection;
+use App\Models\CourseSubject;
+use App\Models\Semester;
+use App\Models\SemesterSection;
 use App\Models\Student;
 use App\Models\StudentSemester;
+use App\Models\TeacherSubject;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -38,7 +39,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(SchoolYearSemester::class, 'school_year_semester_id')
+            $table->foreignIdFor(Semester::class, 'semester_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -46,10 +47,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('student_semester_subjects', function (Blueprint $table) {
+        Schema::create('student_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(CourseSemesterSubject::class, 'course_semester_subject_id')
+            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -59,7 +60,12 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(SchoolYearSemesterSection::class, 'school_year_semester_section_id')
+            $table->foreignIdFor(TeacherSubject::class, 'teacher_subject_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -71,6 +77,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('student_subjects');
+        Schema::dropIfExists('student_semesters');
         Schema::dropIfExists('students');
     }
 };

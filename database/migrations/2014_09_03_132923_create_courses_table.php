@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SchoolYear;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,16 +20,14 @@ return new class extends Migration
             $table->unique('year_start', 'year_end');
         });
 
-        Schema::create('school_year_semesters', function (Blueprint $table) {
+        Schema::create('semesters', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('school_year_id');
             $table->unsignedInteger('semester');
 
-            $table->foreign('school_year_id')
-                ->references('id')
-                ->on('school_years')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->foreignIdFor(SchoolYear::class)
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->unique('school_year_id', 'semester');
         });
@@ -72,7 +71,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('course_semester_subjects', function (Blueprint $table) {
+        Schema::create('course_subjects', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('course_semester_id');
             $table->unsignedInteger('subject_id');

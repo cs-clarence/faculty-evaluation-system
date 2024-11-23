@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\CourseSemesterSubject;
-use App\Models\SchoolYearSemester;
-use App\Models\SchoolYearSemesterSection;
+use App\Models\CourseSubject;
+use App\Models\Semester;
+use App\Models\SemesterSection;
 use App\Models\Teacher;
 use App\Models\TeacherSemester;
 use Illuminate\Database\Migrations\Migration;
@@ -29,7 +29,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(SchoolYearSemester::class, 'school_year_semester_id')
+            $table->foreignIdFor(Semester::class, 'semester_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -37,10 +37,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('teacher_semester_subjects', function (Blueprint $table) {
+        Schema::create('teacher_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(CourseSemesterSubject::class, 'course_semester_subject_id')
+            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -50,7 +50,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(SchoolYearSemesterSection::class, 'school_year_semester_section_id')
+            $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
@@ -62,7 +62,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teacher_semester_subjects');
+        Schema::dropIfExists('teacher_subjects');
         Schema::dropIfExists('teacher_semesters');
         Schema::dropIfExists('teachers');
     }

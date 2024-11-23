@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @mixin IdeHelperSchoolYearSemester
  */
-class SchoolYearSemester extends Model
+class Semester extends Model
 {
-    protected $table = 'school_year_semesters';
+    protected $table = 'semesters';
 
     public function school_year(): BelongsTo
     {

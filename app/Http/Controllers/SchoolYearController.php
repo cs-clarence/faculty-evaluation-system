@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSchoolYearRequest;
 use App\Http\Requests\UpdateSchoolYearRequest;
 use App\Models\SchoolYear;
-use App\Models\SchoolYearSemester;
+use App\Models\Semester;
 use Illuminate\Support\Facades\Response;
 
 class SchoolYearController extends Controller
@@ -36,7 +36,7 @@ class SchoolYearController extends Controller
         $start = $max + 1;
         $to = $start + $semesters;
         for ($i = $start; $i <= $to; $i++) {
-            $sem = $semesters[] = new SchoolYearSemester();
+            $sem = $semesters[] = new Semester();
 
             $sem->school_year_id = $sy->id;
             $sem->semester = $i;

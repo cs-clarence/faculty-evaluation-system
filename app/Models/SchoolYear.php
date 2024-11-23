@@ -17,6 +17,6 @@ class SchoolYear extends Model
 
     public function semesters(): HasMany
     {
-        return $this->hasMany(SchoolYearSemester::class);
+        return $this->hasMany(Semester::class);
     }
 }
