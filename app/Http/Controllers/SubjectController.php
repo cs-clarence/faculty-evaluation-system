@@ -14,7 +14,7 @@ class SubjectController extends Controller
     {
         $subjects = Subject::all();
 
-        return view('/admin/subject', compact('subjects'));
+        return view('admin.subjects.index', compact('subjects'));
     }
 
     /**
@@ -42,7 +42,7 @@ class SubjectController extends Controller
         ]);
 
         // Redirect back with a success message
-        return redirect()->route('subject')->with('success', 'Subject added successfully!');
+        return redirect()->route('subjects.index')->with('success', 'Subject added successfully!');
     }
 
     /**

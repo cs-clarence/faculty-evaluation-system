@@ -26,29 +26,29 @@ Route::get('/', function () {
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 
 //Route Subject
-Route::get('/subject', [SubjectController::class, 'index'])->name('subject');
-Route::post('/subjects/store', [SubjectController::class, 'store'])->name('subjects.store');
+Route::get('/admin/subject', [SubjectController::class, 'index'])->name('subjects.index');
+Route::post('/admin/subjects/store', [SubjectController::class, 'store'])->name('subjects.store');
 
 //Route Course
-Route::get('/course', [CourseController::class, 'index'])->name('course');
-Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+Route::get('/admin/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::post('/admin/courses', [CourseController::class, 'store'])->name('courses.store');
 
 //Route Course Semester
 
 // Route to store a new semester for a specific course
-Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
+Route::post('/admin/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
 
 // Route to show the semesters for a specific course
-Route::get('/courses/{course}/semesters', [CourseController::class, 'showSemesters'])->name('courses.showSemesters');
+Route::get('/admin/courses/{course}/semesters', [CourseController::class, 'showSemesters'])->name('courses.showSemesters');
 // Route to store a new semester for a specific course
-Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
+Route::post('/admin/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
 
 //Route Evaluation Form
 Route::get('/evaluation-form', [EvaluationFormController::class, 'index'])->name('evaluation.form');
 
 //Route for department
-Route::get('/department', [CourseController::class, 'department_index'])->name('department');
-Route::post('/departments', [CourseController::class, 'department_store'])->name('department.store');
+Route::get('/admin/departments', [CourseController::class, 'department_index'])->name('departments.index');
+Route::post('/admin/departments', [CourseController::class, 'department_store'])->name('department.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -56,12 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-year.index');
-Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-year.show');
-Route::get('/admin/school-years/{schoolYear}/create', [SchoolYearController::class, 'create'])->name('school-year.create');
-Route::post('/admin/school-years/{schoolYear}/store', [SchoolYearController::class, 'store'])->name('school-year.store');
-Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-year.edit');
-Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-year.update');
-Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-year.destroy');
+Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-years.index');
+Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-years.show');
+Route::get('/admin/school-years/{schoolYear}/create', [SchoolYearController::class, 'create'])->name('school-years.create');
+Route::post('/admin/school-years/{schoolYear}/store', [SchoolYearController::class, 'store'])->name('school-years.store');
+Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-years.edit');
+Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-years.update');
+Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-years.destroy');
 
 require __DIR__ . '/auth.php';

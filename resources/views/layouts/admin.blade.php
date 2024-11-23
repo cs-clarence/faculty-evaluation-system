@@ -60,17 +60,22 @@
                         <span>Profile</span>
                     </a></li>
 
-                <li><a href="{{ route('department') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('school-years.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                        <i class='bx bx-user'></i>
+                        <span>School Years</span>
+                    </a></li>
+
+                <li><a href="{{ route('departments.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
                         <span>Department</span>
                     </a></li>
 
-                <li><a href="{{ route('course') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('courses.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
                         <span>Course</span>
                     </a></li>
 
-                <li><a href="{{ route('subject') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('subjects.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
                         <span>Subject</span>
                     </a></li>
@@ -107,7 +112,9 @@
     </div>
 
     <div class="flex">
-        @yield('content')
+        <section id="mainContent" class="main-content flex-1 p-6 transition-all duration-300 ml-0">
+            @yield('content')
+        </section>
     </div>
     <!-- JavaScript for Sidebar Toggle -->
     <script>

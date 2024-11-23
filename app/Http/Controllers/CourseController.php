@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\CourseSemester;
+use App\Models\CourseSubject;
 use App\Models\Department;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use \DB;
 
 class CourseController extends Controller
 {
@@ -18,7 +20,7 @@ class CourseController extends Controller
         $subjects = Subject::all();
         $courses = Course::with('department')->get();
         $departments = Department::all();
-        return view('/admin/course', compact('subjects', 'courses', 'departments'));
+        return view('admin.courses.index', compact('subjects', 'courses', 'departments'));
     }
 
     /**
@@ -48,7 +50,7 @@ class CourseController extends Controller
         $course->department_id = $validatedData['department_id'];
         $course->save();
 
-        return redirect()->route('course');
+        return redirect()->route('courses.index');
     }
 
     /**
@@ -88,7 +90,7 @@ class CourseController extends Controller
     {
 
         $departments = Department::all();
-        return view('/admin/department', compact('departments'));
+        return view('admin.departments.index', compact('departments'));
     }
 
     public function department_store(Request $request)
@@ -106,7 +108,7 @@ class CourseController extends Controller
         ]);
 
         // Redirect back with a success message
-        return redirect()->route('department')->with('success', 'Subject added successfully!');
+        return redirect()->route('departments.index')->with('success', 'Subject added successfully!');
     }
 
     public function storeSemester(Request $request, Course $course)
@@ -118,15 +120,26 @@ class CourseController extends Controller
             'subjects.*' => 'exists:subjects,id',
         ]);
 
-        // Store the new semester for the course
-        $semester = CourseSemester::create([
-            'course_id' => $course->id,
-            'year_level' => $request->year_level,
-            'semester' => $request->semester,
-        ]);
+        DB::transaction(function () use ($course, $request) {
+            // Store the new semester for the course
+            $semester = new CourseSemester([
+                'course_id' => $course->id,
+                'year_level' => $request->year_level,
+                'semester' => $request->semester,
+            ]);
+            $semester->save();
 
-        // Attach selected subjects to the semester
-        $semester->subjects()->sync($request->subjects);
+            // Attach selected subjects to the semester
+            $courseSubjects = [];
+            foreach ($request->subjects as $subjectId) {
+                $courseSubjects[] = new CourseSubject([
+                    'course_semester_id' => $semester->id,
+                    'subject_id' => $subjectId,
+                ]);
+            }
+
+            $semester->courseSubjects()->saveMany($courseSubjects);
+        });
 
         return redirect()->route('courses.showSemesters', $course->id)
             ->with('success', 'Semester added successfully');
@@ -139,6 +152,6 @@ class CourseController extends Controller
         $course_semesters = $course->course_semesters;
         $subjects = Subject::all();
 
-        return view('/admin/semester', compact('course', 'course_semesters', 'subjects'));
+        return view('admin.courses.semesters.index', compact('course', 'course_semesters', 'subjects'));
     }
 }

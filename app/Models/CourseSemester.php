@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperCourseSemester
@@ -26,6 +27,11 @@ class CourseSemester extends Model
 
     public function subjects()
     {
-        return $this->hasManyThrough(Subject::class, CourseSubject::class);
+        return $this->belongsToMany(Subject::class, CourseSubject::class);
+    }
+
+    public function courseSubjects(): HasMany
+    {
+        return $this->hasMany(CourseSubject::class);
     }
 }

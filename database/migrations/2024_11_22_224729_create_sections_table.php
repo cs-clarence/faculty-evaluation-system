@@ -22,6 +22,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
             $table->timestamps();
         });
 
@@ -38,6 +39,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->dateTimeTz('archived_at')->nullable();
             $table->timestamps();
         });
     }

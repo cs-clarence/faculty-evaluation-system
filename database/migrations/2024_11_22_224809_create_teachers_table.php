@@ -18,6 +18,7 @@ return new class extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
+            $table->dateTimeTz('archived_at')->nullable();
             $table->timestamps();
         });
 
@@ -33,6 +34,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->timestamps();
         });
@@ -49,6 +51,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()

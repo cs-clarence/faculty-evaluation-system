@@ -27,6 +27,7 @@ return new class extends Migration
             // Add other student-specific fields here
             $table->timestamps();
 
+            $table->dateTimeTz('archived_at')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
         });
@@ -43,6 +44,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->timestamps();
         });
@@ -69,6 +71,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
         });
     }
 

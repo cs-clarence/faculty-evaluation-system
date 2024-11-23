@@ -36,6 +36,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('code');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->timestamps();
         });
@@ -44,6 +45,8 @@ return new class extends Migration
             $table->increments('id');
             $table->string('code')->unique();
             $table->string('name');
+            $table->dateTimeTz('archived_at')->nullable();
+
             $table->timestamps();
         });
 
@@ -53,6 +56,7 @@ return new class extends Migration
 
             $table->string('code')->unique();
             $table->string('name');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
@@ -65,6 +69,7 @@ return new class extends Migration
 
             $table->unsignedInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->unique(['course_id', 'year_level', 'semester']);
 
@@ -75,6 +80,7 @@ return new class extends Migration
             $table->increments('id');
             $table->unsignedInteger('course_semester_id');
             $table->unsignedInteger('subject_id');
+            $table->dateTimeTz('archived_at')->nullable();
 
             $table->foreign('course_semester_id')->references('id')->on('course_semesters')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade')->onUpdate('cascade');

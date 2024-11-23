@@ -15,7 +15,7 @@ class SchoolYearController extends Controller
      */
     public function index()
     {
-        return view('admin.school-year.index', [
+        return view('admin.school-years.index', [
             'schoolYears' => SchoolYear::all(),
         ]);
     }
@@ -25,7 +25,7 @@ class SchoolYearController extends Controller
      */
     public function create()
     {
-        return view('admin.school-year.create');
+        return view('admin.school-years.create');
     }
 
     private static function createNSemesters(SchoolYear $sy, int $semesters)
@@ -63,7 +63,7 @@ class SchoolYearController extends Controller
 
         $sy->semesters()->createMany($semesters);
 
-        return redirect('admin.school-year.index');
+        return redirect('admin.school-years.index');
     }
 
     /**
@@ -71,7 +71,7 @@ class SchoolYearController extends Controller
      */
     public function show(SchoolYear $schoolYear)
     {
-        return view('admin.school-year.show', [
+        return view('admin.school-years.show', [
             'schoolYear' => $schoolYear,
         ]);
     }
@@ -81,7 +81,7 @@ class SchoolYearController extends Controller
      */
     public function edit(SchoolYear $schoolYear)
     {
-        return view('admin.school-year.edit', [
+        return view('admin.school-years.edit', [
             'schoolYear' => $schoolYear,
         ]);
     }
@@ -106,6 +106,6 @@ class SchoolYearController extends Controller
     public function destroy(SchoolYear $schoolYear)
     {
         $schoolYear->delete();
-        return Response::redirectToRoute('school-year.index');
+        return Response::redirectToRoute('school-years.index');
     }
 }
