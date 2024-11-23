@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('code');
 
             $table->unique('code');
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('users', function (Blueprint $table) {
@@ -28,10 +28,10 @@ return new class extends Migration
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestampTz('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

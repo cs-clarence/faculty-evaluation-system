@@ -26,7 +26,7 @@
                         $subjects = $semester->subjects;
                         $subjectsText = implode(', ', $subjects->pluck('name')->toArray());
                     @endphp
-                    <tr class="hover:bg-gray-100">
+                    <tr class="">
                         <td class="py-3 px-4">{{ $semester->year_level }}</td>
                         <td class="py-3 px-4">{{ $semester->semester }}</td>
                         <td class="py-3 px-4">{{ $subjectsText }}</td>

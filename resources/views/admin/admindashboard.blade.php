@@ -24,7 +24,7 @@
         <div class="box bg-white shadow-md p-6 rounded-lg flex flex-col items-center">
             <div class="dashlogo-outer text-center">
                 <a href="facilities-dash">
-                    <img src="images/dashLogo.png" alt="DHVSU Facilities Logo" class="w-24 h-24 mx-auto">
+                    <img src="/images/logo.png" alt="DHVSU Facilities Logo" class="w-24 h-24 mx-auto">
                 </a>
                 <label class="text-lg font-semibold text-gray-700">DHVSU FACILITIES</label>
             </div>

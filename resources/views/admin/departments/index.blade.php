@@ -34,7 +34,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
     <!-- Add Subject Modal -->

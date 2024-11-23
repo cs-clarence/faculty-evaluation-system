@@ -25,9 +25,9 @@ return new class extends Migration
             $table->string('student_number')->unique()->nullable();
             $table->string('address');
             // Add other student-specific fields here
-            $table->timestamps();
+            $table->timestampsTz();
 
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
         });
@@ -44,9 +44,9 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('student_subjects', function (Blueprint $table) {
@@ -71,7 +71,8 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
         });
     }
 

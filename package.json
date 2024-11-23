@@ -21,7 +21,6 @@
         "@rencedm112/with-env": "^0.0.39",
         "@tailwindcss/forms": "^0.5.9",
         "@types/alpinejs": "^3.13.10",
-        "alpinejs": "^3.14.3",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.7",
         "laravel-vite-plugin": "^1.0.6",

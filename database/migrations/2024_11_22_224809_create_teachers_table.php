@@ -18,8 +18,8 @@ return new class extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->dateTimeTz('archived_at')->nullable();
-            $table->timestamps();
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
         });
 
         Schema::create('teacher_semesters', function (Blueprint $table) {
@@ -34,9 +34,9 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('teacher_subjects', function (Blueprint $table) {
@@ -51,7 +51,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()

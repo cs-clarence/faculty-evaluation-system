@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSchoolYearRequest;
 use App\Models\SchoolYear;
 use App\Models\Semester;
 use Illuminate\Support\Facades\Response;
+use \DB;
 
 class SchoolYearController extends Controller
 {
@@ -25,24 +26,24 @@ class SchoolYearController extends Controller
      */
     public function create()
     {
-        return view('admin.school-years.create');
+        return view('admin.school-years.form');
     }
 
     private static function createNSemesters(SchoolYear $sy, int $semesters)
     {
-        $semesters = [];
+        $semestersArr = [];
         $max = $sy->semesters()->max('semester');
 
         $start = $max + 1;
         $to = $start + $semesters;
         for ($i = $start; $i <= $to; $i++) {
-            $sem = $semesters[] = new Semester();
+            $sem = $semestersArr[] = new Semester();
 
             $sem->school_year_id = $sy->id;
             $sem->semester = $i;
         }
 
-        return $semesters;
+        return $semestersArr;
     }
 
     /**
@@ -52,18 +53,20 @@ class SchoolYearController extends Controller
     {
         $valid = $request->validated();
 
-        $sy = new SchoolYear([
-            'year_start' => $valid->year_start,
-            'year_end' => $valid->year_end,
-        ]);
+        DB::transaction(function () use ($valid) {
+            $sy = new SchoolYear([
+                'year_start' => $valid['year_start'],
+                'year_end' => $valid['year_end'],
+            ]);
 
-        $sy->save();
+            $sy->save();
 
-        $semesters = self::createNSemesters($sy, $valid->semesters);
+            $semesters = self::createNSemesters($sy, $valid['semesters']);
 
-        $sy->semesters()->createMany($semesters);
+            $sy->semesters()->saveMany($semesters);
+        });
 
-        return redirect('admin.school-years.index');
+        return redirect()->route('school-years.index');
     }
 
     /**
@@ -97,7 +100,7 @@ class SchoolYearController extends Controller
 
         $newSemesters = self::createNSemesters($schoolYear, $additional);
 
-        $schoolYear->semesters()->createMany($newSemesters);
+        $schoolYear->semesters()->saveMany($newSemesters);
     }
 
     /**

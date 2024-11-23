@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperSchoolYearSemester
+ * @mixin IdeHelperSemester
  */
 class Semester extends Model
 {

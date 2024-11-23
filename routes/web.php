@@ -56,10 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/admin/school-years/create', [SchoolYearController::class, 'create'])->name('school-years.create');
+Route::post('/admin/school-years/store', [SchoolYearController::class, 'store'])->name('school-years.store');
 Route::get('/admin/school-years', [SchoolYearController::class, 'index'])->name('school-years.index');
 Route::get('/admin/school-years/{schoolYear}', [SchoolYearController::class, 'show'])->name('school-years.show');
-Route::get('/admin/school-years/{schoolYear}/create', [SchoolYearController::class, 'create'])->name('school-years.create');
-Route::post('/admin/school-years/{schoolYear}/store', [SchoolYearController::class, 'store'])->name('school-years.store');
 Route::get('/admin/school-years/{schoolYear}/edit', [SchoolYearController::class, 'edit'])->name('school-years.edit');
 Route::post('/admin/school-years/{schoolYear}/update', [SchoolYearController::class, 'update'])->name('school-years.update');
 Route::post('/admin/school-years/{schoolYear}/destroy', [SchoolYearController::class, 'update'])->name('school-years.destroy');

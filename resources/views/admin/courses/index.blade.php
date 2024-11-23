@@ -23,7 +23,7 @@
                 <tbody class="text-gray-700">
                     @forelse($courses as $course)
                         <tr class="cursor-pointer hover:bg-gray-100" data-course-id="{{ $course->id }}"
-                            onclick="showModal(this)">
+                            onclick="window.location.href='{{ route('courses.showSemesters', $course->id) }}';">
                             <td class="py-3 px-4 border-b">
                                 <a href="{{ route('courses.showSemesters', $course->id) }}"
                                     class="text-blue-600 hover:underline">
@@ -36,7 +36,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="py-3 px-4 text-center text-gray-500">No subjects found
+                            <td colspan="3" class="py-3 px-4 text-center text-gray-500">No courses found
                             </td>
                         </tr>
                     @endforelse
@@ -61,23 +61,23 @@
                 </div>
 
                 <!-- INPUT MULTIPLE SUBJECTS
-            <div class="mb-4">
-            <label for="subject" class="block text-gray-700">Course Subject</label>
-                <select id="subjectDropdown" class="w-full px-3 py-2 border rounded-lg">
-                    <option value="" disabled selected>Select a subject</option>
-                    @foreach ($subjects as $subject)
+                                <div class="mb-4">
+                                <label for="subject" class="block text-gray-700">Course Subject</label>
+                                    <select id="subjectDropdown" class="w-full px-3 py-2 border rounded-lg">
+                                        <option value="" disabled selected>Select a subject</option>
+                                        @foreach ($subjects as $subject)
     <option value="{{ $subject->id }}">{{ $subject->subjectID }}</option>
     @endforeach
-                </select>
-            </div> -->
+                                    </select>
+                                </div> -->
 
                 <!-- Display Selected Subjects
-            <div class="mb-4">
-                <label for="selectedSubjects" class="block text-gray-700">Selected Subjects</label>
-                <div id="selectedSubjectsContainer" class="w-full px-3 py-2 border rounded-lg bg-gray-100 min-h-[50px]">
+                                <div class="mb-4">
+                                    <label for="selectedSubjects" class="block text-gray-700">Selected Subjects</label>
+                                    <div id="selectedSubjectsContainer" class="w-full px-3 py-2 border rounded-lg bg-gray-100 min-h-[50px]">
 
-                </div>
-            </div> -->
+                                    </div>
+                                </div> -->
 
                 <!-- <input type="hidden" name="subjects[]" id="subjectsInput">   -->
 

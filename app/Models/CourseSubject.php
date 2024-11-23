@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 /**
- * @mixin IdeHelperCourseSemesterSubject
+ * @mixin IdeHelperCourseSubject
  */
 class CourseSubject extends Model
 {

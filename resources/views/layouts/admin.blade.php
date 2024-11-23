@@ -33,6 +33,7 @@
             /* Same width as the sidebar */
         }
     </style>
+    @livewireStyles
 </head>
 
 <body class="bg-gray-100">
@@ -43,7 +44,7 @@
             <!-- Logo and Name -->
             <div class="flex items-center space-x-4 mb-8">
                 <div class="logo-image">
-                    <img src="images/logo.png" alt="Logo" class="w-12 h-12">
+                    <img src="/images/logo.png" alt="Logo" class="w-12 h-12">
                 </div>
                 <span class="font-semibold text-xl">Evaluation System</span>
             </div>
@@ -141,6 +142,7 @@
             }
         });
     </script>
+    @livewireScripts
 </body>
 
 </html>

@@ -14,6 +14,7 @@ class SchoolYear extends Model
     /** @use HasFactory<\Database\Factories\SchoolYearFactory> */
     use HasFactory;
     protected $table = 'school_years';
+    protected $fillable = ['year_start', 'year_end'];
 
     public function semesters(): HasMany
     {

@@ -22,8 +22,8 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->dateTimeTz('archived_at')->nullable();
-            $table->timestamps();
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
         });
 
         Schema::create('semester_sections', function (Blueprint $table) {
@@ -39,8 +39,8 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->dateTimeTz('archived_at')->nullable();
-            $table->timestamps();
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
         });
     }
 
