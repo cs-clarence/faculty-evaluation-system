@@ -13,7 +13,7 @@ class Semester extends Model
     protected $table = 'semesters';
     protected $fillable = ['semester', 'school_year_id'];
 
-    public function school_year(): BelongsTo
+    public function schoolYear(): BelongsTo
     {
         return $this->belongsTo(SchoolYear::class);
     }
