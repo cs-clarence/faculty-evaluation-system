@@ -23,4 +23,17 @@ class Department extends Model
     {
         return $this->hasMany(Course::class);
     }
+
+    public function archive()
+    {
+        $this->archived_at = now();
+        $this->save();
+    }
+
+    public function unarchive()
+    {
+        $this->archived_at = null;
+        $this->save();
+    }
+
 }

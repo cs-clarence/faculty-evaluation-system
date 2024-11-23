@@ -22,7 +22,7 @@ class SchoolYearForm extends Form
         return [
             'schoolYearId' => 'nullable|integer|exists:school_years,id',
             'yearStart' => 'required|numeric|gte:2000|lt:yearEnd',
-            'yearEnd' => ['required', 'numeric', 'gte:2000', 'gt:yearStart'],
+            'yearEnd' => ['required', 'numeric', 'gte:2000', 'gt:yearStart', 'lte:' . $this->yearStart + 1],
             'semesters' => ['required', 'numeric', 'gt:0', 'lt:4'],
         ];
     }
@@ -40,7 +40,10 @@ class SchoolYearForm extends Form
                     return false;
                 }
 
-                $sy->update($this->all());
+                $sy->update([
+                    'year_start' => $this->yearStart,
+                    'year_end' => $this->yearEnd,
+                ]);
 
                 $sy->save();
 
@@ -68,8 +71,7 @@ class SchoolYearForm extends Form
                 $sy->semesters()->saveMany($semesters);
             });
         }
-        $this->isOpen = false;
-        $this->reset();
+        $this->close();
     }
 
     public function open(?SchoolYear $sy = null)

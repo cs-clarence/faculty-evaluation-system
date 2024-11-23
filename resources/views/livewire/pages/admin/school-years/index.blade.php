@@ -29,7 +29,7 @@
                             <td class="py-3 px-4 border-b">{{ $schoolYear->semesters()->count() }}</td>
                             <td class="py-3 px-4 text-right border-b">
                                 <button wire:click='edit({{ $schoolYear->id }})'
-                                    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
                                 <button wire:click='delete({{ $schoolYear->id }})'
@@ -55,10 +55,10 @@
         <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($schoolYearId)
-                    <h3 class="text-lg font-semibold mb-4">Add New School Year</h3>
-                @else
+                @isset($form->schoolYearId)
                     <h3 class="text-lg font-semibold mb-4">Edit School Year</h3>
+                @else
+                    <h3 class="text-lg font-semibold mb-4">Add New School Year</h3>
                 @endisset
                 <form id="addForm" wire:submit.prevent='save'>
                     @csrf
