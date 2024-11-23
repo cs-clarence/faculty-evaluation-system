@@ -28,7 +28,7 @@ class Course extends Model
     /**
      * Relationship: A course has many course semesters.
      */
-    public function course_semesters()
+    public function courseSemesters()
     {
         return $this->hasMany(CourseSemester::class);
     }
