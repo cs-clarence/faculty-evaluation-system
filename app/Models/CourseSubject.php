@@ -17,7 +17,7 @@ class CourseSubject extends Model
     protected $table = 'course_subjects';
     public $fillable = ['subject_id', 'course_semester_id'];
 
-    public function course_semester(): BelongsTo
+    public function courseSemester(): BelongsTo
     {
         return $this->belongsTo(CourseSemester::class);
     }
