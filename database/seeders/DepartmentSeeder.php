@@ -10,9 +10,9 @@ class DepartmentSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    private $defaultDepartments = [
+    private $defaults = [
         [
-            'code' => 'CASSE',
+            'code' => 'CASSED',
             'name' => 'College Of Arts And Social Sciences And Education',
         ],
         [
@@ -28,15 +28,11 @@ class DepartmentSeeder extends Seeder
             'name' => 'College Of Criminology',
         ],
         [
-            'code' => 'COED',
-            'name' => 'College Of Education',
-        ],
-        [
             'code' => 'COE',
             'name' => 'College Of Engineering',
         ],
         [
-            'code' => 'COHM',
+            'code' => 'CHTM',
             'name' => 'College Of Hospitality Management',
         ],
         [
@@ -47,7 +43,7 @@ class DepartmentSeeder extends Seeder
 
     public function run(): void
     {
-        foreach ($this->defaultDepartments as $department) {
+        foreach ($this->defaults as $department) {
             if (!Department::where('code', $department['code'])->exists()) {
                 Department::create($department);
             }

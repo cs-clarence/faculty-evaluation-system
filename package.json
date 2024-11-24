@@ -1,6 +1,7 @@
 {
     "private": true,
     "type": "module",
+    "packageManager": "bun@1.1.36",
     "scripts": {
         "dev": "vite",
         "build": "vite build",

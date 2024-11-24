@@ -18,10 +18,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->foreignIdFor(Course::class)
+            $table->unsignedInteger('year_level');
+            $table->foreignIdFor(Course::class, 'course_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            $table->unique(['year_level', 'code', 'course_id']);
+
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
@@ -29,15 +33,17 @@ return new class extends Migration
         Schema::create('semester_sections', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Section::class)
+            $table->foreignIdFor(Section::class, 'section_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreignIdFor(Semester::class)
+            $table->foreignIdFor(Semester::class, 'semester_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            $table->unique(['section_id', 'semester_id']);
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();

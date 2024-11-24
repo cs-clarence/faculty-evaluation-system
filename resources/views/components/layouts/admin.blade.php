@@ -41,37 +41,56 @@
 
             <!-- Navigation Links -->
             <ul class="flex-1 space-y-4">
-                <li><a href="{{ route('home') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.dashboard.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
-                        <span>Home</span>
+                        <span>Dashboard</span>
                     </a></li>
 
-                <li><a href="" class="flex items-center space-x-2 hover:text-gray-300">
-                        <i class='bx bx-user'></i>
-                        <span>Profile</span>
-                    </a></li>
-
-                <li><a href="{{ route('school-years.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.school-years.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
                         <span>School Years</span>
                     </a></li>
 
-                <li><a href="{{ route('departments.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.departments.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
-                        <span>Department</span>
+                        <span>Departments</span>
                     </a></li>
 
-                <li><a href="{{ route('courses.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.courses.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
-                        <span>Course</span>
+                        <span>Courses</span>
                     </a></li>
 
-                <li><a href="{{ route('subjects.index') }}" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.subjects.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
-                        <span>Subject</span>
+                        <span>Subjects</span>
                     </a></li>
 
-                <li><a href="" class="flex items-center space-x-2 hover:text-gray-300">
+                <li><a href="{{ route('admin.sections.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
+                        <i class='bx bx-user'></i>
+                        <span>Sections</span>
+                    </a></li>
+
+                <li><a href="{{ route('admin.teachers.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
+                        <i class='bx bx-user'></i>
+                        <span>Teachers</span>
+                    </a></li>
+
+                <li><a href="{{ route('admin.students.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
+                        <i class='bx bx-user'></i>
+                        <span>Students</span>
+                    </a></li>
+
+                <li><a href="{{ route('admin.accounts.index') }}"
+                        class="flex items-center space-x-2 hover:text-gray-300">
                         <i class='bx bx-user'></i>
                         <span>Accounts</span>
                     </a></li>

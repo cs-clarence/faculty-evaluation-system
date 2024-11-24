@@ -46,6 +46,8 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->timestampTz('archived_at')->nullable();
 
+            $table->unique(['student_id', 'semester_id']);
+
             $table->timestampsTz();
         });
 
@@ -71,6 +73,9 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            $table->unique(['student_semester_id', 'course_subject_id']);
+
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });

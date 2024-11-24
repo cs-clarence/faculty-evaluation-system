@@ -16,6 +16,7 @@ return new class extends Migration
             $table->increments('id');
             $table->unsignedInteger('year_start');
             $table->unsignedInteger('year_end');
+            $table->timestampTz('archived_at')->nullable();
 
             $table->unique('year_start', 'year_end');
             $table->timestampsTz();
@@ -66,8 +67,8 @@ return new class extends Migration
 
         Schema::create('course_semesters', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('year_level');
-            $table->string('semester');
+            $table->unsignedInteger('year_level');
+            $table->unsignedInteger('semester');
 
             $table->unsignedInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
