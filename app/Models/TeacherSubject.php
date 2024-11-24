@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @mixin IdeHelperTeacherSubject
  */
-class TeacherSubject extends Model
+class TeacherSubject extends Pivot
 {
     //
     protected $table = 'teacher_subjects';

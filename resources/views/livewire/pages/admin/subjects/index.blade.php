@@ -30,7 +30,7 @@
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
-                                @if ($subject->courses()->count() > 0)
+                                @if ($subject->courseSubjects()->count() > 0)
                                     @isset($subject->archived_at)
                                         <button wire:click='unarchive({{ $subject->id }})'
                                             class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
@@ -65,11 +65,11 @@
     </div>
 
     <!-- Add Subject Modal -->
-    @if ($form->isOpen)
+    @if ($isFormOpen)
         <div id="addSubjectModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($form->subjectId)
+                @isset($subject)
                     <h3 class="text-lg font-semibold mb-4">Edit Subject</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Subject</h3>

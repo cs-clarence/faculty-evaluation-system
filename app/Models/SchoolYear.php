@@ -32,4 +32,8 @@ class SchoolYear extends Model
         $this->archived_at = null;
         $this->save();
     }
+
+    public function hasDependents()
+    {
+    }
 }

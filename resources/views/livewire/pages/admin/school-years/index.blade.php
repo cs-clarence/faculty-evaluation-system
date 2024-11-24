@@ -51,31 +51,32 @@
         </div>
     </div>
 
-    @if ($form->isOpen)
+    @if ($this->isFormOpen)
         <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($form->schoolYearId)
+                @isset($this->schoolYear)
                     <h3 class="text-lg font-semibold mb-4">Edit School Year</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New School Year</h3>
                 @endisset
                 <form id="addForm" wire:submit.prevent='save'>
                     @csrf
-                    <input type="hidden" name="id" wire:model.defer="schoolYearId">
+                    <input type="hidden" name="id" wire:model.defer="form.id">
                     <div class="mb-4">
                         <label for="year_start" class="block text-gray-700">Year Start</label>
                         <input type="text" name="year_start" id="year_start" required type="number"
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.yearStart">
-                        @error('form.yearStart')
+                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur="form.year_start">
+                        @error('form.year_start')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-4">
                         <label for="year_end" class="block text-gray-700">Year End</label>
                         <input type="text" name="year_end" id="year_end" required
-                            class="w-full px-3 py-2 border rounded-lg" type="number" wire:model.defer="form.yearEnd">
-                        @error('form.yearEnd')
+                            class="w-full px-3 py-2 border rounded-lg opacity-50" type="number"
+                            wire:model.defer="form.year_end" disabled>
+                        @error('form.year_end')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>

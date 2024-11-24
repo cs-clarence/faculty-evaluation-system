@@ -3,6 +3,7 @@
 use App\Models\CourseSubject;
 use App\Models\Semester;
 use App\Models\SemesterSection;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherSemester;
 use Illuminate\Database\Migrations\Migration;
@@ -34,29 +35,38 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->timestampTz('archived_at')->nullable();
 
+            $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
 
         Schema::create('teacher_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
+            $table->foreignIdFor(Subject::class, 'subject_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(TeacherSemester::class, 'teacher_semester_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->timestampTz('archived_at')->nullable();
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->unique(['teacher_semester_id', 'subject_id']);
+
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
         });
     }
 

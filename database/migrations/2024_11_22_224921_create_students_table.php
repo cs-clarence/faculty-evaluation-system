@@ -5,7 +5,7 @@ use App\Models\Semester;
 use App\Models\SemesterSection;
 use App\Models\Student;
 use App\Models\StudentSemester;
-use App\Models\TeacherSubject;
+use App\Models\Subject;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +18,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('course_id')->nullable();
 
@@ -54,27 +54,27 @@ return new class extends Migration
         Schema::create('student_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
+            $table->foreignIdFor(Subject::class, 'subject_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(StudentSemester::class, 'student_semester_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
-            $table->foreignIdFor(TeacherSubject::class, 'teacher_subject_id')
+            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
-            $table->unique(['student_semester_id', 'course_subject_id']);
+            $table->unique(['student_semester_id', 'subject_id']);
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();

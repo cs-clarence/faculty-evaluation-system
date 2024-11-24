@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\CourseSemester;
 use App\Models\SchoolYear;
+use App\Models\Subject;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('school_years', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedInteger('year_start');
             $table->unsignedInteger('year_end');
             $table->timestampTz('archived_at')->nullable();
@@ -23,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::create('semesters', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedInteger('semester');
 
             $table->foreignIdFor(SchoolYear::class)
@@ -36,7 +38,7 @@ return new class extends Migration
         });
 
         Schema::create('departments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('name')->unique();
             $table->string('code');
             $table->timestampTz('archived_at')->nullable();
@@ -45,7 +47,7 @@ return new class extends Migration
         });
 
         Schema::create('subjects', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('code')->unique();
             $table->string('name');
             $table->timestampTz('archived_at')->nullable();
@@ -54,7 +56,7 @@ return new class extends Migration
         });
 
         Schema::create('courses', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedInteger('department_id');
 
             $table->string('code')->unique();
@@ -66,7 +68,7 @@ return new class extends Migration
         });
 
         Schema::create('course_semesters', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedInteger('year_level');
             $table->unsignedInteger('semester');
 
@@ -80,16 +82,23 @@ return new class extends Migration
         });
 
         Schema::create('course_subjects', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('course_semester_id');
-            $table->unsignedInteger('subject_id');
+            $table->id();
+
+            $table->foreignIdFor(CourseSemester::class, 'course_semester_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Subject::class, 'subject_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->timestampTz('archived_at')->nullable();
 
-            $table->foreign('course_semester_id')->references('id')->on('course_semesters')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade')->onUpdate('cascade');
+            $table->unique(['course_semester_id', 'subject_id']);
 
             $table->timestampsTz();
-            $table->unique(['course_semester_id', 'subject_id']);
         });
     }
 

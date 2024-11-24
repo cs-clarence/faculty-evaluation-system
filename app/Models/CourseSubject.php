@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @mixin IdeHelperCourseSubject
  */
-class CourseSubject extends Model
+class CourseSubject extends Pivot
 {
-    use HasFactory;
+    public $incrementing = true;
     protected $table = 'course_subjects';
-    public $fillable = ['subject_id', 'course_semester_id'];
+    protected $fillable = ['subject_id', 'course_semester_id'];
 
     public function courseSemester(): BelongsTo
     {

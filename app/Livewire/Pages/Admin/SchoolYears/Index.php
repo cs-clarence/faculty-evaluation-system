@@ -4,12 +4,13 @@ namespace App\Livewire\Pages\Admin\SchoolYears;
 
 use App\Livewire\Forms\SchoolYearForm;
 use App\Models\SchoolYear;
-use App\Models\Semester;
 use Livewire\Component;
 
 class Index extends Component
 {
     public SchoolYearForm $form;
+    public bool $isFormOpen = false;
+    public ?SchoolYear $schoolYear = null;
 
     public function mount()
     {
@@ -25,22 +26,28 @@ class Index extends Component
 
     public function openForm()
     {
-        $this->form->open();
+        $this->isFormOpen = true;
     }
 
     public function save()
     {
         $this->form->save();
+        $this->form->clear();
+        $this->isFormOpen = false;
     }
 
     public function closeForm()
     {
-        $this->form->close();
+        $this->form->clear();
+        $this->isFormOpen = false;
+        $this->schoolYear = null;
     }
 
     public function edit(SchoolYear $sy)
     {
-        $this->form->open($sy);
+        $this->isFormOpen = true;
+        $this->schoolYear = $sy;
+        $this->form->set($sy);
     }
 
     public function delete(SchoolYear $sy)
@@ -48,20 +55,10 @@ class Index extends Component
         $sy->delete();
     }
 
-    private static function createNSemesters(SchoolYear $sy, int $semesters)
+    public function updated(string $name, $value)
     {
-        $semestersArr = [];
-        $max = $sy->semesters()->max('semester');
-
-        $start = $max + 1;
-        $to = $start + $semesters;
-        for ($i = $start; $i <= $to; $i++) {
-            $sem = $semestersArr[] = new Semester();
-
-            $sem->school_year_id = $sy->id;
-            $sem->semester = $i;
+        if ($name === 'form.year_start') {
+            $this->form->year_end = $value + 1;
         }
-
-        return $semestersArr;
     }
 }

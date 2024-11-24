@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,4 +37,18 @@ class Department extends Model
         $this->save();
     }
 
+    public function scopeWithoutArchived(Builder $builder)
+    {
+        $builder->whereNull('archived_at');
+    }
+
+    public function hasDependents()
+    {
+        $courseCount = isset($this->courses_count) ? $this->courses_count : $this->courses()->count();
+        if ($courseCount > 0) {
+            return true;
+        }
+
+        return false;
+    }
 }

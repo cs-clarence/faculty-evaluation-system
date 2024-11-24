@@ -90,9 +90,9 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="subject" class="block text-gray-700">Course Department</label>
+                    <label for="department_id" class="block text-gray-700">Course Department</label>
                     <select id="subjectDropdown" name="department_id" class="w-full px-3 py-2 border rounded-lg">
-                        <option value="" disabled selected>Select a department</option>
+                        <option value="" selected>Select a department</option>
                         @foreach ($departments as $department)
                             <option value="{{ $department->id }}">
                                 {{ $department->name }}
@@ -103,8 +103,8 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="button" id="cancelBtn"
-                        class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
+                    <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
+                        wire:click='closeForm'>Cancel</button>
                     <button type="submit"
                         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
                 </div>

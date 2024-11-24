@@ -19,6 +19,7 @@
     @isset($head)
         {{ $head }}
     @endisset
+    @stack('head')
 </head>
 
 <body class="min-h-dvh bg-gray-100">
@@ -29,5 +30,6 @@
     @endisset
 </body>
 @livewireScripts
+@stack('scripts')
 
 </html>

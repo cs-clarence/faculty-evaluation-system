@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperCourse
@@ -15,9 +17,9 @@ class Course extends Model
     protected $fillable = ['code', 'name', 'department_id'];
     protected $table = 'courses';
 
-    public function subjects()
+    public function courseSubjects()
     {
-        return $this->belongsToMany(Subject::class, 'course_subject', 'course_id', 'subject_id');
+        return $this->hasManyThrough(CourseSubject::class, CourseSemester::class);
     }
 
     public function department()
@@ -33,6 +35,11 @@ class Course extends Model
         return $this->hasMany(CourseSemester::class);
     }
 
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class);
+    }
+
     public function archive()
     {
         $this->archived_at = now();
@@ -43,5 +50,19 @@ class Course extends Model
     {
         $this->archived_at = null;
         $this->save();
+    }
+
+    public function scopeWithoutArchived(Builder $builder)
+    {
+        $builder->whereNull('archived_at');
+    }
+
+    public function hasDependents()
+    {
+        $sectionCount = isset($this->sections_count) ? $this->sections_count : $this->sections()->count();
+
+        if ($sectionCount > 0) {
+            return true;
+        }
     }
 }

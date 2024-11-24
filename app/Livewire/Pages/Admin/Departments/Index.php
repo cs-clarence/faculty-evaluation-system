@@ -9,12 +9,18 @@ use Livewire\Component;
 class Index extends Component
 {
     public DepartmentForm $form;
-
-    public ?Department $department = null;
+    public bool $isFormOpen = false;
+    public ?Department $department;
 
     public function render()
     {
-        $departments = Department::all();
+        $departments = Department::withCount(['courses'])
+            ->orderBy('code')
+            ->orderBy('name')
+            ->orderBy('created_at')
+            ->orderBy('updated_at')
+            ->lazy();
+
         return view('livewire.pages.admin.departments.index')
             ->with(compact('departments'))
             ->layout('components.layouts.admin');
@@ -23,16 +29,19 @@ class Index extends Component
     public function save()
     {
         $this->form->save();
+        $this->closeForm();
     }
 
     public function openForm()
     {
-        $this->form->open();
+        $this->isFormOpen = true;
     }
 
     public function closeForm()
     {
-        $this->form->close();
+        $this->isFormOpen = false;
+        $this->form->clear();
+        $this->department = null;
     }
 
     public function delete(Department $department)
@@ -42,8 +51,9 @@ class Index extends Component
 
     public function edit(Department $department)
     {
-        $this->form->open($department);
         $this->department = $department;
+        $this->isFormOpen = true;
+        $this->form->set($department);
     }
 
     public function archive(Department $department)

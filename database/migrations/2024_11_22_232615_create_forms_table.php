@@ -22,7 +22,7 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
             $table->timestamps();
         });
 
@@ -48,7 +48,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->dateTimeTz('archived_at')->nullable();
+            $table->timestampTz('archived_at')->nullable();
             $table->timestamps();
         });
 
@@ -68,7 +68,7 @@ return new class extends Migration
             $table->dateTimeTz('starts_on');
             $table->dateTimeTz('ends_on');
             $table->boolean('is_open');
-            $table->boolean('is_submission_editable');
+            $table->boolean('is_submissions_editable');
             $table->dateTimeTz('archived_at')->nullable();
             $table->foreignIdFor(Semester::class)
                 ->constrained()
@@ -84,7 +84,7 @@ return new class extends Migration
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(StudentSubject::class)
+            $table->foreignIdFor(StudentSubject::class, 'student_subject_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();

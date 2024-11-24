@@ -8,9 +8,8 @@ use Livewire\Form;
 
 class DepartmentForm extends Form
 {
-    public bool $isOpen = false;
     #[Locked]
-    public ?int $departmentId = null;
+    public ?int $id = null;
     public ?string $code = null;
     public ?string $name = null;
 
@@ -18,9 +17,9 @@ class DepartmentForm extends Form
     {
         $unique = 'unique:departments,code';
         return [
-            'departmentId' => ['nullable', 'integer', 'exists:departments,id'],
+            'id' => ['nullable', 'integer', 'exists:departments,id'],
             'code' => ['required', 'string', 'max:255',
-                isset($this->departmentId) ? $unique . ',' . $this->departmentId : $unique],
+                isset($this->id) ? $unique . ',' . $this->id : $unique],
             'name' => ['required', 'string', 'max:255'],
         ];
     }
@@ -28,36 +27,21 @@ class DepartmentForm extends Form
     public function save()
     {
         $this->validate();
-        if (isset($this->departmentId)) {
-            Department::whereId($this->departmentId)->update($this->except(['departmentId', 'isOpen']));
+        if (isset($this->id)) {
+            Department::whereId($this->id)->update($this->except(['id']));
         } else {
-            Department::create($this->except(['isOpen', 'departmentId']));
+            Department::create($this->except(['id']));
         }
-        $this->close();
-    }
-
-    public function open(?Department $department = null)
-    {
-        if (isset($department)) {
-            $this->set($department);
-        }
-        $this->isOpen = true;
+        $this->clear();
     }
 
     public function set(Department $department)
     {
-        $this->fill(
-            [
-                'departmentId' => $department->id,
-                'code' => $department->code,
-                'name' => $department->name,
-            ]
-        );
+        $this->fill($department->attributesToArray());
     }
 
-    public function close()
+    public function clear()
     {
-        $this->isOpen = false;
         $this->reset();
         $this->resetErrorBag();
     }

@@ -9,9 +9,18 @@ use Livewire\Component;
 class Index extends Component
 {
     public SubjectForm $form;
+    public ?Subject $subject;
+    public bool $isFormOpen = false;
+
     public function render()
     {
-        $subjects = Subject::all();
+        $subjects = Subject::withCount(['courseSemesters'])
+            ->orderBy('code')
+            ->orderBy('name')
+            ->orderBy('created_at')
+            ->orderBy('updated_at')
+            ->get();
+
         return view('livewire.pages.admin.subjects.index')
             ->with(compact('subjects'))
             ->layout('components.layouts.admin');
@@ -19,22 +28,27 @@ class Index extends Component
 
     public function openForm()
     {
-        $this->form->open();
+        $this->isFormOpen = true;
     }
 
     public function closeForm()
     {
-        $this->form->close();
+        $this->isFormOpen = false;
+        $this->form->clear();
+        unset($this->subject);
     }
 
     public function edit(Subject $subject)
     {
-        $this->form->open($subject);
+        $this->subject = $subject;
+        $this->isFormOpen = true;
+        $this->form->set($subject);
     }
 
     public function save()
     {
         $this->form->save();
+        $this->closeForm();
     }
 
     public function archive(Subject $subject)
@@ -51,5 +65,4 @@ class Index extends Component
     {
         $subject->unarchive();
     }
-
 }
