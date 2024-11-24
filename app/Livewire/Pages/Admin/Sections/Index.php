@@ -6,6 +6,7 @@ use App\Facades\Helpers\SectionHelper;
 use App\Livewire\Forms\SectionForm;
 use App\Models\Course;
 use App\Models\Section;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
 
 class Index extends Component
@@ -16,11 +17,18 @@ class Index extends Component
 
     public function render()
     {
-        $sections = Section::orderBy('year_level')
+        $sections = Section::with(['course' => function (BelongsTo $builder) {
+            $builder->select(['id', 'name']);
+        }])
+            ->orderBy('course_id')
+            ->orderBy('year_level')
+            ->orderBy('semester')
+            ->orderBy('name')
             ->orderBy('code')
-            ->lazy();
+            ->get();
 
-        $courses = Course::withoutArchived()
+        $courses = Course::query()
+            ->withoutArchived()
             ->orderBy('department_id')
             ->orderBy('code')
             ->orderBy('name')

@@ -26,7 +26,7 @@
                                 {{ $schoolYear->year_start }}
                                 - {{ $schoolYear->year_end }}
                             </td>
-                            <td class="py-3 px-4 border-b">{{ $schoolYear->semesters()->count() }}</td>
+                            <td class="py-3 px-4 border-b">{{ $schoolYear->semesters_count }}</td>
                             <td class="py-3 px-4 text-right border-b">
                                 <button wire:click='edit({{ $schoolYear->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">

@@ -40,7 +40,8 @@ class SectionForm extends Form
                 ->where('course_id', $this->course_id)
                 ->where('year_level', $this->year_level)
                 ->where('semester', $this->semester)
-                ->where('name', $this->name),
+                ->where('name', $this->name)
+                ->ignore($this->id ?? 0),
         ]);
 
         if (isset($this->id)) {

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Role;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -18,6 +19,17 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/home';
+
+    public static function getDashboard(int $roleId)
+    {
+        $roleCode = Role::find($roleId)->code;
+        return match ($roleCode) {
+            'admin' => route('admin.dashboard.index'),
+            'student' => route('student.dashboard.index'),
+            'teacher' => route('teacher.dashboard.index'),
+            default => RouteServiceProvider::HOME,
+        };
+    }
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

@@ -27,7 +27,7 @@ class CourseSemester extends Model
 
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, CourseSubject::class);
+        return $this->belongsToMany(Subject::class, CourseSubject::class)->withTimestamps();
     }
 
     public function courseSubjects(): HasMany

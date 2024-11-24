@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Role;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,15 +29,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $roleCode = Role::whereId($request->user()->role_id)->first(['code'])->code;
+        $user = $request->user();
 
         return redirect()->intended(
-            match ($roleCode) {
-                'admin' => route('admin.dashboard.index'),
-                'student' => route('student.dashboard.index'),
-                'teacher' => route('teacher.dashboard.index'),
-                default => RouteServiceProvider::HOME,
-            }
+            RouteServiceProvider::getDashboard($user->role_id)
         );
     }
 

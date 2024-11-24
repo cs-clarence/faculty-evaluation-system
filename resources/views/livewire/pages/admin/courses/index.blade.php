@@ -23,13 +23,18 @@
                 </thead>
                 <tbody class="text-gray-700">
                     @forelse($courses as $course)
-                        <tr class="cursor-pointer hover:bg-gray-100" data-course-id="{{ $course->id }}">
+                        <tr>
                             <td class="py-3 px-4 border-b">
                                 {{ $course->code }}
                             </td>
                             <td class="py-3 px-4 border-b">{{ $course->name }}</td>
                             <td class="py-3 px-4 border-b">{{ $course->department->name ?? 'N/A' }}</td>
                             <td class="py-3 px-4 border-b">
+                                <button
+                                    x-on:click="Livewire.navigate('{{ route('admin.courses.course', ['course' => $course->id]) }}')"
+                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                                    View
+                                </button>
                                 <button wire:click='edit({{ $course->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
@@ -130,64 +135,4 @@
             </div>
         </div>
     @endif
-
-    @script
-        <script>
-            //Toggle modal for add subject
-            document.getElementById('addCourseBtn').addEventListener('click', function() {
-                document.getElementById('addCourseModal').classList.remove('hidden');
-            });
-
-            document.getElementById('cancelBtn').addEventListener('click', function() {
-                document.getElementById('addCourseModal').classList.add('hidden');
-            });
-
-            //Course Subject
-            document.addEventListener('DOMContentLoaded', function() {
-                const dropdown = document.getElementById('subjectDropdown');
-                const selectedSubjectsContainer = document.getElementById('selectedSubjectsContainer');
-                const subjectsInput = document.getElementById('subjectsInput');
-                let selectedSubjects = [];
-
-                // Handle dropdown selection
-                dropdown.addEventListener('change', function() {
-                    const selectedValue = dropdown.value;
-                    const selectedText = dropdown.options[dropdown.selectedIndex].text;
-
-                    // Check if the subject is already selected
-                    if (!selectedSubjects.includes(selectedValue)) {
-                        // Add subject to selectedSubjects array
-                        selectedSubjects.push(selectedValue);
-
-                        // Update hidden input value
-                        subjectsInput.value = selectedSubjects.join(',');
-
-                        // Create and display the subject tag
-                        const subjectTag = document.createElement('div');
-                        subjectTag.className =
-                            'inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded-full m-1';
-                        subjectTag.textContent = selectedText;
-
-                        // Add a remove button to each tag
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'ml-2 text-red-600 hover:text-red-800';
-                        removeBtn.textContent = 'x';
-                        removeBtn.addEventListener('click', function() {
-                            // Remove subject from selectedSubjects array
-                            selectedSubjects = selectedSubjects.filter(id => id !== selectedValue);
-                            subjectsInput.value = selectedSubjects.join(',');
-                            // Remove the tag from the display
-                            selectedSubjectsContainer.removeChild(subjectTag);
-                        });
-
-                        subjectTag.appendChild(removeBtn);
-                        selectedSubjectsContainer.appendChild(subjectTag);
-                    }
-
-                    // Reset dropdown selection
-                    dropdown.selectedIndex = 0;
-                });
-            });
-        </script>
-    @endscript
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -55,6 +56,11 @@ class Subject extends Model
     {
         $this->archived_at = null;
         $this->save();
+    }
+
+    public function scopeWithoutArchived(Builder $builder)
+    {
+        $builder->whereNull('archived_at');
     }
 
     public function isArchived(): Attribute

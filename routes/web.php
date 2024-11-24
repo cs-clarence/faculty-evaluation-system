@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EvaluationFormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -38,9 +37,7 @@ Route::middleware(['auth'])
         Route::get('/dashboard', App\Livewire\Pages\Admin\Dashboard\Index::class)->name('dashboard.index');
         Route::get('/subjects', App\Livewire\Pages\Admin\Subjects\Index::class)->name('subjects.index');
         Route::get('/courses', App\Livewire\Pages\Admin\Courses\Index::class)->name('courses.index');
-        Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
-        Route::get('/courses/{course}/semesters', [CourseController::class, 'showSemesters'])->name('courses.showSemesters');
-        Route::post('/courses/{course}/semesters', [CourseController::class, 'storeSemester'])->name('courses.storeSemester');
+        Route::get('/courses/{course}', App\Livewire\Pages\Admin\Courses\Course::class)->name('courses.course');
         Route::get('/departments', App\Livewire\Pages\Admin\Departments\Index::class)->name('departments.index');
 
         Route::get('/school-years', App\Livewire\Pages\Admin\SchoolYears\Index::class)->name('school-years.index');
@@ -48,6 +45,20 @@ Route::middleware(['auth'])
         Route::get('/students', App\Livewire\Pages\Admin\Students\Index::class)->name('students.index');
         Route::get('/teachers', App\Livewire\Pages\Admin\Teachers\Index::class)->name('teachers.index');
         Route::get('/accounts', App\Livewire\Pages\Admin\Teachers\Index::class)->name('accounts.index');
+    });
+
+Route::middleware(['auth'])
+    ->name('student.')
+    ->prefix('student')
+    ->group(function () {
+        Route::get('/dashboard', App\Livewire\Pages\Admin\Dashboard\Index::class)->name('dashboard.index');
+    });
+
+Route::middleware(['auth'])
+    ->name('teacher.')
+    ->prefix('teacher')
+    ->group(function () {
+        Route::get('/dashboard', App\Livewire\Pages\Admin\Dashboard\Index::class)->name('dashboard.index');
     });
 
 require __DIR__ . '/auth.php';
