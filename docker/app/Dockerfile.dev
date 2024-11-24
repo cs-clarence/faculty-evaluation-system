@@ -2,7 +2,8 @@ FROM php:fpm-alpine
 LABEL authors="rencema"
 
 RUN set -ex \
-    && apk --no-cache add postgresql-dev postgresql-libs \
-    && docker-php-ext-install pdo pgsql pdo_pgsql \
-    && docker-php-ext-enable pdo_pgsql \
+    && apk --no-cache add postgresql-dev postgresql-libs icu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo pgsql pdo_pgsql intl \
+    && docker-php-ext-enable pdo_pgsql intl \
     && apk del postgresql-dev

@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Number;
+@endphp
+
 <div class="contents">
     <div class="top flex justify-end mb-4">
         <button wire:click='openForm' id="addButton" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
@@ -26,16 +30,16 @@
                     @forelse($sections as $section)
                         <tr wire:key="{{ $section->id }}">
                             <td class="py-3 px-4 border-b">
-                                {{ $section->year_level }}
+                                {{ Number::ordinal($section->year_level) }}
                             </td>
                             <td class="py-3 px-4 border-b">
-                                {{ $section->semester }}
-                            </td>
-                            <td class="py-3 px-4 border-b">
-                                {{ $section->code }}
+                                {{ Number::ordinal($section->semester) }}
                             </td>
                             <td class="py-3 px-4 border-b">
                                 {{ $section->name }}
+                            </td>
+                            <td class="py-3 px-4 border-b">
+                                {{ $section->code }}
                             </td>
                             <td class="py-3 px-4 border-b">
                                 {{ $section->course->name }}
