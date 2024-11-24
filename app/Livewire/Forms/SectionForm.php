@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Section;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Form;
 
@@ -11,6 +12,7 @@ class SectionForm extends Form
     #[Locked]
     public ?int $id = null;
     public ?int $year_level = null;
+    public ?int $semester = null;
     public ?string $code = null;
     public ?string $name = null;
     public ?int $course_id = null;
@@ -23,6 +25,7 @@ class SectionForm extends Form
             'code' => ['required', 'string', 'max:255',
                 isset($this->id) ? $unique . ',' . $this->id : $unique],
             'year_level' => ['required', 'integer', 'gt:0'],
+            'semester' => ['required', 'integer', 'gt:0'],
             'name' => ['required', 'string', 'max:255'],
             'course_id' => ['required', 'integer', 'exists:courses,id'],
         ];
@@ -32,8 +35,13 @@ class SectionForm extends Form
     {
         $this->validate();
 
-        $exists = Section::where('code', $this->code)->when('year_level', $this->year_level)
-            ->where('course_id', $this->course_id)->exists();
+        $this->validate([
+            'name' => Rule::unique('sections')
+                ->where('course_id', $this->course_id)
+                ->where('year_level', $this->year_level)
+                ->where('semester', $this->semester)
+                ->where('name', $this->name),
+        ]);
 
         if (isset($this->id)) {
             Section::whereId($this->id)->update($this->except(['id']));

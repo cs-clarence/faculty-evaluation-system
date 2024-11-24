@@ -19,12 +19,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('code')->unique();
             $table->unsignedInteger('year_level');
+            $table->unsignedInteger('semester');
             $table->foreignIdFor(Course::class, 'course_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->unique(['year_level', 'code', 'course_id']);
+            $table->unique(['year_level', 'semester', 'course_id', 'name']);
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();

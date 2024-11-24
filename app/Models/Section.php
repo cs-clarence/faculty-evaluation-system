@@ -16,7 +16,7 @@ class Section extends Model
     /** @use HasFactory<\Database\Factories\SectionFactory> */
     use HasFactory;
     protected $table = 'sections';
-    protected $fillable = ['year_level', 'code', 'name', 'course_id'];
+    protected $fillable = ['year_level', 'code', 'name', 'course_id', 'semester'];
 
     public function course(): BelongsTo
     {

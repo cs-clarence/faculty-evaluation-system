@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Admin\Sections;
 use App\Livewire\Forms\SectionForm;
 use App\Models\Course;
 use App\Models\Section;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Index extends Component
@@ -29,6 +30,19 @@ class Index extends Component
         return view('livewire.pages.admin.sections.index')
             ->with(compact('sections', 'courses'))
             ->layout('components.layouts.admin');
+    }
+
+    public function updated(string $name, $value)
+    {
+        if (($name === 'form.year_level' || $name === 'form.semester' || $name === 'form.name' || $name === 'form.course_id') && (
+            isset($this->form->name) && $this->form->name !== '' && isset($this->form->year_level) && isset($this->form->semester) && isset($this->form->course_id)
+        ) && (!isset($this->form->code) || $this->form->code === '')) {
+            $course = Course::whereId($this->form->course_id)->first();
+            $name = preg_replace('/\s+/', '_', Str::upper($this->form->name));
+            $paddedYearLevel = Str::padLeft($this->form->year_level, 2, '0');
+            $paddedSemester = Str::padLeft($this->form->semester, 2, '0');
+            $this->form->code = "{$course->code}_Y{$paddedYearLevel}_S{$paddedSemester}_{$name}";
+        }
     }
 
     public function openForm()
