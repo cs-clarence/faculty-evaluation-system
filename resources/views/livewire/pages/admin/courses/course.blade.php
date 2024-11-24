@@ -2,6 +2,36 @@
     use Illuminate\Support\Number;
 @endphp
 
+@assets
+    <style>
+        .accordion-toggle::before {
+            transition: transform 0.3s ease-in-out;
+            transform: rotate3d(0, 0, 1, 0deg);
+        }
+
+        .accordion-toggle-open::before {
+            transform: rotate3d(0, 0, 1, 180deg);
+        }
+
+        .accordion-body {
+            @supports (interpolate: allow-keywords) {
+                interpolate-size: allow-keywords;
+            }
+
+            transition: transform 0.3s ease-in-out,
+            height 0.3s ease-in-out;
+            transform: scaleY(0);
+            transform-origin: top;
+            height: 0px;
+        }
+
+        .accordion-body-open {
+            transform: scaleY(1);
+            height: max-content;
+        }
+    </style>
+@endassets
+
 <div class="contents">
     <div class="container mx-auto p-4">
         <div class="flex justify-between mb-4">
@@ -13,26 +43,51 @@
         </div>
 
         @forelse ($courseSemesters as $semester)
-            <div
-                class="text-xl text-gray-600 flex flex-row justify-between mb-2 border border-gray-200 rounded-lg bg-white p-4
-                    hover:bg-gray-100 cursor-pointer items-center">
+            <div class="text-xl text-gray-600 flex flex-row justify-between border border-gray-200 rounded-lg bg-white p-4
+                    hover:bg-gray-100 cursor-pointer items-center"
+                wire:click.self='toggleAccordion({{ $semester->id }})'>
                 <h2>
                     {{ Number::ordinal($semester->year_level) }} Year - {{ Number::ordinal($semester->semester) }}
                     Semester
+                    <span class="text-lg text-gray-400">({{ $semester->subjects_count }} Subjects)</span>
                 </h2>
-                <div class="flex flex-row justify-end gap-2">
-                    <button wire:click='editCourseSemester({{ $semester->id }})'
-                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                <div class="flex flex-row justify-end gap-2 items-center">
+                    <button wire:click.stop='editCourseSemester({{ $semester->id }})' @disabled($semester->hasDependents())
+                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 {{ $semester->hasDependents() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         Edit
                     </button>
-                    <button wire:click='deleteCourseSemester({{ $semester->id }})'
+                    <button wire:click.stop='deleteCourseSemester({{ $semester->id }})' @disabled($semester->hasDependents())
                         wire:confirm='Are you sure you want to delete this semester?'
-                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 {{ $semester->hasDependents() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         Delete
                     </button>
+                    <div>
+                        <i
+                            class="uil uil-angle-down accordion-toggle {{ $this->isOpenAccordion($semester) ? 'accordion-toggle-open' : '' }}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-body {{ $this->isOpenAccordion($semester) ? 'accordion-body-open' : '' }}">
+                <div class="text-gray-600 text-sm">
+                    <p>
+                        Year: {{ Number::ordinal($semester->year_level) }}
+                    </p>
+                    <p>
+                        Semester: {{ Number::ordinal($semester->semester) }}
+                    </p>
+                    <p>
+                        Subjects: {{ $semester->subjects_count }}
+                    </p>
                 </div>
             </div>
         @empty
+            <div
+                class="text-xl text-gray-600 flex flex-row justify-center mb-2 border border-gray-200 rounded-lg bg-white p-4
+                    items-center">
+                <h2>
+                    No Semesters Found
+                </h2>
+            </div>
         @endforelse
     </div>
 
@@ -46,7 +101,7 @@
                     <h3 class="text-lg font-semibold mb-4">Add New Semester</h3>
                 @endisset
 
-                <form id="addSemesterForm" wire:submit='saveCourseSemester'>
+                <form id="addSemesterForm" wire:submit.prevent='saveCourseSemester'>
                     @csrf
                     <input type="hidden" name="id" wire:model.defer="courseSemesterForm.id">
                     <input type="hidden" name="course_id" wire:model.defer="courseSemesterForm.course_id">
@@ -71,7 +126,7 @@
                     </div>
 
                     <!-- Multi-Select Dropdown for Subjects -->
-                    <div class="mb-4">
+                    <div class="mb-4 {{ isset($this->courseSemester) ? 'hidden' : '' }}">
                         <label for="courseSemesterForm.subject_ids[]" class="block text-gray-700">Select
                             Subjects</label>
                         <select id="subjectDropdown" name="courseSemesterForm.subject_ids[]" multiple
@@ -85,6 +140,9 @@
                             @endforeach
                         </select>
                         @error('courseSemesterForm.subject_ids')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                        @error('courseSemesterForm.subject_ids.*')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>

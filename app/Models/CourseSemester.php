@@ -34,4 +34,9 @@ class CourseSemester extends Model
     {
         return $this->hasMany(CourseSubject::class);
     }
+
+    public function hasDependents()
+    {
+        return false;
+    }
 }

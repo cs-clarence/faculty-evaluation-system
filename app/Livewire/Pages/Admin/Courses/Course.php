@@ -13,6 +13,7 @@ class Course extends Component
     public CourseModel $course;
     public bool $isCourseSemesterFormOpen = false;
     public ?CourseSemester $courseSemester;
+    public ?int $openCourseSemesterId = null;
     public CourseSemesterForm $courseSemesterForm;
 
     public function render()
@@ -24,6 +25,7 @@ class Course extends Component
                 'hcourse' => $this->course,
                 'subjects' => $subjects,
                 'courseSemesters' => $this->course->courseSemesters()
+                    ->withCount(['subjects'])
                     ->orderBy('year_level')
                     ->orderBy('semester')
                     ->lazy(),
@@ -61,5 +63,19 @@ class Course extends Component
     public function deleteCourseSemester(CourseSemester $courseSemester)
     {
         $courseSemester->delete();
+    }
+
+    public function isOpenAccordion(CourseSemester $courseSemester)
+    {
+        return $this->openCourseSemesterId === $courseSemester->id;
+    }
+
+    public function toggleAccordion(CourseSemester $courseSemester)
+    {
+        if ($this->isOpenAccordion($courseSemester)) {
+            $this->openCourseSemesterId = null;
+        } else {
+            $this->openCourseSemesterId = $courseSemester->id;
+        }
     }
 }

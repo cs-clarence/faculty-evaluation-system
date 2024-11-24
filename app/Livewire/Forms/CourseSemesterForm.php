@@ -20,12 +20,12 @@ class CourseSemesterForm extends Form
     public function rules()
     {
         return [
-            'id' => ['nullable', 'integer', 'exists:departments,id'],
+            'id' => ['nullable', 'integer', 'exists:course_semesters,id'],
             'year_level' => ['required', 'integer', 'gt:0'],
             'course_id' => ['required', 'exists:courses,id'],
             'semester' => ['required', 'integer', 'gt:0'],
-            'subject_ids' => ['required', 'array'],
-            'subject_ids.*' => ['required', 'exists:subjects,id'],
+            'subject_ids' => ['required', 'array', 'min:1'],
+            'subject_ids.*' => ['integer', 'exists:subjects,id'],
         ];
     }
 
@@ -41,6 +41,7 @@ class CourseSemesterForm extends Form
         $this->validate([
             'year_level' => $uniqueRule,
             'semester' => $uniqueRule,
+            'course_id' => $uniqueRule,
         ]);
 
         DB::transaction(function () {
@@ -49,8 +50,8 @@ class CourseSemesterForm extends Form
                 $courseSemester->update($this->except(['id', 'subject_ids']));
             } else {
                 $courseSemester = CourseSemester::create($this->except(['id', 'subject_ids']));
+                $courseSemester->subjects()->sync($this->subject_ids);
             }
-            $courseSemester->subjects()->sync($this->subject_ids);
         });
     }
 
