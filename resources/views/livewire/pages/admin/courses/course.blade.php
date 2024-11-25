@@ -49,7 +49,7 @@
                 <h2 class="text-xl">
                     {{ Number::ordinal($semester->year_level) }} Year - {{ Number::ordinal($semester->semester) }}
                     Semester
-                    <span class="text-lg text-gray-400">({{ $semester->subjects_count }} Subjects)</span>
+                    <span class="text-lg text-gray-400">({{ $semester->subjects_count }} Subject(s))</span>
                 </h2>
                 <div class="flex flex-row justify-end gap-2 items-center">
                     <button wire:click.stop='openAddCourseSubjectsForm({{ $semester->id }})'
