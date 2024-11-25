@@ -20,11 +20,17 @@ class Authenticate extends Middleware
 
     public function handle($request, \Closure $next, ...$guards)
     {
+        $user = $request->user();
+
+        if (!isset($user)) {
+            return Response::redirectTo('/');
+        }
+
         if (empty($guards)) {
             return $next($request);
         }
 
-        $userRoleId = $request->user()->role_id;
+        $userRoleId = $user->role_id;
         $roleCode = Role::whereId($userRoleId)->first()->code;
         foreach ($guards as $guard) {
             if ($guard === $roleCode) {
@@ -32,6 +38,6 @@ class Authenticate extends Middleware
             }
         }
 
-        return Response::redirectTo(RouteServiceProvider::getDashboard($userRoleId));
+        return Response::redirectToIntended(RouteServiceProvider::getDashboard($userRoleId));
     }
 }

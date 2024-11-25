@@ -11,4 +11,5 @@ class FormQuestionOption extends Model
 {
     //
     protected $table = 'form_question_options';
+    public $fillable = ['name', 'value', 'interpretation', 'form_question_id'];
 }

@@ -10,12 +10,12 @@
         'title' => 'School Years',
     ],
     [
-        'href' => route('admin.departments.index'),
-        'title' => 'Departments',
-    ],
-    [
         'href' => route('admin.subjects.index'),
         'title' => 'Subjects',
+    ],
+    [
+        'href' => route('admin.departments.index'),
+        'title' => 'Departments',
     ],
     [
         'href' => route('admin.courses.index'),

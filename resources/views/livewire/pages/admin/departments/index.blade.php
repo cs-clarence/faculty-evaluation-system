@@ -17,6 +17,7 @@
                     <tr>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Department Code</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Department Name</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold">Courses</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
                     </tr>
                 </thead>
@@ -25,6 +26,7 @@
                         <tr>
                             <td class="py-3 px-4 border-b">{{ $department->code }}</td>
                             <td class="py-3 px-4 border-b">{{ $department->name }}</td>
+                            <td class="py-3 px-4 border-b">{{ $department->courses_count }}</td>
                             <td class="py-3 px-4 border-b">
                                 <button wire:click='edit({{ $department->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">

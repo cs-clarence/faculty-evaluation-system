@@ -23,4 +23,14 @@ class Student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function studentSemesters()
+    {
+        return $this->hasMany(StudentSemester::class);
+    }
+
+    public function teacherSubjects()
+    {
+        return $this->hasManyThrough(StudentSubject::class, StudentSemester::class);
+    }
 }

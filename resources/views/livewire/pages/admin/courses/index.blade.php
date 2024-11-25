@@ -17,6 +17,8 @@
                     <tr>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Course Code</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Course Name</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold">Semesters</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold">Subjects</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Department</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
                     </tr>
@@ -28,6 +30,8 @@
                                 {{ $course->code }}
                             </td>
                             <td class="py-3 px-4 border-b">{{ $course->name }}</td>
+                            <td class="py-3 px-4 border-b">{{ $course->course_semesters_count }}</td>
+                            <td class="py-3 px-4 border-b">{{ $course->course_subjects_count }}</td>
                             <td class="py-3 px-4 border-b">{{ $course->department->name ?? 'N/A' }}</td>
                             <td class="py-3 px-4 border-b">
                                 <button

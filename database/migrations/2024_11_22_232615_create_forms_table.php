@@ -5,6 +5,7 @@ use App\Models\FormQuestion;
 use App\Models\FormQuestionOption;
 use App\Models\FormSection;
 use App\Models\FormSubmission;
+use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Semester;
 use App\Models\StudentSubject;
@@ -22,23 +23,26 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('description')->nullable();
             $table->timestampTz('archived_at')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_sections', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('description')->nullable();
             $table->foreignIdFor(Form::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_questions', function (Blueprint $table) {
             $table->id();
             $table->string('question');
+            $table->string('description')->nullable();
             $table->string('type');
             $table->foreignIdFor(Form::class)
                 ->constrained()
@@ -49,24 +53,25 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->timestampTz('archived_at')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_question_options', function (Blueprint $table) {
             $table->id();
-            $table->string('option');
+            $table->string('name');
+            $table->string('interpretation')->nullable();
             $table->float('value');
             $table->foreignIdFor(FormQuestion::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_submission_periods', function (Blueprint $table) {
             $table->id();
-            $table->dateTimeTz('starts_on');
-            $table->dateTimeTz('ends_on');
+            $table->timestampTz('starts_on');
+            $table->timestampTz('ends_on');
             $table->boolean('is_open');
             $table->boolean('is_submissions_editable');
             $table->dateTimeTz('archived_at')->nullable();
@@ -78,7 +83,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_submissions', function (Blueprint $table) {
@@ -99,7 +104,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::create('form_submission_answers', function (Blueprint $table) {
@@ -116,16 +121,25 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->float('value');
-
             $table->string('interpretation')->nullable();
 
-            $table->foreignIdFor(FormQuestionOption::class)
-                ->nullable()
+            $table->timestampsTz();
+        });
+
+        Schema::create('form_submission_answer_selected_options', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignIdFor(FormSubmissionAnswer::class, 'form_submission_answer_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->timestamps();
+            $table->foreignIdFor(FormQuestionOption::class, 'form_question_option_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->timestampsTz();
         });
     }
 
@@ -134,6 +148,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('form_submission_answer_selected_options');
+        Schema::dropIfExists('form_submission_answers');
         Schema::dropIfExists('form_submissions');
         Schema::dropIfExists('form_submission_periods');
         Schema::dropIfExists('form_question_options');

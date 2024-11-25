@@ -15,7 +15,7 @@ class Index extends Component
 
     public function render()
     {
-        $courses = Course::withCount(['sections'])
+        $courses = Course::withCount(['sections', 'courseSemesters', 'courseSubjects'])
             ->with(['department'])
             ->orderBy('code')
             ->orderBy('name')

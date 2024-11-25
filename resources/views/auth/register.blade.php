@@ -88,5 +88,6 @@
                 studentDetails.classList.add('hidden');
             }
         }
+        toggleStudentFields();
     </script>
 </x-layouts.guest>
