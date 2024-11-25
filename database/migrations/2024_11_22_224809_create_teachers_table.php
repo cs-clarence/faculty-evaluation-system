@@ -6,6 +6,7 @@ use App\Models\SemesterSection;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherSemester;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +20,10 @@ return new class extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class, 'user_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });

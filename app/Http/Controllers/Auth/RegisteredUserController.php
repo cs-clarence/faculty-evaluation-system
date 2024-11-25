@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -21,7 +23,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'roles' => Role::where('hidden', false)->get(),
+            'studentRole' => Role::where('code', 'student')->first(),
+        ]);
     }
 
     /**
@@ -35,7 +40,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'student_id' => 'nullable|string|unique:students,student_id',
+            'student_number' => 'nullable|string|unique:students,student_number',
         ]);
 
         $user = User::create([
@@ -46,13 +51,17 @@ class RegisteredUserController extends Controller
         ]);
 
         // Save student data if role is "Student"
-        if ($request->role_id == 3) {
+        if ($request->role_id == 2) {
             Student::create([
                 'user_id' => $user->id, // Link to the user
-                'student_id' => $request->student_id,
-                'studentName' => $request->studentName,
+                'student_number' => $request->student_number,
                 'address' => $request->address,
-                'course_subject_id' => $request->course_subject_id, // Save course_subject_id
+            ]);
+        }
+
+        if ($request->role_id == 3) {
+            Teacher::create([
+                'user_id' => $user->id, // Link to the user
             ]);
         }
 

@@ -15,15 +15,12 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'student_number',
-        'name',
         'address',
     ];
     protected $table = 'students';
 
     public function user()
     {
-
         return $this->belongsTo(User::class);
-
     }
 }

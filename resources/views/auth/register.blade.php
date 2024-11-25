@@ -22,12 +22,14 @@
         <div class="mt-4">
             <x-input-label for="role_id" :value="__('Role')" />
             <select id="role_id" name="role_id" class="block mt-1 w-full" onchange="toggleStudentFields()">
-                @can('super_admin_area')
-                    <option value="1">SuperAdmin</option>
-                @endcan
-                <option value="2">Admin</option>
-                <option value="3">Student</option>
-                <option value="4">Teacher</option>
+                <option value="" disabled>Select Role</option>
+                @forelse ($roles as $role)
+                    @if (!$role->hidden)
+                        <option value="{{ $role->id }}">{{ $role->display_name }}</option>
+                    @endif
+                @empty
+                    <option value="" disabled>No roles</option>
+                @endforelse
             </select>
             <x-input-error :messages="$errors->get('role_id')" class="mt-2" />
         </div>
@@ -35,16 +37,10 @@
         <!-- Student Details -->
         <div id="student-details" class="mt-4 hidden">
             <div>
-                <x-input-label for="student_id" :value="__('Student ID')" />
-                <x-text-input id="student_id" class="block mt-1 w-full" type="text" name="student_id"
-                    :value="old('student_id')" />
-                <x-input-error :messages="$errors->get('student_id')" class="mt-2" />
-            </div>
-            <div class="mt-4">
-                <x-input-label for="studentName" :value="__('Student Name')" />
-                <x-text-input id="studentName" class="block mt-1 w-full" type="text" name="studentName"
-                    :value="old('studentName')" />
-                <x-input-error :messages="$errors->get('studentName')" class="mt-2" />
+                <x-input-label for="student_number" :value="__('Student Number')" />
+                <x-text-input id="student_number" class="block mt-1 w-full" type="text" name="student_number"
+                    :value="old('student_number')" />
+                <x-input-error :messages="$errors->get('student_number')" class="mt-2" />
             </div>
             <div class="mt-4">
                 <x-input-label for="address" :value="__('Address')" />
@@ -86,7 +82,7 @@
         function toggleStudentFields() {
             const roleSelect = document.getElementById('role_id');
             const studentDetails = document.getElementById('student-details');
-            if (roleSelect.value == '3') { // Role ID 3 is Student
+            if (roleSelect.value == '{{ $studentRole->id }}') { // Role ID 3 is Student
                 studentDetails.classList.remove('hidden');
             } else {
                 studentDetails.classList.add('hidden');

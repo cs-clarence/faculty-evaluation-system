@@ -21,30 +21,48 @@ class RoleFactory extends Factory
         ];
     }
 
-    public function admin(): array
+    public function hidden(bool $hidden = true)
     {
-        return [
-            'id' => 1,
-            'display_name' => 'Admin',
-            'code' => 'admin',
-        ];
+        return $this->state(function (array $attributes) use ($hidden) {
+            return [
+                'hidden' => $hidden,
+            ];
+        });
     }
 
-    public function student(): array
+    public function admin()
     {
-        return [
-            'id' => 2,
-            'display_name' => 'Student',
-            'code' => 'student',
-        ];
+        return $this->state(function (array $attributes) {
+            return [
+                'id' => 1,
+                'display_name' => 'Admin',
+                'code' => 'admin',
+                'hidden' => true,
+            ];
+        });
     }
 
-    public function teacher(): array
+    public function student()
     {
-        return [
-            'id' => 3,
-            'display_name' => 'Teacher',
-            'code' => 'teacher',
-        ];
+        return $this->state(function (array $attributes) {
+            return [
+                'id' => 2,
+                'display_name' => 'Student',
+                'code' => 'student',
+                'hidden' => false,
+            ];
+        });
+    }
+
+    public function teacher()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'id' => 3,
+                'display_name' => 'Teacher',
+                'code' => 'teacher',
+                'hidden' => false,
+            ];
+        });
     }
 }

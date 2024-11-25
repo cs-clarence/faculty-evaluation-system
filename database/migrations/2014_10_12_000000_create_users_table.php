@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('display_name');
             $table->string('code');
+            $table->boolean('hidden');
 
             $table->unique('code');
             $table->timestampsTz();
