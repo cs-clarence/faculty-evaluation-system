@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -26,8 +26,31 @@ class CourseSubject extends Pivot
         return $this->hasOneThrough(Semester::class, CourseSemester::class);
     }
 
-    public function subject(): HasOne
+    public function subject(): BelongsTo
     {
-        return $this->hasOne(Subject::class);
+        return $this->belongsTo(Subject::class);
     }
+
+    public function archive()
+    {
+        $this->archived_at = now();
+        $this->save();
+    }
+
+    public function unarchive()
+    {
+        $this->archived_at = null;
+        $this->save();
+    }
+
+    public function isArchived(): Attribute
+    {
+        return new Attribute(get: fn() => isset($this->archived_at));
+    }
+
+    public function hasDependents()
+    {
+        return false;
+    }
+
 }

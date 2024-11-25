@@ -43,15 +43,19 @@
         </div>
 
         @forelse ($courseSemesters as $semester)
-            <div class="text-xl text-gray-600 flex flex-row justify-between border border-gray-200 rounded-lg bg-white p-4
+            <div class="text-gray-600 flex flex-row justify-between border border-gray-200 rounded-lg bg-white p-4
                     hover:bg-gray-100 cursor-pointer items-center"
                 wire:click.self='toggleAccordion({{ $semester->id }})'>
-                <h2>
+                <h2 class="text-xl">
                     {{ Number::ordinal($semester->year_level) }} Year - {{ Number::ordinal($semester->semester) }}
                     Semester
                     <span class="text-lg text-gray-400">({{ $semester->subjects_count }} Subjects)</span>
                 </h2>
                 <div class="flex flex-row justify-end gap-2 items-center">
+                    <button wire:click.stop='openAddCourseSubjectsForm({{ $semester->id }})'
+                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                        Add Subjects
+                    </button>
                     <button wire:click.stop='editCourseSemester({{ $semester->id }})' @disabled($semester->hasDependents())
                         class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 {{ $semester->hasDependents() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         Edit
@@ -68,17 +72,48 @@
                 </div>
             </div>
             <div class="accordion-body {{ $this->isOpenAccordion($semester) ? 'accordion-body-open' : '' }}">
-                <div class="text-gray-600 text-sm">
-                    <p>
-                        Year: {{ Number::ordinal($semester->year_level) }}
-                    </p>
-                    <p>
-                        Semester: {{ Number::ordinal($semester->semester) }}
-                    </p>
-                    <p>
-                        Subjects: {{ $semester->subjects_count }}
-                    </p>
-                </div>
+                <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
+                    <thead class="bg-gray-200 text-gray-600">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Name</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Code</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        @forelse($semester->courseSubjects()->lazy() as $courseSubject)
+                            <tr>
+                                <td class="py-3 px-4 border-b">{{ $courseSubject->subject->code }}</td>
+                                <td class="py-3 px-4 border-b">{{ $courseSubject->subject->name }}</td>
+                                <td class="py-3 px-4 border-b">
+                                    @if ($courseSubject->is_archived)
+                                        <button wire:click='unarchiveCourseSubject({{ $courseSubject->id }})'
+                                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                                            Unarchive
+                                        </button>
+                                    @else
+                                        <button wire:click='archiveCourseSubject({{ $courseSubject->id }})'
+                                            class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+                                            Archive
+                                        </button>
+                                    @endif
+                                    @if (!$courseSubject->hasDependents())
+                                        <button wire:click='deleteCourseSubject({{ $courseSubject->id }})'
+                                            wire:confirm='Are you sure you want to delete this subject?'
+                                            class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                                            Delete
+                                        </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="py-3 px-4 text-center text-gray-500">No subjects found
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         @empty
             <div
@@ -150,6 +185,49 @@
                     <div class="flex justify-end">
                         <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
                             wire:click='closeCourseSemesterForm'>Cancel</button>
+                        <button type="submit"
+                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    @if ($this->isAddCourseSubjectsFormOpen)
+        <div id="addSemesterModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white p-6 rounded-lg w-96">
+                <h3 class="text-lg font-semibold mb-4">Add Subjects</h3>
+
+                <form wire:submit.prevent='saveAddCourseSubjects'>
+                    @csrf
+                    <input type="hidden" name="addCourseSubjectsForm.course_semester_id"
+                        wire:model.defer="addCourseSubjectsForm.course_semester_id">
+                    <!-- Multi-Select Dropdown for Subjects -->
+                    <div class="mb-4">
+                        <label for="addCourseSubjectsForm.subject_ids[]" class="block text-gray-700">Select
+                            Subjects</label>
+                        <select name="addCourseSubjectsForm.subject_ids[]" multiple
+                            wire:model.defer="addCourseSubjectsForm.subject_ids"
+                            class="px-3 py-2 border rounded-lg w-full min-h-[300px]">
+                            @foreach ($filteredSubjects as $subject)
+                                <option value="{{ $subject->id }}">
+                                    {{ $subject->name }}
+                                    ({{ $subject->code }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('addCourseSubjectsForm.subject_ids')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                        @error('addCourseSubjectsForm.subject_ids.*')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button" id="cancelBtn"
+                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
+                            wire:click='closeAddCourseSubjectsForm'>Cancel</button>
                         <button type="submit"
                             class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
                     </div>

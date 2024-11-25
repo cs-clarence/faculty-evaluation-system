@@ -4,7 +4,6 @@ namespace App\Livewire\Forms;
 
 use App\Models\Course;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 class CourseForm extends Form
