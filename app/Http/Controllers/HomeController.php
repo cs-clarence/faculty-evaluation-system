@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -11,12 +10,12 @@ class HomeController extends Controller
     {
 
         // Check if the user is authenticated
-        if(Auth::id()) {
+        if (Auth::id()) {
             $role_id = Auth()->user()->role_id;
             // Redirect based on role_id
             if ($role_id == '2') {
 
-                return view('/admin/admindashboard');
+                return view('/admin/dashboard');
 
             } elseif ($role_id == '3') {
 

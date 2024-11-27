@@ -30,6 +30,10 @@ class Authenticate extends Middleware
             return $next($request);
         }
 
+        if ($user->is_archived) {
+            return Response::redirectToRoute('account-archived.index');
+        }
+
         $userRoleId = $user->role_id;
         $roleCode = Role::whereId($userRoleId)->first()->code;
         foreach ($guards as $guard) {
@@ -38,6 +42,6 @@ class Authenticate extends Middleware
             }
         }
 
-        return Response::redirectToIntended(RouteServiceProvider::getDashboard($userRoleId));
+        return Response::redirectToIntended(RouteServiceProvider::getDashboard($roleCode));
     }
 }

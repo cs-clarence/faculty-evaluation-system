@@ -21,49 +21,17 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: course_semester_subjects; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.course_semester_subjects (
-    id integer NOT NULL,
-    course_semester_id integer NOT NULL,
-    subject_id integer NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
-);
-
-
---
--- Name: course_semester_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.course_semester_subjects_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: course_semester_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.course_semester_subjects_id_seq OWNED BY public.course_semester_subjects.id;
-
-
---
 -- Name: course_semesters; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.course_semesters (
-    id integer NOT NULL,
-    year_level character varying(255) NOT NULL,
-    semester character varying(255) NOT NULL,
+    id bigint NOT NULL,
+    year_level integer NOT NULL,
+    semester integer NOT NULL,
     course_id integer NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -72,7 +40,6 @@ CREATE TABLE public.course_semesters (
 --
 
 CREATE SEQUENCE public.course_semesters_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -88,16 +55,50 @@ ALTER SEQUENCE public.course_semesters_id_seq OWNED BY public.course_semesters.i
 
 
 --
+-- Name: course_subjects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.course_subjects (
+    id bigint NOT NULL,
+    course_semester_id bigint NOT NULL,
+    subject_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: course_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.course_subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: course_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.course_subjects_id_seq OWNED BY public.course_subjects.id;
+
+
+--
 -- Name: courses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.courses (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     department_id integer NOT NULL,
-    course_code character varying(255) NOT NULL,
-    course_name character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    code character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -106,7 +107,6 @@ CREATE TABLE public.courses (
 --
 
 CREATE SEQUENCE public.courses_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -126,11 +126,12 @@ ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
 --
 
 CREATE TABLE public.departments (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying(255) NOT NULL,
     code character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -139,7 +140,6 @@ CREATE TABLE public.departments (
 --
 
 CREATE SEQUENCE public.departments_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -165,7 +165,7 @@ CREATE TABLE public.failed_jobs (
     queue text NOT NULL,
     payload text NOT NULL,
     exception text NOT NULL,
-    failed_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    failed_at timestamp(0) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -186,6 +186,279 @@ CREATE SEQUENCE public.failed_jobs_id_seq
 --
 
 ALTER SEQUENCE public.failed_jobs_id_seq OWNED BY public.failed_jobs.id;
+
+
+--
+-- Name: form_question_options; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_question_options (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    interpretation character varying(255),
+    value double precision NOT NULL,
+    form_question_id bigint NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_question_options_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_question_options_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_question_options_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_question_options_id_seq OWNED BY public.form_question_options.id;
+
+
+--
+-- Name: form_questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_questions (
+    id bigint NOT NULL,
+    question character varying(255) NOT NULL,
+    description character varying(255),
+    type character varying(255) NOT NULL,
+    form_id bigint NOT NULL,
+    form_section_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_questions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_questions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_questions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_questions_id_seq OWNED BY public.form_questions.id;
+
+
+--
+-- Name: form_sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_sections (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    form_id bigint NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_sections_id_seq OWNED BY public.form_sections.id;
+
+
+--
+-- Name: form_submission_answer_selected_options; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submission_answer_selected_options (
+    id bigint NOT NULL,
+    form_submission_answer_id bigint NOT NULL,
+    form_question_option_id bigint NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_submission_answer_selected_options_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_submission_answer_selected_options_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_submission_answer_selected_options_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_submission_answer_selected_options_id_seq OWNED BY public.form_submission_answer_selected_options.id;
+
+
+--
+-- Name: form_submission_answers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submission_answers (
+    id bigint NOT NULL,
+    form_submission_id bigint NOT NULL,
+    form_question_id bigint NOT NULL,
+    value double precision NOT NULL,
+    interpretation character varying(255),
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_submission_answers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_submission_answers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_submission_answers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_submission_answers_id_seq OWNED BY public.form_submission_answers.id;
+
+
+--
+-- Name: form_submission_periods; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submission_periods (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    starts_at timestamp(0) with time zone NOT NULL,
+    ends_at timestamp(0) with time zone NOT NULL,
+    is_open boolean NOT NULL,
+    is_submissions_editable boolean NOT NULL,
+    archived_at timestamp(0) with time zone,
+    semester_id bigint NOT NULL,
+    form_id bigint NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_submission_periods_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_submission_periods_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_submission_periods_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_submission_periods_id_seq OWNED BY public.form_submission_periods.id;
+
+
+--
+-- Name: form_submissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submissions (
+    id bigint NOT NULL,
+    student_subject_id bigint NOT NULL,
+    form_submission_period_id bigint NOT NULL,
+    form_id bigint NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_submissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_submissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_submissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_submissions_id_seq OWNED BY public.form_submissions.id;
+
+
+--
+-- Name: forms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.forms (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: forms_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.forms_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: forms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.forms_id_seq OWNED BY public.forms.id;
 
 
 --
@@ -226,7 +499,7 @@ ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 CREATE TABLE public.password_reset_tokens (
     email character varying(255) NOT NULL,
     token character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone
+    created_at timestamp(0) with time zone
 );
 
 
@@ -241,10 +514,10 @@ CREATE TABLE public.personal_access_tokens (
     name character varying(255) NOT NULL,
     token character varying(64) NOT NULL,
     abilities text,
-    last_used_at timestamp(0) without time zone,
-    expires_at timestamp(0) without time zone,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    last_used_at timestamp(0) with time zone,
+    expires_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -273,9 +546,11 @@ ALTER SEQUENCE public.personal_access_tokens_id_seq OWNED BY public.personal_acc
 
 CREATE TABLE public.roles (
     id integer NOT NULL,
-    name character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    display_name character varying(255) NOT NULL,
+    code character varying(255) NOT NULL,
+    hidden boolean NOT NULL,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -300,18 +575,221 @@ ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
+-- Name: school_years; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.school_years (
+    id bigint NOT NULL,
+    year_start integer NOT NULL,
+    year_end integer NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: school_years_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.school_years_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: school_years_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.school_years_id_seq OWNED BY public.school_years.id;
+
+
+--
+-- Name: sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sections (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    code character varying(255) NOT NULL,
+    year_level integer NOT NULL,
+    semester integer NOT NULL,
+    course_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.sections_id_seq OWNED BY public.sections.id;
+
+
+--
+-- Name: semester_sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.semester_sections (
+    id bigint NOT NULL,
+    section_id bigint NOT NULL,
+    semester_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: semester_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.semester_sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: semester_sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.semester_sections_id_seq OWNED BY public.semester_sections.id;
+
+
+--
+-- Name: semesters; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.semesters (
+    id bigint NOT NULL,
+    semester integer NOT NULL,
+    school_year_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: semesters_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.semesters_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: semesters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.semesters_id_seq OWNED BY public.semesters.id;
+
+
+--
+-- Name: student_semesters; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.student_semesters (
+    id bigint NOT NULL,
+    student_id bigint NOT NULL,
+    semester_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: student_semesters_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.student_semesters_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: student_semesters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.student_semesters_id_seq OWNED BY public.student_semesters.id;
+
+
+--
+-- Name: student_subjects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.student_subjects (
+    id bigint NOT NULL,
+    subject_id bigint NOT NULL,
+    student_semester_id bigint NOT NULL,
+    course_subject_id bigint NOT NULL,
+    semester_section_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: student_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.student_subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: student_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.student_subjects_id_seq OWNED BY public.student_subjects.id;
+
+
+--
 -- Name: students; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.students (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     user_id integer NOT NULL,
     course_id integer,
-    student_id character varying(255),
-    student_name character varying(255) NOT NULL,
+    student_number character varying(255),
     address character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone,
+    archived_at timestamp(0) with time zone
 );
 
 
@@ -320,7 +798,6 @@ CREATE TABLE public.students (
 --
 
 CREATE SEQUENCE public.students_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -340,11 +817,12 @@ ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
 --
 
 CREATE TABLE public.subjects (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     code character varying(255) NOT NULL,
     name character varying(255) NOT NULL,
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -353,7 +831,6 @@ CREATE TABLE public.subjects (
 --
 
 CREATE SEQUENCE public.subjects_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -369,6 +846,106 @@ ALTER SEQUENCE public.subjects_id_seq OWNED BY public.subjects.id;
 
 
 --
+-- Name: teacher_semesters; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.teacher_semesters (
+    id bigint NOT NULL,
+    teacher_id bigint NOT NULL,
+    semester_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: teacher_semesters_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.teacher_semesters_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: teacher_semesters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.teacher_semesters_id_seq OWNED BY public.teacher_semesters.id;
+
+
+--
+-- Name: teacher_subjects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.teacher_subjects (
+    id bigint NOT NULL,
+    subject_id bigint NOT NULL,
+    teacher_semester_id bigint NOT NULL,
+    course_subject_id bigint NOT NULL,
+    semester_section_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: teacher_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.teacher_subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: teacher_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.teacher_subjects_id_seq OWNED BY public.teacher_subjects.id;
+
+
+--
+-- Name: teachers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.teachers (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: teachers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.teachers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: teachers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.teachers_id_seq OWNED BY public.teachers.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -377,11 +954,12 @@ CREATE TABLE public.users (
     name character varying(255) NOT NULL,
     role_id integer NOT NULL,
     email character varying(255) NOT NULL,
-    email_verified_at timestamp(0) without time zone,
+    email_verified_at timestamp(0) with time zone,
     password character varying(255) NOT NULL,
     remember_token character varying(100),
-    created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
 );
 
 
@@ -406,17 +984,17 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: course_semester_subjects id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.course_semester_subjects ALTER COLUMN id SET DEFAULT nextval('public.course_semester_subjects_id_seq'::regclass);
-
-
---
 -- Name: course_semesters id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.course_semesters ALTER COLUMN id SET DEFAULT nextval('public.course_semesters_id_seq'::regclass);
+
+
+--
+-- Name: course_subjects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.course_subjects ALTER COLUMN id SET DEFAULT nextval('public.course_subjects_id_seq'::regclass);
 
 
 --
@@ -441,6 +1019,62 @@ ALTER TABLE ONLY public.failed_jobs ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: form_question_options id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_options ALTER COLUMN id SET DEFAULT nextval('public.form_question_options_id_seq'::regclass);
+
+
+--
+-- Name: form_questions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_questions ALTER COLUMN id SET DEFAULT nextval('public.form_questions_id_seq'::regclass);
+
+
+--
+-- Name: form_sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_sections ALTER COLUMN id SET DEFAULT nextval('public.form_sections_id_seq'::regclass);
+
+
+--
+-- Name: form_submission_answer_selected_options id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answer_selected_options ALTER COLUMN id SET DEFAULT nextval('public.form_submission_answer_selected_options_id_seq'::regclass);
+
+
+--
+-- Name: form_submission_answers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answers ALTER COLUMN id SET DEFAULT nextval('public.form_submission_answers_id_seq'::regclass);
+
+
+--
+-- Name: form_submission_periods id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_periods ALTER COLUMN id SET DEFAULT nextval('public.form_submission_periods_id_seq'::regclass);
+
+
+--
+-- Name: form_submissions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions ALTER COLUMN id SET DEFAULT nextval('public.form_submissions_id_seq'::regclass);
+
+
+--
+-- Name: forms id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forms ALTER COLUMN id SET DEFAULT nextval('public.forms_id_seq'::regclass);
+
+
+--
 -- Name: migrations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -462,6 +1096,48 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_
 
 
 --
+-- Name: school_years id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_years ALTER COLUMN id SET DEFAULT nextval('public.school_years_id_seq'::regclass);
+
+
+--
+-- Name: sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections ALTER COLUMN id SET DEFAULT nextval('public.sections_id_seq'::regclass);
+
+
+--
+-- Name: semester_sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semester_sections ALTER COLUMN id SET DEFAULT nextval('public.semester_sections_id_seq'::regclass);
+
+
+--
+-- Name: semesters id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semesters ALTER COLUMN id SET DEFAULT nextval('public.semesters_id_seq'::regclass);
+
+
+--
+-- Name: student_semesters id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters ALTER COLUMN id SET DEFAULT nextval('public.student_semesters_id_seq'::regclass);
+
+
+--
+-- Name: student_subjects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects ALTER COLUMN id SET DEFAULT nextval('public.student_subjects_id_seq'::regclass);
+
+
+--
 -- Name: students id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -476,6 +1152,27 @@ ALTER TABLE ONLY public.subjects ALTER COLUMN id SET DEFAULT nextval('public.sub
 
 
 --
+-- Name: teacher_semesters id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_semesters ALTER COLUMN id SET DEFAULT nextval('public.teacher_semesters_id_seq'::regclass);
+
+
+--
+-- Name: teacher_subjects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects ALTER COLUMN id SET DEFAULT nextval('public.teacher_subjects_id_seq'::regclass);
+
+
+--
+-- Name: teachers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teachers ALTER COLUMN id SET DEFAULT nextval('public.teachers_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -483,19 +1180,11 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- Name: course_semester_subjects course_semester_subjects_course_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: course_semesters course_semesters_course_id_year_level_semester_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.course_semester_subjects
-    ADD CONSTRAINT course_semester_subjects_course_semester_id_subject_id_unique UNIQUE (course_semester_id, subject_id);
-
-
---
--- Name: course_semester_subjects course_semester_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.course_semester_subjects
-    ADD CONSTRAINT course_semester_subjects_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.course_semesters
+    ADD CONSTRAINT course_semesters_course_id_year_level_semester_unique UNIQUE (course_id, year_level, semester);
 
 
 --
@@ -504,6 +1193,30 @@ ALTER TABLE ONLY public.course_semester_subjects
 
 ALTER TABLE ONLY public.course_semesters
     ADD CONSTRAINT course_semesters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: course_subjects course_subjects_course_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.course_subjects
+    ADD CONSTRAINT course_subjects_course_semester_id_subject_id_unique UNIQUE (course_semester_id, subject_id);
+
+
+--
+-- Name: course_subjects course_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.course_subjects
+    ADD CONSTRAINT course_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: courses courses_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses
+    ADD CONSTRAINT courses_code_unique UNIQUE (code);
 
 
 --
@@ -547,6 +1260,70 @@ ALTER TABLE ONLY public.failed_jobs
 
 
 --
+-- Name: form_question_options form_question_options_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_options
+    ADD CONSTRAINT form_question_options_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_questions form_questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_questions
+    ADD CONSTRAINT form_questions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_sections form_sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_sections
+    ADD CONSTRAINT form_sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submission_answer_selected_options form_submission_answer_selected_options_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answer_selected_options
+    ADD CONSTRAINT form_submission_answer_selected_options_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submission_answers form_submission_answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answers
+    ADD CONSTRAINT form_submission_answers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submission_periods form_submission_periods_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_periods
+    ADD CONSTRAINT form_submission_periods_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submissions form_submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: forms forms_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.forms
+    ADD CONSTRAINT forms_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -579,11 +1356,115 @@ ALTER TABLE ONLY public.personal_access_tokens
 
 
 --
+-- Name: roles roles_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_code_unique UNIQUE (code);
+
+
+--
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: school_years school_years_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_years
+    ADD CONSTRAINT school_years_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sections sections_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_code_unique UNIQUE (code);
+
+
+--
+-- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sections sections_year_level_semester_course_id_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_year_level_semester_course_id_name_unique UNIQUE (year_level, semester, course_id, name);
+
+
+--
+-- Name: semester_sections semester_sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semester_sections
+    ADD CONSTRAINT semester_sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: semester_sections semester_sections_section_id_semester_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semester_sections
+    ADD CONSTRAINT semester_sections_section_id_semester_id_unique UNIQUE (section_id, semester_id);
+
+
+--
+-- Name: semesters semesters_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semesters
+    ADD CONSTRAINT semesters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: semesters semesters_school_year_id_semester_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semesters
+    ADD CONSTRAINT semesters_school_year_id_semester_unique UNIQUE (school_year_id, semester);
+
+
+--
+-- Name: student_semesters student_semesters_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: student_semesters student_semesters_student_id_semester_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_student_id_semester_id_unique UNIQUE (student_id, semester_id);
+
+
+--
+-- Name: student_subjects student_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: student_subjects student_subjects_student_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_student_semester_id_subject_id_unique UNIQUE (student_semester_id, subject_id);
 
 
 --
@@ -595,11 +1476,19 @@ ALTER TABLE ONLY public.students
 
 
 --
--- Name: students students_student_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: students students_student_number_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.students
-    ADD CONSTRAINT students_student_id_unique UNIQUE (student_id);
+    ADD CONSTRAINT students_student_number_unique UNIQUE (student_number);
+
+
+--
+-- Name: subjects subjects_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subjects
+    ADD CONSTRAINT subjects_code_unique UNIQUE (code);
 
 
 --
@@ -611,11 +1500,35 @@ ALTER TABLE ONLY public.subjects
 
 
 --
--- Name: subjects subjects_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: teacher_semesters teacher_semesters_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.subjects
-    ADD CONSTRAINT subjects_code_unique UNIQUE (code);
+ALTER TABLE ONLY public.teacher_semesters
+    ADD CONSTRAINT teacher_semesters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: teacher_subjects teacher_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: teacher_subjects teacher_subjects_teacher_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_teacher_semester_id_subject_id_unique UNIQUE (teacher_semester_id, subject_id);
+
+
+--
+-- Name: teachers teachers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teachers
+    ADD CONSTRAINT teachers_pkey PRIMARY KEY (id);
 
 
 --
@@ -635,26 +1548,18 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: school_years year_end; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.school_years
+    ADD CONSTRAINT year_end UNIQUE (year_start);
+
+
+--
 -- Name: personal_access_tokens_tokenable_type_tokenable_id_index; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX personal_access_tokens_tokenable_type_tokenable_id_index ON public.personal_access_tokens USING btree (tokenable_type, tokenable_id);
-
-
---
--- Name: course_semester_subjects course_semester_subjects_course_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.course_semester_subjects
-    ADD CONSTRAINT course_semester_subjects_course_semester_id_foreign FOREIGN KEY (course_semester_id) REFERENCES public.course_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: course_semester_subjects course_semester_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.course_semester_subjects
-    ADD CONSTRAINT course_semester_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -666,11 +1571,211 @@ ALTER TABLE ONLY public.course_semesters
 
 
 --
+-- Name: course_subjects course_subjects_course_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.course_subjects
+    ADD CONSTRAINT course_subjects_course_semester_id_foreign FOREIGN KEY (course_semester_id) REFERENCES public.course_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: course_subjects course_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.course_subjects
+    ADD CONSTRAINT course_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: courses courses_department_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.courses
     ADD CONSTRAINT courses_department_id_foreign FOREIGN KEY (department_id) REFERENCES public.departments(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_question_options form_question_options_form_question_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_options
+    ADD CONSTRAINT form_question_options_form_question_id_foreign FOREIGN KEY (form_question_id) REFERENCES public.form_questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_questions form_questions_form_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_questions
+    ADD CONSTRAINT form_questions_form_id_foreign FOREIGN KEY (form_id) REFERENCES public.forms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_questions form_questions_form_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_questions
+    ADD CONSTRAINT form_questions_form_section_id_foreign FOREIGN KEY (form_section_id) REFERENCES public.form_sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_sections form_sections_form_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_sections
+    ADD CONSTRAINT form_sections_form_id_foreign FOREIGN KEY (form_id) REFERENCES public.forms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_answer_selected_options form_submission_answer_selected_options_form_question_option_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answer_selected_options
+    ADD CONSTRAINT form_submission_answer_selected_options_form_question_option_id FOREIGN KEY (form_question_option_id) REFERENCES public.form_question_options(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_answer_selected_options form_submission_answer_selected_options_form_submission_answer_; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answer_selected_options
+    ADD CONSTRAINT form_submission_answer_selected_options_form_submission_answer_ FOREIGN KEY (form_submission_answer_id) REFERENCES public.form_submission_answers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_answers form_submission_answers_form_question_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answers
+    ADD CONSTRAINT form_submission_answers_form_question_id_foreign FOREIGN KEY (form_question_id) REFERENCES public.form_questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_answers form_submission_answers_form_submission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_answers
+    ADD CONSTRAINT form_submission_answers_form_submission_id_foreign FOREIGN KEY (form_submission_id) REFERENCES public.form_submissions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_periods form_submission_periods_form_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_periods
+    ADD CONSTRAINT form_submission_periods_form_id_foreign FOREIGN KEY (form_id) REFERENCES public.forms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_periods form_submission_periods_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_periods
+    ADD CONSTRAINT form_submission_periods_semester_id_foreign FOREIGN KEY (semester_id) REFERENCES public.semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submissions form_submissions_form_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_form_id_foreign FOREIGN KEY (form_id) REFERENCES public.forms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submissions form_submissions_form_submission_period_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_form_submission_period_id_foreign FOREIGN KEY (form_submission_period_id) REFERENCES public.form_submission_periods(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submissions form_submissions_student_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_student_subject_id_foreign FOREIGN KEY (student_subject_id) REFERENCES public.student_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: sections sections_course_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_course_id_foreign FOREIGN KEY (course_id) REFERENCES public.courses(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: semester_sections semester_sections_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semester_sections
+    ADD CONSTRAINT semester_sections_section_id_foreign FOREIGN KEY (section_id) REFERENCES public.sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: semester_sections semester_sections_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semester_sections
+    ADD CONSTRAINT semester_sections_semester_id_foreign FOREIGN KEY (semester_id) REFERENCES public.semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: semesters semesters_school_year_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.semesters
+    ADD CONSTRAINT semesters_school_year_id_foreign FOREIGN KEY (school_year_id) REFERENCES public.school_years(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_semesters student_semesters_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_semester_id_foreign FOREIGN KEY (semester_id) REFERENCES public.semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_semesters student_semesters_student_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_student_id_foreign FOREIGN KEY (student_id) REFERENCES public.students(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_subjects student_subjects_course_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_course_subject_id_foreign FOREIGN KEY (course_subject_id) REFERENCES public.course_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_subjects student_subjects_semester_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_semester_section_id_foreign FOREIGN KEY (semester_section_id) REFERENCES public.semester_sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_subjects student_subjects_student_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_student_semester_id_foreign FOREIGN KEY (student_semester_id) REFERENCES public.student_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: student_subjects student_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_subjects
+    ADD CONSTRAINT student_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -687,6 +1792,62 @@ ALTER TABLE ONLY public.students
 
 ALTER TABLE ONLY public.students
     ADD CONSTRAINT students_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_semesters teacher_semesters_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_semesters
+    ADD CONSTRAINT teacher_semesters_semester_id_foreign FOREIGN KEY (semester_id) REFERENCES public.semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_semesters teacher_semesters_teacher_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_semesters
+    ADD CONSTRAINT teacher_semesters_teacher_id_foreign FOREIGN KEY (teacher_id) REFERENCES public.teachers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_subjects teacher_subjects_course_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_course_subject_id_foreign FOREIGN KEY (course_subject_id) REFERENCES public.course_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_subjects teacher_subjects_semester_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_semester_section_id_foreign FOREIGN KEY (semester_section_id) REFERENCES public.sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_subjects teacher_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_subjects teacher_subjects_teacher_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subjects
+    ADD CONSTRAINT teacher_subjects_teacher_semester_id_foreign FOREIGN KEY (teacher_semester_id) REFERENCES public.teacher_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teachers teachers_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teachers
+    ADD CONSTRAINT teachers_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -724,11 +1885,15 @@ SET row_security = off;
 --
 
 COPY public.migrations (id, migration, batch) FROM stdin;
-6	2014_09_03_132923_create_courses_table	1
-7	2014_10_12_000000_create_users_table	1
-8	2014_10_12_100000_create_password_reset_tokens_table	1
-9	2019_08_19_000000_create_failed_jobs_table	1
-10	2019_12_14_000001_create_personal_access_tokens_table	1
+1	2014_09_03_132923_create_courses_table	1
+2	2014_10_12_000000_create_users_table	1
+3	2014_10_12_100000_create_password_reset_tokens_table	1
+4	2019_08_19_000000_create_failed_jobs_table	1
+5	2019_12_14_000001_create_personal_access_tokens_table	1
+6	2024_11_22_224729_create_sections_table	1
+7	2024_11_22_224809_create_teachers_table	1
+8	2024_11_22_224921_create_students_table	1
+9	2024_11_22_232615_create_forms_table	1
 \.
 
 
@@ -736,7 +1901,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 10, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 9, true);
 
 
 --

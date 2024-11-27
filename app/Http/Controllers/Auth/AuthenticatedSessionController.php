@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
 
         return redirect()->intended(
-            RouteServiceProvider::getDashboard($user->role_id)
+            RouteServiceProvider::getDashboard($user->role->code)
         );
     }
 

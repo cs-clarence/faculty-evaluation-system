@@ -32,6 +32,7 @@ return new class extends Migration
             $table->timestampTz('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
     }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use RoleCode;
 
 class RegisteredUserController extends Controller
 {
@@ -51,7 +52,8 @@ class RegisteredUserController extends Controller
         ]);
 
         // Save student data if role is "Student"
-        if ($request->role_id == 2) {
+        $roleCode = Role::whereId($request->role_id)->first(['code'])->code;
+        if ($roleCode === RoleCode::Student->value) {
             Student::create([
                 'user_id' => $user->id, // Link to the user
                 'student_number' => $request->student_number,
@@ -59,7 +61,7 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        if ($request->role_id == 3) {
+        if ($roleCode === RoleCode::Teacher->value) {
             Teacher::create([
                 'user_id' => $user->id, // Link to the user
             ]);
@@ -70,7 +72,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect()->intended(
-            RouteServiceProvider::getDashboard($user->role_id)
+            RouteServiceProvider::getDashboard($roleCode)
         );
     }
 }

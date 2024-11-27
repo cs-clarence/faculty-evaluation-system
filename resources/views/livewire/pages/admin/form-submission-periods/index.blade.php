@@ -39,6 +39,19 @@
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
+                                @if ($period->is_open)
+                                    <button wire:click='close({{ $period->id }})'
+                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                        wire:confirm='Are you sure you want to close this submission period?'>
+                                        Close
+                                    </button>
+                                @else
+                                    <button wire:click='open({{ $period->id }})'
+                                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                                        Open
+                                    </button>
+                                @endif
+
                                 @if ($period->is_archived)
                                     <button wire:click='unarchive({{ $period->id }})'
                                         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">

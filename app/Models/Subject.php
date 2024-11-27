@@ -14,7 +14,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Subject extends Model
 {
-    use HasFactory, Archivable;
+    use HasFactory;
+    use Archivable {
+        Archivable::archive as baseArchive;
+        Archivable::unarchive as baseUnarchive;
+    }
 
     protected $table = 'subjects';
 
@@ -62,5 +66,17 @@ class Subject extends Model
         }
 
         return false;
+    }
+
+    public function archive()
+    {
+        $this->user()->archive();
+        $this->baseArchive();
+    }
+
+    public function unarchive()
+    {
+        $this->user()->unarchive();
+        $this->baseUnarchive();
     }
 }

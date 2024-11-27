@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
+    use Archivable {
+        Archivable::archive as baseArchive;
+        Archivable::unarchive as baseUnarchive;
+    }
 
     protected $fillable = [
         'user_id',
@@ -29,8 +34,27 @@ class Student extends Model
         return $this->hasMany(StudentSemester::class);
     }
 
-    public function teacherSubjects()
+    public function studentSubjects()
     {
         return $this->hasManyThrough(StudentSubject::class, StudentSemester::class);
+    }
+
+    public function hasDependents()
+    {
+        return $this->user->hasDependents();
+    }
+
+    public function delete()
+    {
+        $this->user->delete();
+    }
+    public function archive()
+    {
+        $this->user->archive();
+    }
+
+    public function unarchive()
+    {
+        $this->user->unarchive();
     }
 }

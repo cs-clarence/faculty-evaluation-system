@@ -30,6 +30,11 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/evaluation-form', [EvaluationFormController::class, 'index'])->name('evaluation.form');
 
+Route::middleware(['auth'])
+    ->group(function () {
+        Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)->name('account-archived.index');
+    });
+
 Route::middleware(['auth:admin'])
     ->name('admin.')
     ->prefix('admin')
@@ -45,7 +50,7 @@ Route::middleware(['auth:admin'])
         Route::get('/sections', App\Livewire\Pages\Admin\Sections\Index::class)->name('sections.index');
         Route::get('/students', App\Livewire\Pages\Admin\Students\Index::class)->name('students.index');
         Route::get('/teachers', App\Livewire\Pages\Admin\Teachers\Index::class)->name('teachers.index');
-        Route::get('/accounts', App\Livewire\Pages\Admin\Teachers\Index::class)->name('accounts.index');
+        Route::get('/accounts', App\Livewire\Pages\Admin\Accounts\Index::class)->name('accounts.index');
     });
 
 Route::middleware(['auth:student'])
