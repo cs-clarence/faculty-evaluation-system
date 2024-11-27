@@ -35,5 +35,11 @@ class SchoolYear extends Model
 
     public function hasDependents()
     {
+        return false;
+    }
+
+    public function __tostring()
+    {
+        return "{$this->year_start} - {$this->year_end}";
     }
 }

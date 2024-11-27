@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Archivable;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -9,6 +11,49 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FormSubmissionPeriod extends Model
 {
+    use Archivable;
     //
     protected $table = 'form_submission_periods';
+    public $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'semester_id', 'is_open', 'is_submissions_editable'];
+
+    public function casts()
+    {
+        return [
+            'starts_at' => 'datetime:Y-m-d\Tg:i a',
+            'ends_at' => 'datetime:Y-m-d\Tg:i a',
+        ];
+    }
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
+
+    public function open()
+    {
+        $this->is_open = true;
+        $this->save();
+    }
+
+    public function close()
+    {
+        $this->is_open = false;
+        $this->save();
+    }
+
+    public function hasDependents(): bool
+    {
+
+        return false;
+    }
+
+    public function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d\Tg:i a');
+    }
 }

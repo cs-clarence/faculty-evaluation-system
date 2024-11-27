@@ -70,8 +70,9 @@ return new class extends Migration
 
         Schema::create('form_submission_periods', function (Blueprint $table) {
             $table->id();
-            $table->timestampTz('starts_on');
-            $table->timestampTz('ends_on');
+            $table->string('name');
+            $table->timestampTz('starts_at');
+            $table->timestampTz('ends_at');
             $table->boolean('is_open');
             $table->boolean('is_submissions_editable');
             $table->dateTimeTz('archived_at')->nullable();

@@ -28,12 +28,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('semester');
 
-            $table->foreignIdFor(SchoolYear::class)
+            $table->foreignIdFor(SchoolYear::class, 'school_year_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
             $table->unique(['school_year_id', 'semester']);
+            $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
 
@@ -112,7 +113,7 @@ return new class extends Migration
         Schema::dropIfExists('courses');
         Schema::dropIfExists('subjects');
         Schema::dropIfExists('departments');
-        Schema::dropIfExists('school_year_semesters');
+        Schema::dropIfExists('semesters');
         Schema::dropIfExists('school_years');
     }
 };

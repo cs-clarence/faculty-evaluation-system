@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\CourseSubject;
+use App\Models\Section;
 use App\Models\Semester;
-use App\Models\SemesterSection;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherSemester;
@@ -63,7 +63,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
+            $table->foreignIdFor(Section::class, 'semester_section_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();

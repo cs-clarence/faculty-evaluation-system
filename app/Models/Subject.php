@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Traits\Archivable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Subject extends Model
 {
-    use HasFactory;
+    use HasFactory, Archivable;
 
     protected $table = 'subjects';
 
@@ -44,23 +44,6 @@ class Subject extends Model
     {
         return $this->belongsToMany(StudentSemester::class, StudentSemester::class)
             ->using(StudentSubject::class);
-    }
-
-    public function archive()
-    {
-        $this->archived_at = now();
-        $this->save();
-    }
-
-    public function unarchive()
-    {
-        $this->archived_at = null;
-        $this->save();
-    }
-
-    public function scopeWithoutArchived(Builder $builder)
-    {
-        $builder->whereNull('archived_at');
     }
 
     public function isArchived(): Attribute
