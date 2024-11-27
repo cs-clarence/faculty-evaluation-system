@@ -35,6 +35,14 @@ class SchoolYear extends Model
 
     public function hasDependents()
     {
+        $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriods'])->get();
+
+        foreach ($semesters as $semester) {
+            if ($semester->sections_count > 0 || $semester->form_submission_periods_count > 0) {
+                return true;
+            }
+        }
+
         return false;
     }
 

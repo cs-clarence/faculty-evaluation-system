@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Number;
 
 /**
@@ -26,9 +26,14 @@ class Semester extends Model
         return $this->hasMany(SemesterSection::class);
     }
 
-    public function sections(): HasManyThrough
+    public function sections(): BelongsToMany
     {
-        return $this->hasManyThrough(Section::class, SemesterSection::class);
+        return $this->belongsToMany(Section::class, SemesterSection::class);
+    }
+
+    public function formSubmissionPeriods(): HasMany
+    {
+        return $this->hasMany(FormSubmissionPeriod::class);
     }
 
     public function __tostring()

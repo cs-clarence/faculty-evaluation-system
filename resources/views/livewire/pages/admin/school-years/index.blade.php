@@ -32,11 +32,13 @@
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
-                                <button wire:click='delete({{ $schoolYear->id }})'
-                                    wire:confirm='Are you sure you want to delete this school year?'
-                                    class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                    Delete
-                                </button>
+                                @if (!$schoolYear->hasDependents())
+                                    <button wire:click='delete({{ $schoolYear->id }})'
+                                        wire:confirm='Are you sure you want to delete this school year?'
+                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                                        Delete
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @empty

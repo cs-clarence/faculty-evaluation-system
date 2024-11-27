@@ -32,20 +32,19 @@
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
-                                @if ($department->hasDependents())
-                                    @isset($department->archived_at)
-                                        <button wire:click='unarchive({{ $department->id }})'
-                                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                                            Unarchive
-                                        </button>
-                                    @else
-                                        <button wire:click='archive({{ $department->id }})'
-                                            class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-                                            title="This department has courses associated with it. You can only archive it until you delete those courses.">
-                                            Archive
-                                        </button>
-                                    @endisset
+                                @if ($department->is_archived)
+                                    <button wire:click='unarchive({{ $department->id }})'
+                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                                        Unarchive
+                                    </button>
                                 @else
+                                    <button wire:click='archive({{ $department->id }})'
+                                        class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+                                        title="This department has courses associated with it. You can only archive it until you delete those courses.">
+                                        Archive
+                                    </button>
+                                @endif
+                                @if (!$department->hasDependents())
                                     <button wire:click='delete({{ $department->id }})'
                                         wire:confirm='Are you sure you want to delete this department?'
                                         class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">

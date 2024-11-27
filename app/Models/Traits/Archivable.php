@@ -12,16 +12,14 @@ trait Archivable
      * @param array<int> $ignoreIds
      * @return void
      */
-    public function scopeWithoutArchived(Builder $builder, ?array $exceptIds = null): Builder
+    public function scopeWithoutArchived(Builder $builder, ?array $exceptIds = null)
     {
-        return $builder->where(function (Builder $builder) use ($exceptIds): Builder {
+        $builder->where(function (Builder $builder) use ($exceptIds) {
             $b = $builder->whereNull('archived_at');
 
             if (isset($exceptIds)) {
                 $b = $b->orWhereIn('id', $exceptIds);
             }
-
-            return $b;
         });
     }
 

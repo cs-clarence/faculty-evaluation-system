@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Section extends Model
 {
     /** @use HasFactory<\Database\Factories\SectionFactory> */
-    use HasFactory;
+    use HasFactory, Archivable;
     protected $table = 'sections';
     protected $fillable = ['year_level', 'code', 'name', 'course_id', 'semester'];
 
