@@ -1,4 +1,13 @@
 services:
+  app:
+    image: rencedm112/spcf-tes:latest
+    volumes:
+      - ./.env:/var/www/html/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+
   database:
     image: postgres:alpine
     restart: unless-stopped
@@ -6,20 +15,30 @@ services:
     volumes:
       - "./docker/database/fs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
       - database-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+    ports:
+      - "5432:5432"
 
-  gateway:
-    image: nginx:alpine
-    restart: unless-stopped
+  database-admin-ui:
+    image: adminer:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+
+  proxy:
+    image: nginx:latest
+    entrypoint:
+      - nginx
+    command:
+      - -g
+      - "daemon off;"
+    networks:
+      app-network:
+        ipv4_address: ${PROXY_IP:-172.16.0.2}
     depends_on:
       - app
-      - adminer
-      - s3
-      - webdav
       - database
-    networks:
-      - app-network
+      - database-admin-ui
     env_file:
       - .env
     environment:
@@ -32,126 +51,20 @@ services:
       - "5432:5432"
       - "9733:9733"
     volumes:
-      - ./docker/gateway/fs/etc/nginx/templates:/etc/nginx/templates
-      - ./docker/gateway/fs/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-
-  adminer:
-    restart: unless-stopped
-    image: michalhosna/adminer
-    env_file:
-      - .env
-    networks:
-      - app-network
-    ports:
-      - "8080:8080"
-    environment:
-      ADMINER_DB: tara_turo
-      ADMINER_DRIVER: pgsql
-      ADMINER_SERVER: database
-      ADMINER_AUTOLOGIN: 0
-      ADMINER_NAME: Welcome to Tara Turo DB Admin Panel
-
-  fs-master-1:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    volumes:
-      - fs-master-1-data:/data:rw
-    command:
-      - master
-      - -ip=fs-master-1 # This is the hostname of the master
-      - -ip.bind=0.0.0.0 # Which IP to bind
-      - -mdir=/data # Where to store metadata
-      - -port=9333 # Port for this master to listen
-      - -port.grpc=19333 # Default is port + 10000
-      - -metricsPort=9334
-      - -volumeSizeLimitMB=1000 # 1gb volume size limit
-    networks:
-      - app-network
-
-  fs-volume-1:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    volumes:
-      - fs-volume-1-data:/data:rw
-    command:
-      - volume
-      - -mserver=fs-master-1:9333 # Comma separated master servers
-      - -ip=fs-volume-1 # This is the hostname of the volume
-      - -ip.bind=0.0.0.0 # Which IP to bind
-      - -dir=/data # Where to store data
-      - -port=9433 # Port for this master to listen
-      - -port.grpc=19433 # Default is port + 10000
-      - -metricsPort=9434
-    depends_on:
-      - fs-master-1
-    networks:
-      - app-network
-
-  fs-filer-1:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    command:
-      - filer
-      - -master=fs-master-1:9333
-      - -ip=fs-filer-1
-      - -ip.bind=0.0.0.0
-      - -port=9533
-      - -port.grpc=19533
-    volumes:
-      - fs-filer-1-data:/data
-    depends_on:
-      - fs-master-1
-      - fs-volume-1
-    networks:
-      - app-network
-
-  s3:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    command:
-      - s3
-      - -filer=fs-filer-1:9533
-      - -ip.bind=0.0.0.0
-      - -port=9633
-      - -port.grpc=19633
-      - -metricsPort=9634
-    depends_on:
-      - fs-master-1
-      - fs-volume-1
-      - fs-filer-1
-    networks:
-      - app-network
-
-  webdav:
-    image: chrislusf/seaweedfs
-    restart: unless-stopped
-    networks:
-      - app-network
-    command:
-      - webdav
-      - -filer=fs-filer-1:9533
-      - -port=9733
-    depends_on:
-      - fs-master-1
-      - fs-volume-1
-      - fs-filer-1
+      - ./docker/proxy/fs/etc/nginx/templates:/etc/nginx/templates
+      - ./docker/proxy/fs/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
 
 volumes:
   database-data:
-    driver: local
-    name: database-data
-  fs-master-1-data:
-    driver: local
-    name: fs-master-1-data
-  fs-volume-1-data:
-    driver: local
-    name: fs-volume-1-data
-  fs-filer-1-data:
-    driver: local
-    name: fs-filer-1-data
+  mail-server-data:
+
 
 networks:
   app-network:
-    attachable: true
     driver: bridge
+    attachable: true
     name: app-network
+    ipam:
+      config:
+        - subnet: ${NETWORK_SUBNET:-172.16.0.0/16}
+          gateway: ${NETWORK_GATEWAY_IP:-172.16.0.1}

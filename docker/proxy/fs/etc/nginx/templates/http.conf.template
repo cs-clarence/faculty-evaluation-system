@@ -1,0 +1,55 @@
+include mime.types;
+
+upstream upstream-app {
+    server app:8000;
+}
+
+upstream upstream-database-admin-ui {
+    server database-admin-ui:8080;
+}
+
+# upstream upstream-s3 {
+#     server s3:9633;
+# }
+
+# App
+server {
+    listen *:80;
+    server_name $APP_HOST;
+
+    location / {
+        proxy_pass http://upstream-app;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Uri $request_uri;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $APP_PORT;
+    }
+}
+
+# Adminer
+server {
+    listen *:80;
+    server_name $DATABASE_ADMIN_UI_HOST;
+
+    location / {
+        proxy_pass http://upstream-adminer;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Uri $request_uri;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $DATABASE_ADMIN_UI_PORT;
+    }
+}
+
+# S3
+# server {
+#     listen *:80;
+#     server_name $S3_HOST;
+
+#     location / {
+#         proxy_pass http://upstream-s3;
+#     }
+# }
