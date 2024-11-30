@@ -15,7 +15,8 @@ ARG ENV=development
 ENV ENV=$ENV
 WORKDIR /var/www/html
 COPY --from=build-support-js /var/www/html/ ./
-RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader --ignore-platform-reqs \
+RUN git config --global --add safe.directory /var/www/html \
+    && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --ignore-platform-reqs \
     && composer dump-autoload --no-dev --optimize  \
     && php artisan optimize \
     && php artisan config:cache \

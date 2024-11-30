@@ -27,6 +27,7 @@ services:
   database-migrator:
     image: rencedm112/spcf-tes-database-migrator:latest
     pull_policy: always
+    restart: on-failure
     command:
       - migrate
       - apply
