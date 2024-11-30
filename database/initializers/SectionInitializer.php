@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Facades\Helpers\SectionHelper;
 use App\Models\Course;
 use App\Models\Section;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class SectionSeeder extends Seeder
+class SectionInitializer extends Initializer
 {
     /**
      * Run the database seeds.

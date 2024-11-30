@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Models\Role;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class RoleSeeder extends Seeder
+class RoleInitializer extends Initializer
 {
     /**
      * Run the database seeds.

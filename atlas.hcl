@@ -18,7 +18,7 @@ env {
     dev  = local.dev
 
     src = local.src
-    schemas = [ "public" ]
+    // schemas = [ "public" ]
 
     migration {
         // baseline = "20240501054945"

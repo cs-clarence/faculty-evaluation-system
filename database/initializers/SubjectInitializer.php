@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Models\Subject;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class SubjectSeeder extends Seeder
+class SubjectInitializer extends Initializer
 {
     private static $defaults = [
         [

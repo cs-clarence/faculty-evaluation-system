@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Models\Department;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class DepartmentSeeder extends Seeder
+class DepartmentInitializer extends Initializer
 {
     /**
      * Run the database seeds.

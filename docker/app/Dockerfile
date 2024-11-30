@@ -8,6 +8,7 @@ WORKDIR /var/www/html
 COPY ./ ./
 RUN bun install
 RUN bun run build
+RUN rm -rf ./node_modules
 
 FROM composer:latest AS build-support-php
 ARG ENV=development
@@ -22,19 +23,7 @@ RUN composer install --no-dev --no-interaction --no-progress --optimize-autoload
     && php artisan route:cache \
     && php artisan view:cache
 
-
-FROM php:fpm-alpine AS build-main-production
-
-COPY --from=build-support-php /var/www/html/ ./
-COPY ./docker/app/fs/etc/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./docker/app/fs/usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
-COPY ./docker/app/fs/usr/local/etc/php-fpm.d /usr/local/etc/php-fpm.d
-COPY ./docker/app/fs/etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
-
-FROM php:fpm-alpine AS build-main-development
-
-
-FROM build-main-${ENV}
+FROM php:fpm-alpine AS build-main-base
 ARG ENV=development
 ENV ENV=$ENV
 LABEL authors="rencema"
@@ -45,4 +34,17 @@ RUN set -ex \
     && docker-php-ext-install pdo pgsql pdo_pgsql intl \
     && docker-php-ext-enable pdo_pgsql intl opcache \
     && apk del postgresql-dev
+
+FROM build-main-base AS build-main-production
+
+COPY --from=build-support-php /var/www/html/ ./
+COPY ./docker/app/fs/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/app/fs/usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
+COPY ./docker/app/fs/usr/local/etc/php-fpm.d /usr/local/etc/php-fpm.d
+COPY ./docker/app/fs/etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+
+FROM build-main-base AS build-main-development
+
+
+FROM build-main-${ENV}
 CMD [ "supervisord", "-c", "/etc/supervisor/supervisord.conf" ]

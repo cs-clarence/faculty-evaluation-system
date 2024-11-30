@@ -1,58 +1,89 @@
 services:
   app:
+    restart: unless-stopped
     image: rencedm112/spcf-tes:latest
-    volumes:
-      - ./.env:/var/www/html/.env
-    ports:
-      - "8000:8000"
+    pull_policy: always
+    networks:
+      - main-network
+    environment:
+      - APP_TRUSTED_PROXY_IPS=${APP_TRUSTED_PROXY_IPS:-${PROXY_IP:-172.16.0.100}}
+    env_file:
+      - ./.env.production
     depends_on:
       - database
+      - database-migrator
 
   database:
     image: postgres:alpine
     restart: unless-stopped
-    env_file: .env
+    networks:
+      - main-network
     volumes:
       - "./docker/database/fs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
       - database-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    env_file:
+      - ./.env.production
 
-  database-admin-ui:
-    image: adminer:latest
-    ports:
-      - 8080:8080
+  database-migrator:
+    image: rencedm112/spcf-tes-database-migrator:latest
+    pull_policy: always
+    command:
+      - migrate
+      - apply
+      - --url=${DATABASE_URL}
+    networks:
+      - main-network
     depends_on:
       - database
+    env_file:
+      - ./.env.production
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+
+  database-admin-app:
+    image: adminer:latest
+    restart: unless-stopped
+    networks:
+      - main-network
+    depends_on:
+      - database
+    env_file:
+      - ./.env.production
 
   proxy:
-    image: nginx:latest
-    entrypoint:
-      - nginx
-    command:
-      - -g
-      - "daemon off;"
+    image: nginx:alpine
+    restart: unless-stopped
+    # Don't override entrypoint, otherwise environmental variables will not be substituted
+    # entrypoint:
+    # - nginx
+    # command:
+    #   - -g
+    #   - "daemon off;"
     networks:
-      app-network:
-        ipv4_address: ${PROXY_IP:-172.16.0.2}
+      main-network:
+        ipv4_address: ${PROXY_IP:-172.16.0.100}
     depends_on:
       - app
       - database
-      - database-admin-ui
-    env_file:
-      - .env
+      - database-admin-app
     environment:
       NGINX_ENVSUBST_TEMPLATE_DIR: /etc/nginx/templates
       NGINX_ENVSUBST_TEMPLATE_SUFFIX: .template
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
+      PROXY_HTTP_PORT: ${PROXY_HTTP_PORT:-80}
+      PROXY_HTTPS_PORT: ${PROXY_HTTPS_PORT:-443}
+      APP_HOST: ${APP_HOST:?APP_HOST environment variable is required}
+      DATABASE_ADMIN_APP_HOST: ${DATABASE_ADMIN_APP_HOST:?DATABASE_ADMIN_APP_HOST environment variable is required}
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PROXY_HTTP_PORT:-80}:${PROXY_HTTP_PORT:-80}"
+      - "${PROXY_HTTPS_PORT:-443}:${PROXY_HTTPS_PORT:-443}"
       - "5432:5432"
       - "9733:9733"
     volumes:
       - ./docker/proxy/fs/etc/nginx/templates:/etc/nginx/templates
       - ./docker/proxy/fs/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+    env_file:
+      - ./.env.production
 
 volumes:
   database-data:
@@ -60,10 +91,10 @@ volumes:
 
 
 networks:
-  app-network:
+  main-network:
     driver: bridge
     attachable: true
-    name: app-network
+    name: main-network
     ipam:
       config:
         - subnet: ${NETWORK_SUBNET:-172.16.0.0/16}

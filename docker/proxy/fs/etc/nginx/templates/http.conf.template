@@ -4,8 +4,8 @@ upstream upstream-app {
     server app:8000;
 }
 
-upstream upstream-database-admin-ui {
-    server database-admin-ui:8080;
+upstream upstream-database-admin-app {
+    server database-admin-app:8080;
 }
 
 # upstream upstream-s3 {
@@ -14,7 +14,7 @@ upstream upstream-database-admin-ui {
 
 # App
 server {
-    listen *:80;
+    listen *:$PROXY_HTTP_PORT;
     server_name $APP_HOST;
 
     location / {
@@ -24,23 +24,23 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Uri $request_uri;
         proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Port $APP_PORT;
+        proxy_set_header X-Forwarded-Port $server_port;
     }
 }
 
 # Adminer
 server {
-    listen *:80;
-    server_name $DATABASE_ADMIN_UI_HOST;
+    listen *:$PROXY_HTTP_PORT;
+    server_name $DATABASE_ADMIN_APP_HOST;
 
     location / {
-        proxy_pass http://upstream-adminer;
+        proxy_pass http://upstream-database-admin-app;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-Uri $request_uri;
         proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Port $DATABASE_ADMIN_UI_PORT;
+        proxy_set_header X-Forwarded-Port $server_port;
     }
 }
 

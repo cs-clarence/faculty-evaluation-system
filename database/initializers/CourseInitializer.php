@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Models\Course;
 use App\Models\Department;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class CourseSeeder extends Seeder
+class CourseInitializer extends Initializer
 {
     private $defaults = [
         [

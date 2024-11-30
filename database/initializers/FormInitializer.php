@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Initializers;
 
 use App\Models\Form;
-use Illuminate\Database\Seeder;
+use Database\Initializers\Base\Initializer;
 
-class FormSeeder extends Seeder
+class FormInitializer extends Initializer
 {
     private const DEFAULT_DESCRIPTION = '1 - Strongly Disagree 2 - Disagree 3 - Neutral 4 - Agree 5 - Strongly Agree';
     private const TYPE_MULTIPLE_CHOICES_SINGLE_SELECT = 'multiple_choices_single_select';
