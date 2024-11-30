@@ -9,7 +9,7 @@ upstream upstream-database {
 # Database
 server {
     listen *:5432;
-    server_name $DATABASE_HOST;
+    server_name $DATABASE_HOSTNAME;
 
     proxy_pass upstream-database;
 }

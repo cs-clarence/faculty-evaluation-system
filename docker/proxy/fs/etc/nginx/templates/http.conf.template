@@ -15,7 +15,7 @@ upstream upstream-database-admin-app {
 # App
 server {
     listen *:$PROXY_HTTP_PORT;
-    server_name $APP_HOST;
+    server_name $APP_HOSTNAME;
 
     location / {
         proxy_pass http://upstream-app;
@@ -31,7 +31,7 @@ server {
 # Adminer
 server {
     listen *:$PROXY_HTTP_PORT;
-    server_name $DATABASE_ADMIN_APP_HOST;
+    server_name $DATABASE_ADMIN_APP_HOSTNAME;
 
     location / {
         proxy_pass http://upstream-database-admin-app;

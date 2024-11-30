@@ -17,7 +17,9 @@ services:
     image: postgres:alpine
     restart: unless-stopped
     networks:
-      - main-network
+      main-network:
+        aliases:
+          - ${DATABASE_HOSTNAME:-database}
     volumes:
       - "./docker/database/fs/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
       - database-data:/var/lib/postgresql/data
@@ -34,8 +36,6 @@ services:
       - --url=${DATABASE_URL}
     networks:
       - main-network
-    depends_on:
-      - database
     env_file:
       - ./.env.production
     environment:
@@ -73,8 +73,8 @@ services:
       NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
       PROXY_HTTP_PORT: ${PROXY_HTTP_PORT:-80}
       PROXY_HTTPS_PORT: ${PROXY_HTTPS_PORT:-443}
-      APP_HOST: ${APP_HOST:?APP_HOST environment variable is required}
-      DATABASE_ADMIN_APP_HOST: ${DATABASE_ADMIN_APP_HOST:?DATABASE_ADMIN_APP_HOST environment variable is required}
+      APP_HOSTNAME: ${APP_HOSTNAME:?APP_HOSTNAME environment variable is required}
+      DATABASE_ADMIN_APP_HOST: ${DATABASE_ADMIN_APP_HOSTNAME:?DATABASE_ADMIN_APP_HOSTNAME environment variable is required}
     ports:
       - "${PROXY_HTTP_PORT:-80}:${PROXY_HTTP_PORT:-80}"
       - "${PROXY_HTTPS_PORT:-443}:${PROXY_HTTPS_PORT:-443}"

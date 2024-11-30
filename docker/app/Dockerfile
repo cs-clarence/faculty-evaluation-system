@@ -6,9 +6,10 @@ ENV ENV=$ENV
 ENV NODE_ENV=$ENV
 WORKDIR /var/www/html
 COPY ./ ./
-RUN bun install
-RUN bun run build
-RUN rm -rf ./node_modules
+RUN bun install \
+    && bun run build \
+    && rm -rf ./node_modules \
+    && rm -rf ./public/hot
 
 FROM composer:latest AS build-support-php
 ARG ENV=development
