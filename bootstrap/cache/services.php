@@ -37,6 +37,7 @@
     33 => 'App\\Providers\\AuthServiceProvider',
     34 => 'App\\Providers\\EventServiceProvider',
     35 => 'App\\Providers\\RouteServiceProvider',
+    36 => 'App\\Features\\ChatBot\\ChatBotServiceProvider',
   ),
   'eager' => 
   array (
@@ -60,6 +61,7 @@
     17 => 'App\\Providers\\AuthServiceProvider',
     18 => 'App\\Providers\\EventServiceProvider',
     19 => 'App\\Providers\\RouteServiceProvider',
+    20 => 'App\\Features\\ChatBot\\ChatBotServiceProvider',
   ),
   'deferred' => 
   array (

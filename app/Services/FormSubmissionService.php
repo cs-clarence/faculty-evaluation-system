@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Features\ChatBot\Services\ChatCompleter;
+use App\Features\ChatBot\Types\Message\Message;
 use App\Models\Form;
+use App\Models\FormQuestionEssayTypeConfiguration;
 use App\Models\FormQuestionOption;
 use App\Models\FormQuestionType;
 use App\Models\FormSubmission;
@@ -10,10 +13,83 @@ use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\StudentSubject;
 use App\Models\Teacher;
-use Log;
 
 class FormSubmissionService
 {
+    public function __construct(private ChatCompleter $chat)
+    {
+    }
+
+    private static function createSystemMessage(FormQuestionEssayTypeConfiguration $config)
+    {
+        return Message::system(<<<TXT
+            You are a helpful assistant. You evaluate essay type answers to questions
+            and determine the value from the scale from {$config->value_scale_from} to {$config->value_scale_to}.
+            The value can be a float value.
+            You also determine the interpretation of the answer where it's Good or Bad.
+            You can only answer in json encoded format.
+
+            Examples:
+            Question: What are the characteristics that you like to your teacher?
+            Essay Answer: The teacher really knows how to teach.
+            Your Response:
+            {
+                "value": 3.73,
+                "interpretation": "Good"
+            }
+        TXT);
+    }
+
+    public static function createUserMessage(string $question, string $answer)
+    {
+        return Message::user(<<<TXT
+        Question: {$question}
+        Essay Answer: {$answer}
+        TXT);
+    }
+
+    private static function randomBetweenFloat(float $min, float $max)
+    {
+        return $min + mt_rand() / mt_getrandmax() * ($max - $min);
+    }
+
+    private static function getHalf(float $min, float $max)
+    {
+        $diff = $max - $min;
+        return $min + ($diff / 2);
+    }
+
+    private function getInterpretation(FormQuestionEssayTypeConfiguration $config,
+        string $question,
+        string $answer,
+    ) {
+
+        $systemMessage = self::createSystemMessage($config);
+        $userMessage = self::createUserMessage(
+            $question,
+            $answer,
+        );
+        try {
+            $response = $this->chat->complete([$systemMessage, $userMessage],
+                false,
+                [
+                    'response_format' => ['type' => 'json_object'],
+                ]
+            );
+            $text = $response->getText();
+            $aiResponse = json_decode($text, true);
+
+            return $aiResponse;
+        } catch (\Exception) {
+            $half = self::getHalf($config->value_scale_from, $config->value_scale_to);
+            $random = self::randomBetweenFloat($config->value_scale_from, $config->value_scale_to);
+            return [
+                'value' => $random,
+                'interpretation' => $random > $half ? 'Good' : 'Bad',
+            ];
+        }
+    }
+
     private static function getFormId(Form | int $form)
     {
         return $form instanceof Form ? $form->id : $form;
@@ -49,11 +125,10 @@ class FormSubmissionService
         : FormSubmission::whereId($formSubmission)->get();
     }
 
-    private static function save(
+    private function save(
         FormSubmission $formSubmission,
         array $answers,
     ) {
-        Log::info(json_encode($answers));
         $form = self::getForm($formSubmission->form_id);
 
         $newAnswers = [];
@@ -62,11 +137,18 @@ class FormSubmissionService
                 $value = $answers["{$question->id}"];
                 if ($question->type === FormQuestionType::Essay->value) {
                     $config = $question->essayTypeConfiguration;
+                    $interpretation = $this->getInterpretation(
+                        $config,
+                        $question->question,
+                        $value,
+                    );
+
                     $newAnswers[] = new FormSubmissionAnswer([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id' => $question->id,
-                        'value' => $config->value_scale_to,
+                        'value' => $interpretation['value'],
                         'text' => $value,
+                        'interpretation' => $interpretation['interpretation'],
                     ]);
                 } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
                     $option = FormQuestionOption::whereId($value)->first(['id', 'value', 'interpretation', 'name']);
@@ -113,14 +195,13 @@ class FormSubmissionService
 
         $formSubmission->save();
 
-        self::save($formSubmission, $answers);
+        $this->save($formSubmission, $answers);
     }
 
     public function update(
         FormSubmission | int $formSubmission,
         array $answers,
     ) {
-
-        self::save($formSubmission, $answers);
+        $this->save($formSubmission, $answers);
     }
 }

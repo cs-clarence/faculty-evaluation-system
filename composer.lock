@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11c7bf1a834b1635a5badfd17b087514",
+    "content-hash": "13b189ad2d6b25f65b94b2ff457179cb",
     "packages": [
         {
             "name": "awobaz/compoships",
@@ -2093,6 +2093,51 @@
                 }
             ],
             "time": "2024-11-29T15:49:18+00:00"
+        },
+        {
+            "name": "lucianotonet/groq-php",
+            "version": "0.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lucianotonet/groq-php.git",
+                "reference": "c36c5a471d4caf0cec642887371203c6339d9738"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lucianotonet/groq-php/zipball/c36c5a471d4caf0cec642887371203c6339d9738",
+                "reference": "c36c5a471d4caf0cec642887371203c6339d9738",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.9",
+                "php": "^8.1.0",
+                "vlucas/phpdotenv": "^5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.3"
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "LucianoTonet\\GroqPHP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luciano Tonet",
+                    "email": "tonetlds@gmail.com"
+                }
+            ],
+            "description": "PHP library to access Groq REST API",
+            "support": {
+                "issues": "https://github.com/lucianotonet/groq-php/issues",
+                "source": "https://github.com/lucianotonet/groq-php/tree/v0.0.10"
+            },
+            "time": "2024-10-29T21:45:23+00:00"
         },
         {
             "name": "monolog/monolog",

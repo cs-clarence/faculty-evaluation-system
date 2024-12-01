@@ -1,9 +1,9 @@
-<div class="container mx-auto p-4 flex-grow flex flex-col gap-4">
-    <h2 class="text-2xl">{{ $formSubmissionPeriod->name }}
-        ({{ $formSubmissionPeriod->semester }})</h2>
-    <h2 class="text-xl">{{ $studentSubject->subject_name }} ({{ $studentSubject->subject_code }})
-    </h2>
-    <form wire:submit.prevent="save">
+<form wire:submit.prevent="save" class="container mx-auto p-4 flex-grow flex flex-col gap-4">
+    <div class="flex flex-col gap-4 justify-center bg-white shadow-md rounded-lg p-6 mb-4 ">
+        <h2 class="text-2xl">{{ $formSubmissionPeriod->name }}
+            ({{ $formSubmissionPeriod->semester }})</h2>
+        <h2 class="text-xl">{{ $studentSubject->subject_name }} ({{ $studentSubject->subject_code }})
+        </h2>
         @isset($this->teacher)
             <h2 class="text-xl">{{ $teacher->name }}</h2>
             <input type="hidden" name="teacher_id" value="{{ $teacher->id }}" wire:model="form.teacher_id" />
@@ -24,9 +24,9 @@
                 @enderror
             </div>
         @endisset
-        <x-forms.form-submission-form :form="$formModel" :readonly="false" :createWireModel="$this->getCreateWireModel()" />
-        <div class="flex justify-end mb-16">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Submit</button>
-        </div>
-    </form>
-</div>
+    </div>
+    <x-forms.form-submission-form :form="$formModel" :readonly="false" :createWireModel="$this->getCreateWireModel()" />
+    <div class="flex justify-end mb-16">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Submit</button>
+    </div>
+</form>
