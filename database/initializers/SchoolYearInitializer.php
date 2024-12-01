@@ -18,7 +18,7 @@ class SchoolYearInitializer extends Initializer
 
         for ($i = $start; $i <= $until; $i++) {
             if (!SchoolYear::whereYearStart($i)->exists()) {
-                SchoolYearService::create($i, 3);
+                SchoolYearService::create($i, 2);
             }
         }
     }

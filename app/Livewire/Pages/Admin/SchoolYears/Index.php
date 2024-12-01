@@ -30,6 +30,9 @@ class Index extends Component
     public function openForm()
     {
         $this->isFormOpen = true;
+        if (!isset($this->form->semesters)) {
+            $this->form->semesters = 2;
+        }
     }
 
     public function save()
@@ -48,9 +51,9 @@ class Index extends Component
 
     public function edit(SchoolYear $sy)
     {
-        $this->isFormOpen = true;
         $this->schoolYear = $sy;
         $this->form->set($sy);
+        $this->openForm();
     }
 
     public function delete(SchoolYear $sy)

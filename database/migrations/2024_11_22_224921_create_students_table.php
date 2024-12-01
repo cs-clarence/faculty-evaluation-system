@@ -55,6 +55,13 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
+                ->nullable()
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->timestampTz('archived_at')->nullable();
 
             $table->unique(['student_id', 'semester_id']);
@@ -76,6 +83,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
+                ->nullable()
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();

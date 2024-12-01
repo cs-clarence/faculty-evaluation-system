@@ -6,6 +6,7 @@ use App\Livewire\Forms\FormSubmissionPeriodForm;
 use App\Models\Form;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Semester;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
 
@@ -34,6 +35,7 @@ class Index extends Component
             ->lazy();
 
         $semesters = Semester::with(['schoolYear'])
+            ->whereHas('schoolYear', fn(Builder $schoolYear) => $schoolYear->active())
             ->withCount(['schoolYear'])
             ->orderByDesc('school_year_id')
             ->orderByDesc('semester')

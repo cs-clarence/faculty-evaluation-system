@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\Archivable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -55,5 +56,16 @@ class FormSubmissionPeriod extends Model
     public function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d\Tg:i a');
+    }
+
+    public function scopeOpen(Builder $builder)
+    {
+        $now = now();
+        $builder
+            ->where('open', true)
+            ->where(fn(Builder $builder) => $builder
+                    ->where('starts_at', '>=', $now)
+                    ->where('ends_at', '<=', $now)
+            );
     }
 }

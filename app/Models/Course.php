@@ -47,5 +47,7 @@ class Course extends Model
         if ($sectionCount > 0) {
             return true;
         }
+
+        return false;
     }
 }

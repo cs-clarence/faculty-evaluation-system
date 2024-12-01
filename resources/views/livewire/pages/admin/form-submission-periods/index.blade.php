@@ -153,19 +153,19 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mb-4">
-                        <label for="is_open" class="block text-sm font-medium text-gray-700">Open</label>
+                    <div class="mb-4 flex flex-row items-center gap-2">
                         <input type="checkbox" name="is_open" id="is_open" wire:model="form.is_open">
+                        <label for="is_open" class="block text-sm font-medium text-gray-700">Open</label>
                         @error('form.is_open')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-4 flex flex-row items-center gap-2">
+                        <input type="checkbox" name="is_submissions_editable" id="is_submissions_editable"
+                            wire:model="form.is_submissions_editable">
                         <label for="is_submissions_editable"
                             class="block text-sm font-medium text-gray-700">Submissions
                             Editable</label>
-                        <input type="checkbox" name="is_submissions_editable" id="is_submissions_editable"
-                            wire:model="form.is_submissions_editable">
                         @error('form.is_submissions_editable')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror

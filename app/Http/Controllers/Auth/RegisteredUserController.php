@@ -30,6 +30,7 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         $courses = Course::withoutArchived()
+            ->has('courseSubjects')
             ->orderBy('name')
             ->orderBy('code')
             ->orderBy('department_id')
@@ -40,7 +41,9 @@ class RegisteredUserController extends Controller
             ->orderBy('code')
             ->lazy();
 
-        $schoolYear = SchoolYear::orderByDesc('year_start')->lazy();
+        $schoolYear = SchoolYear::active()
+            ->orderByDesc('year_start')
+            ->lazy();
 
         return view('auth.register', [
             'roles' => Role::where('hidden', false)->get(),

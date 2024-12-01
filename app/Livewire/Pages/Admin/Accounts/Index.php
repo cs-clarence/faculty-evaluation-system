@@ -39,7 +39,8 @@ class Index extends Component
 
         $roles = Role::orderBy('code')->orderBy('display_name')->lazy();
 
-        $schoolYears = SchoolYear::orderByDesc('year_start')
+        $schoolYears = SchoolYear::active()
+            ->orderByDesc('year_start')
             ->orderByDesc('year_end')
             ->lazy();
 

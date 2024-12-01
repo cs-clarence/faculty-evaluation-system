@@ -13,13 +13,13 @@
                 {{ $roleCode->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected>Select a role</option>
+                <option value="" selected disabled>Select a role</option>
                 @forelse ($roles as $role)
                     <option value="{{ $role->code }}">
                         {{ $role->display_name }}
                     </option>
                 @empty
-                    <option value="" selected>No roles found</option>
+                    <option value="" selected disabled>No roles found</option>
                 @endforelse
             </select>
             @error($roleCodeName)
@@ -110,14 +110,14 @@
                 {{ $courseId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected>Select a course</option>
+                <option value="" selected disabled>Select a course</option>
                 @forelse ($courses as $course)
                     <option value="{{ $course->id }}">
                         {{ $course->name }}
                         ({{ $course->code }})
                     </option>
                 @empty
-                    <option value="" selected>No courses found</option>
+                    <option value="" selected disabled>No courses found</option>
                 @endforelse
             </select>
             @error($courseIdName)
@@ -133,16 +133,49 @@
                 {{ $startingSchoolYearId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected>Select a school year</option>
+                <option value="" selected disabled>Select a school year</option>
                 @forelse ($schoolYears as $startingSchoolYear)
                     <option value="{{ $startingSchoolYear->id }}">
                         {{ $startingSchoolYear->year_start }} - {{ $startingSchoolYear->year_end }}
                     </option>
                 @empty
-                    <option value="" selected>No school years found</option>
+                    <option value="" selected disabled>No school years found</option>
                 @endforelse
             </select>
             @error($startingSchoolYearIdName)
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+    @endisset
+    @isset($realignSubjects)
+        @php($realignSubjectsName = $realignSubjects->attributes['name'] ?? 'form.realign_subjects')
+
+        <div class="mb-4 flex flex-row items-center gap-2">
+            <input
+                {{ $realignSubjects->attributes->merge([
+                    'id' => $realignSubjectsName,
+                    'type' => 'checkbox',
+                    'name' => $realignSubjectsName,
+                ]) }} />
+            <label for="{{ $realignSubjectsName }}" class="block text-sm font-medium text-gray-700">Realign
+                Subjects</label>
+            @error($realignSubjectsName)
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+    @endisset
+    @isset($deleteSubjectsFromPreviousCourse)
+        @php($deleteSubjectsFromPreviousCourseName = $deleteSubjectsFromPreviousCourse->attributes['name'] ?? 'form.delete_subjects_from_previous_course')
+        <div class="mb-4 flex flex-row items-center gap-2">
+            <input
+                {{ $deleteSubjectsFromPreviousCourse->attributes->merge([
+                    'id' => $deleteSubjectsFromPreviousCourseName,
+                    'type' => 'checkbox',
+                    'name' => $deleteSubjectsFromPreviousCourseName,
+                ]) }} />
+            <label for="{{ $deleteSubjectsFromPreviousCourseName }}" class="block text-sm font-medium text-gray-700">Delete
+                Subjects From Previous Course</label>
+            @error($deleteSubjectsFromPreviousCourseName)
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
         </div>
@@ -155,14 +188,14 @@
                 {{ $departmentId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected>Select a department</option>
+                <option value="" selected disabled>Select a department</option>
                 @forelse ($departments as $department)
                     <option value="{{ $department->id }}">
                         {{ $department->name }}
                         ({{ $department->code }})
                     </option>
                 @empty
-                    <option value="" selected>No departments found</option>
+                    <option value="" selected disabled>No departments found</option>
                 @endforelse
             </select>
             @error($departmentIdName)
@@ -170,6 +203,7 @@
             @enderror
         </div>
     @endisset
+
     @isset($slot)
         {{ $slot }}
     @endisset

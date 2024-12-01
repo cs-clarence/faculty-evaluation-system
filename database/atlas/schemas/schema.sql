@@ -1,8 +1,4 @@
 --
--- PostgreSQL database dump
---
-
---
 -- Name: course_semesters; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -701,6 +697,7 @@ CREATE TABLE public.student_semesters (
     id bigint NOT NULL,
     student_id bigint NOT NULL,
     semester_id bigint NOT NULL,
+    semester_section_id bigint,
     archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -734,7 +731,7 @@ CREATE TABLE public.student_subjects (
     id bigint NOT NULL,
     student_semester_id bigint NOT NULL,
     course_subject_id bigint NOT NULL,
-    semester_section_id bigint NOT NULL,
+    semester_section_id bigint,
     archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -1755,6 +1752,14 @@ ALTER TABLE ONLY public.student_semesters
 
 
 --
+-- Name: student_semesters student_semesters_semester_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_semester_section_id_foreign FOREIGN KEY (semester_section_id) REFERENCES public.semester_sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: student_semesters student_semesters_student_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1872,15 +1877,3 @@ ALTER TABLE ONLY public.teachers
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- PostgreSQL database dump complete
---
-
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 16.0
--- Dumped by pg_dump version 16.3

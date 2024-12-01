@@ -31,6 +31,11 @@ class Semester extends Model
         return $this->belongsToMany(Section::class, SemesterSection::class);
     }
 
+    public function studentSemesters()
+    {
+        return $this->hasMany(StudentSemester::class);
+    }
+
     public function formSubmissionPeriods(): HasMany
     {
         return $this->hasMany(FormSubmissionPeriod::class);

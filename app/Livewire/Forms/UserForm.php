@@ -12,7 +12,6 @@ use DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
-use Log;
 
 class UserForm extends BaseForm
 {
@@ -24,12 +23,13 @@ class UserForm extends BaseForm
     public ?string $password_confirmation;
     public ?string $role_code;
     public ?string $student_number;
-    public ?int $course_id;
+    public ?int $course_id = null;
     public ?int $department_id;
-    public ?int $starting_school_year_id;
+    public ?int $starting_school_year_id = null;
     public bool $include_password = true;
     public bool $include_base = true;
-    public bool $recreate_subjects = false;
+    public bool $realign_subjects = true;
+    public bool $delete_subjects_from_previous_course = false;
 
     public function rules()
     {
@@ -102,8 +102,7 @@ class UserForm extends BaseForm
                 if ($this->include_base) {
                     UserService::update($user, $this->name, $this->email, RoleCode::from($this->role_code));
                     if ($this->role_code === 'student') {
-                        Log::info($this->all());
-                        StudentService::update($user, $this->student_number, $this->course_id, $this->starting_school_year_id);
+                        StudentService::update($user, $this->student_number, $this->course_id, $this->starting_school_year_id, $this->realign_subjects, $this->delete_subjects_from_previous_course);
                     }
                     if ($this->role_code === 'teacher') {
                         TeacherService::update($user, $this->department_id);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,10 +41,12 @@ class SchoolYear extends Model
 
     public function hasDependents()
     {
-        $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriods'])->get();
+        $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriods', 'studentSemesters'])->get();
 
         foreach ($semesters as $semester) {
-            if ($semester->sections_count > 0 || $semester->form_submission_periods_count > 0) {
+            if ($semester->sections_count > 0 || $semester->form_submission_periods_count > 0
+                || $semester->student_semesters_count > 0
+            ) {
                 return true;
             }
         }
@@ -54,6 +57,11 @@ class SchoolYear extends Model
         }
 
         return false;
+    }
+
+    public function scopeActive(Builder $builder)
+    {
+        $builder->where('year_start', '<=', now()->year);
     }
 
     public function __tostring()

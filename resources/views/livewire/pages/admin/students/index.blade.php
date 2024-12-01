@@ -98,10 +98,23 @@
                         <x-slot:id name="form.id" wire:model="form.id"></x-slot:id>
                         <x-slot:name name="form.name" wire:model="form.name"></x-slot:name>
                         <x-slot:email name="form.email" wire:model="form.email"></x-slot:email>
-                        <x-slot:courseId name="form.course_id" wire:model="form.course_id"></x-slot:courseId>
                         <x-slot:studentNumber name="form.student_number" wire:model="form.student_number"></x-slot:studentNumber>
+                        <x-slot:courseId name="form.course_id" wire:model.live="form.course_id"></x-slot:courseId>
                         <x-slot:startingSchoolYearId name="form.starting_school_year_id"
-                            wire:model="form.starting_school_year_id"></x-slot:startingSchoolYearId>
+                            wire:model.live="form.starting_school_year_id"></x-slot:startingSchoolYearId>
+
+                        @isset($this->model)
+                            @if (
+                                $this->form->course_id !== $this->model->student->course_id ||
+                                    $this->form->starting_school_year_id !== $this->model->student->starting_school_year_id)
+                                <x-slot:realignSubjects name="form.realign_subjects"
+                                    wire:model="form.realign_subjects"></x-slot:realignSubjects>
+                            @endif
+                            @if ($this->form->course_id !== $this->model->student->course_id)
+                                <x-slot:deleteSubjectsFromPreviousCourse name="form.delete_subjects_from_previous_course"
+                                    wire:model="form.delete_subjects_from_previous_course"></x-slot:deleteSubjectsFromPreviousCourse>
+                            @endif
+                        @endisset
                     @endif
                     @if ($this->form->include_password)
                         <x-slot:password name="form.password" wire:model="form.password"></x-slot:password>

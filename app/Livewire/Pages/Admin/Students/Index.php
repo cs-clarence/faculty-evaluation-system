@@ -29,12 +29,14 @@ class Index extends Component
             ->lazy();
 
         $courses = Course::withoutArchived()
+            ->has('courseSubjects')
             ->orderBy('department_id')
             ->orderBy('code')
             ->orderBy('name')
             ->lazy();
 
-        $schoolYears = SchoolYear::orderByDesc('year_start')
+        $schoolYears = SchoolYear::active()
+            ->orderByDesc('year_start')
             ->orderByDesc('year_end')
             ->lazy();
 
@@ -64,6 +66,7 @@ class Index extends Component
 
     public function edit(User $model)
     {
+        $model->load(['student', 'teacher']);
         $this->model = $model;
         $this->form->set($model);
         $this->form->setupEdit(includeBase: true);

@@ -26,10 +26,8 @@ class SchoolYearForm extends BaseForm
                     ->where('year_end', $this->year_end)
                     ->ignore($this->id, 'id'),
             ],
-
             'year_end' => ['required', 'numeric', 'gte:2000', 'gt:year_start', 'lte:' . $this->year_start + 1],
-
-            'semesters' => ['required', 'numeric', 'gt:0', 'lt:4'],
+            'semesters' => ['required', 'numeric', 'gte:2'],
         ];
     }
 
