@@ -1,6 +1,7 @@
 --
 -- PostgreSQL database dump
 --
+
 --
 -- Name: course_semesters; Type: TABLE; Schema: public; Owner: -
 --
@@ -1315,11 +1316,11 @@ ALTER TABLE ONLY public.form_submissions
 
 
 --
--- Name: form_submissions form_submissions_teacher_id_student_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: form_submissions form_submissions_teacher_id_student_subject_id_form_submission_; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.form_submissions
-    ADD CONSTRAINT form_submissions_teacher_id_student_subject_id_unique UNIQUE (teacher_id, student_subject_id);
+    ADD CONSTRAINT form_submissions_teacher_id_student_subject_id_form_submission_ UNIQUE (teacher_id, student_subject_id, form_submission_period_id);
 
 
 --
@@ -1880,3 +1881,6 @@ ALTER TABLE ONLY public.users
 --
 -- PostgreSQL database dump
 --
+
+-- Dumped from database version 16.0
+-- Dumped by pg_dump version 16.3
