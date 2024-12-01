@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\StudentSemester;
 use App\Models\StudentSubject;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class StudentService
 {
@@ -156,6 +157,11 @@ class StudentService
         $this->alignStudentSubjects($student, $courseId, null, $schoolYear, null);
 
         return $student;
+    }
+
+    public function currentStudent()
+    {
+        return Student::whereUserId(Auth()->user()->id);
     }
 
     public function update(User | int $user, string $studentNumber, int $courseId, SchoolYear | int $startingSchoolYear,

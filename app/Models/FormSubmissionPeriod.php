@@ -58,14 +58,12 @@ class FormSubmissionPeriod extends Model
         return $date->format('Y-m-d\Tg:i a');
     }
 
-    public function scopeOpen(Builder $builder)
+    public function scopeIsOpen(Builder $builder)
     {
         $now = now();
-        $builder
-            ->where('open', true)
-            ->where(fn(Builder $builder) => $builder
-                    ->where('starts_at', '>=', $now)
-                    ->where('ends_at', '<=', $now)
-            );
+        return $builder
+            ->where('is_open', true)
+            ->where('starts_at', '<=', $now)
+            ->where('ends_at', '>=', $now);
     }
 }

@@ -11,4 +11,9 @@ class TeacherSemester extends Model
 {
     //
     protected $table = 'teacher_semesters';
+
+    public function teacherSubjects()
+    {
+        return $this->hasMany(TeacherSubject::class);
+    }
 }

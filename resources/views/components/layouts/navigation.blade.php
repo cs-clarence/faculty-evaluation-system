@@ -16,7 +16,7 @@
             }
 
             .main-content {
-                transition: margin-left 0.1s ease, width 0.3s ease;
+                transition: transform 0.3s ease;
             }
 
             .nav-link-open {
@@ -81,7 +81,7 @@
                 <span>SPCF - TEACHERS EVALUATION SYSTEM</span>
             </div>
         </div>
-        <section id="mainContent" class="main-content flex-1 p-6 transition-all duration-300 ml-0">
+        <section id="mainContent" class="main-content flex flex-col flex-1 p-6 transition-all duration-300 ml-0">
             @isset($slot)
                 {{ $slot }}
             @else
@@ -97,11 +97,13 @@
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.getElementById('mainContent');
                 const navLink = document.getElementById('navLink');
+                const body = document.querySelector('body');
 
                 const open = () => {
                     sidebar.classList.remove('sidebar-closed');
                     sidebar.classList.add('sidebar-open');
-                    mainContent.style.marginLeft = '256px'; // Adjust margin to prevent content overlap
+                    body.style.overflow = 'hidden'; // Prevent body scroll
+                    mainContent.style.transform = 'translateX(256px)'; // Adjust margin to prevent content overlap
                     sidebarToggle.style.transform = 'translateX(256px)'; // Move the button along with sidebar
                     navLink.classList.add('nav-link-open'); // Add the margin class to nav link
                 }
@@ -109,7 +111,8 @@
                 const close = () => {
                     sidebar.classList.remove('sidebar-open');
                     sidebar.classList.add('sidebar-closed');
-                    mainContent.style.marginLeft = '0'; // Reset margin
+                    body.style.overflow = 'auto'; // Enable body scroll
+                    mainContent.style.transform = 'translateX(0)'; // Reset margin
                     sidebarToggle.style.transform = 'translateX(0)'; // Reset button position
                     navLink.classList.remove('nav-link-open'); // Remove the margin class from nav link
                 }

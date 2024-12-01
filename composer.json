@@ -6,12 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "awobaz/compoships": "^2.3",
+        "fakerphp/faker": "^1.24",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.34",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",
-        "livewire/livewire": "^3.5",
-        "fakerphp/faker": "^1.24"
+        "livewire/livewire": "^3.5"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.2",

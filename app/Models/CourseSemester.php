@@ -20,7 +20,7 @@ class CourseSemester extends Model
     /**
      * Relationship with Course.
      */
-    public function courses()
+    public function course()
     {
         return $this->belongsTo(Course::class);
     }

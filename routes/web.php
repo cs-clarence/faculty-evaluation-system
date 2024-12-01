@@ -60,6 +60,7 @@ Route::middleware(['auth:student'])
     ->prefix('student')
     ->group(function () {
         Route::get('/dashboard', App\Livewire\Pages\Student\Dashboard\Index::class)->name('dashboard.index');
+        Route::get('/form-submission/{studentSubject}/{formSubmissionPeriod}/{teacher?}', App\Livewire\Pages\Student\FormSubmission\Index::class)->name('form-submission.index');
     });
 
 Route::middleware(['auth:teacher'])
