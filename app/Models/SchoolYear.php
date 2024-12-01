@@ -33,6 +33,11 @@ class SchoolYear extends Model
         $this->save();
     }
 
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'starting_school_year_id');
+    }
+
     public function hasDependents()
     {
         $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriods'])->get();
@@ -41,6 +46,11 @@ class SchoolYear extends Model
             if ($semester->sections_count > 0 || $semester->form_submission_periods_count > 0) {
                 return true;
             }
+        }
+        $studentsCount = isset($this->students_count) ? $this->students_count : $this->students()->count();
+
+        if ($studentsCount > 0) {
+            return true;
         }
 
         return false;

@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Database\Initializers\DatabaseInitializer;
+use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
-use \DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,8 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::transaction(function () {
-            (new DatabaseInitializer())->run();
-        });
+        (new DatabaseInitializer())->run();
+        $this->call([
+            UserSeeder::class,
+        ]);
     }
 }

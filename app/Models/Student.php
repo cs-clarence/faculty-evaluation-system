@@ -21,12 +21,20 @@ class Student extends Model
         'user_id',
         'student_number',
         'address',
+        'course_id',
+        'starting_school_year_id',
     ];
+
     protected $table = 'students';
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 
     public function studentSemesters()
@@ -37,6 +45,11 @@ class Student extends Model
     public function studentSubjects()
     {
         return $this->hasManyThrough(StudentSubject::class, StudentSemester::class);
+    }
+
+    public function schoolYear()
+    {
+        return $this->belongsTo(SchoolYear::class, 'starting_school_year_id');
     }
 
     public function hasDependents()

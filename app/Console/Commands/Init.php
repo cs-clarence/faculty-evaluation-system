@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Database\Initializers\DatabaseInitializer;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class Init extends Command
 {
@@ -27,9 +26,7 @@ class Init extends Command
      */
     public function handle()
     {
-        DB::transaction(function () {
-            (new DatabaseInitializer())->run();
-        });
+        (new DatabaseInitializer())->run();
         $this->info("Application initialized");
     }
 }

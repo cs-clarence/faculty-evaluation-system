@@ -4,9 +4,8 @@ namespace App\Livewire\Forms;
 
 use App\Models\Department;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-class DepartmentForm extends Form
+class DepartmentForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -24,7 +23,7 @@ class DepartmentForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         if (isset($this->id)) {
@@ -38,11 +37,5 @@ class DepartmentForm extends Form
     public function set(Department $department)
     {
         $this->fill($department->attributesToArray());
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
     }
 }

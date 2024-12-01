@@ -17,7 +17,12 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * @use HasFactory<\Database\Factories\UserFactory>
+     */
+    use HasFactory;
+    use HasApiTokens, Notifiable;
     use Archivable {
         Archivable::archive as baseArchive;
         Archivable::unarchive as baseUnarchive;
@@ -58,7 +63,7 @@ class User extends Authenticatable
     //Relationship for the role
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function student()
@@ -77,14 +82,12 @@ class User extends Authenticatable
 
         if (isset($teacher)) {
             $teacher->baseArchive();
-            return;
         }
 
         $student = $this->student;
 
         if (isset($student)) {
             $student->baseArchive();
-            return;
         }
 
         $this->baseArchive();
@@ -96,14 +99,12 @@ class User extends Authenticatable
 
         if (isset($teacher)) {
             $teacher->baseUnarchive();
-            return;
         }
 
         $student = $this->student;
 
         if (isset($student)) {
             $student->baseUnarchive();
-            return;
         }
 
         $this->baseUnarchive();

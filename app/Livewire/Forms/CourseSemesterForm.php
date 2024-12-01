@@ -5,10 +5,9 @@ namespace App\Livewire\Forms;
 use App\Models\CourseSemester;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 use \DB;
 
-class CourseSemesterForm extends Form
+class CourseSemesterForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -29,7 +28,7 @@ class CourseSemesterForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         $uniqueRule = Rule::unique('course_semesters')
@@ -61,11 +60,5 @@ class CourseSemesterForm extends Form
              ...$courseSemester->attributesToArray(),
             'subject_ids' => $courseSemester->subjects()->get(['subjects.id'])->pluck('id')->toArray(),
         ]);
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
     }
 }

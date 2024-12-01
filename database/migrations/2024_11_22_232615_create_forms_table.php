@@ -9,6 +9,7 @@ use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Semester;
 use App\Models\StudentSubject;
+use App\Models\Teacher;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -76,14 +77,17 @@ return new class extends Migration
             $table->boolean('is_open');
             $table->boolean('is_submissions_editable');
             $table->dateTimeTz('archived_at')->nullable();
-            $table->foreignIdFor(Semester::class)
+            $table->foreignIdFor(Semester::class, 'semester_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->foreignIdFor(Form::class)
+            $table->foreignIdFor(Form::class, 'form_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->unique(['semester_id', 'form_id']);
+
             $table->timestampsTz();
         });
 
@@ -91,19 +95,33 @@ return new class extends Migration
             $table->id();
 
             $table->foreignIdFor(StudentSubject::class, 'student_subject_id')
+                ->unique()
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(FormSubmissionPeriod::class)
+            $table->foreignIdFor(Teacher::class, 'teacher_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(Form::class)
+            $table->foreignIdFor(FormSubmissionPeriod::class, 'form_submission_period_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Form::class, 'form_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->unique([
+                'teacher_id',
+                'student_subject_id',
+                'form_submission_period_id',
+            ]);
+
+            $table->timestampTz('archived_at')->nullable();
 
             $table->timestampsTz();
         });

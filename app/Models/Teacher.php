@@ -19,7 +19,7 @@ class Teacher extends Model
     }
 
     protected $table = 'teachers';
-    public $fillable = ['user_id'];
+    public $fillable = ['user_id', 'department_id'];
 
     public function user()
     {
@@ -34,6 +34,11 @@ class Teacher extends Model
     public function teacherSubjects()
     {
         return $this->hasManyThrough(TeacherSubject::class, TeacherSemester::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function hasDependents()

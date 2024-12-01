@@ -73,7 +73,7 @@ class Course extends Component
 
     public function saveCourseSemester()
     {
-        $this->courseSemesterForm->save();
+        $this->courseSemesterForm->submit();
         $this->closeCourseSemesterForm();
     }
 

@@ -1,4 +1,6 @@
-
+--
+-- PostgreSQL database dump
+--
 --
 -- Name: course_semesters; Type: TABLE; Schema: public; Owner: -
 --
@@ -381,8 +383,10 @@ ALTER SEQUENCE public.form_submission_periods_id_seq OWNED BY public.form_submis
 CREATE TABLE public.form_submissions (
     id bigint NOT NULL,
     student_subject_id bigint NOT NULL,
+    teacher_id bigint NOT NULL,
     form_submission_period_id bigint NOT NULL,
     form_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
 );
@@ -727,7 +731,6 @@ ALTER SEQUENCE public.student_semesters_id_seq OWNED BY public.student_semesters
 
 CREATE TABLE public.student_subjects (
     id bigint NOT NULL,
-    subject_id bigint NOT NULL,
     student_semester_id bigint NOT NULL,
     course_subject_id bigint NOT NULL,
     semester_section_id bigint NOT NULL,
@@ -762,10 +765,11 @@ ALTER SEQUENCE public.student_subjects_id_seq OWNED BY public.student_subjects.i
 
 CREATE TABLE public.students (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    course_id integer,
-    student_number character varying(255),
-    address character varying(255) NOT NULL,
+    student_number character varying(255) NOT NULL,
+    address character varying(255),
+    starting_school_year_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    course_id bigint NOT NULL,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone,
     archived_at timestamp(0) with time zone
@@ -863,7 +867,6 @@ ALTER SEQUENCE public.teacher_semesters_id_seq OWNED BY public.teacher_semesters
 
 CREATE TABLE public.teacher_subjects (
     id bigint NOT NULL,
-    subject_id bigint NOT NULL,
     teacher_semester_id bigint NOT NULL,
     course_subject_id bigint NOT NULL,
     semester_section_id bigint NOT NULL,
@@ -899,6 +902,7 @@ ALTER SEQUENCE public.teacher_subjects_id_seq OWNED BY public.teacher_subjects.i
 CREATE TABLE public.teachers (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
+    department_id bigint NOT NULL,
     archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -1287,11 +1291,35 @@ ALTER TABLE ONLY public.form_submission_periods
 
 
 --
+-- Name: form_submission_periods form_submission_periods_semester_id_form_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_periods
+    ADD CONSTRAINT form_submission_periods_semester_id_form_id_unique UNIQUE (semester_id, form_id);
+
+
+--
 -- Name: form_submissions form_submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.form_submissions
     ADD CONSTRAINT form_submissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submissions form_submissions_student_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_student_subject_id_unique UNIQUE (student_subject_id);
+
+
+--
+-- Name: form_submissions form_submissions_teacher_id_student_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_teacher_id_student_subject_id_unique UNIQUE (teacher_id, student_subject_id);
 
 
 --
@@ -1439,11 +1467,11 @@ ALTER TABLE ONLY public.student_subjects
 
 
 --
--- Name: student_subjects student_subjects_student_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: student_subjects student_subjects_student_semester_id_course_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.student_subjects
-    ADD CONSTRAINT student_subjects_student_semester_id_subject_id_unique UNIQUE (student_semester_id, subject_id);
+    ADD CONSTRAINT student_subjects_student_semester_id_course_subject_id_unique UNIQUE (student_semester_id, course_subject_id);
 
 
 --
@@ -1495,11 +1523,11 @@ ALTER TABLE ONLY public.teacher_subjects
 
 
 --
--- Name: teacher_subjects teacher_subjects_teacher_semester_id_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: teacher_subjects teacher_subjects_teacher_semester_id_course_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teacher_subjects
-    ADD CONSTRAINT teacher_subjects_teacher_semester_id_subject_id_unique UNIQUE (teacher_semester_id, subject_id);
+    ADD CONSTRAINT teacher_subjects_teacher_semester_id_course_subject_id_unique UNIQUE (teacher_semester_id, course_subject_id);
 
 
 --
@@ -1678,6 +1706,14 @@ ALTER TABLE ONLY public.form_submissions
 
 
 --
+-- Name: form_submissions form_submissions_teacher_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_teacher_id_foreign FOREIGN KEY (teacher_id) REFERENCES public.teachers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: sections sections_course_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1750,19 +1786,19 @@ ALTER TABLE ONLY public.student_subjects
 
 
 --
--- Name: student_subjects student_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.student_subjects
-    ADD CONSTRAINT student_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: students students_course_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.students
     ADD CONSTRAINT students_course_id_foreign FOREIGN KEY (course_id) REFERENCES public.courses(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: students students_starting_school_year_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.students
+    ADD CONSTRAINT students_starting_school_year_id_foreign FOREIGN KEY (starting_school_year_id) REFERENCES public.school_years(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1806,19 +1842,19 @@ ALTER TABLE ONLY public.teacher_subjects
 
 
 --
--- Name: teacher_subjects teacher_subjects_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.teacher_subjects
-    ADD CONSTRAINT teacher_subjects_subject_id_foreign FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: teacher_subjects teacher_subjects_teacher_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teacher_subjects
     ADD CONSTRAINT teacher_subjects_teacher_semester_id_foreign FOREIGN KEY (teacher_semester_id) REFERENCES public.teacher_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teachers teachers_department_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teachers
+    ADD CONSTRAINT teachers_department_id_foreign FOREIGN KEY (department_id) REFERENCES public.departments(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1835,3 +1871,12 @@ ALTER TABLE ONLY public.teachers
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--

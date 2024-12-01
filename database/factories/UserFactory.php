@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
+use App\Models\RoleCode;
+use Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -33,8 +36,38 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function password(string $password)
+    {
+        return $this->state(fn(array $attributes) => [
+            'password' => Hash::make($password),
+        ]);
+    }
+
+    public function email(string $email)
+    {
+        return $this->state(fn(array $attributes) => [
+            'email' => $email,
+        ]);
+    }
+
+    public function name(string $name)
+    {
+        return $this->state(fn(array $attributes) => [
+            'name' => $name,
+        ]);
+    }
+
+    public function admin()
+    {
+        $adminRoleId = Role::whereCode(RoleCode::Admin)->first(['id'])->id;
+
+        return $this->state(fn(array $attributes) => [
+            'role_id' => $adminRoleId,
         ]);
     }
 }

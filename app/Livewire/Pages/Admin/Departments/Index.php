@@ -28,7 +28,7 @@ class Index extends Component
 
     public function save()
     {
-        $this->form->save();
+        $this->form->submit();
         $this->closeForm();
     }
 

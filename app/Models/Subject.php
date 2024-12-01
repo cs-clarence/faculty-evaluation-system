@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,11 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Subject extends Model
 {
-    use HasFactory;
-    use Archivable {
-        Archivable::archive as baseArchive;
-        Archivable::unarchive as baseUnarchive;
-    }
+    use HasFactory, Archivable;
 
     protected $table = 'subjects';
 
@@ -50,13 +45,6 @@ class Subject extends Model
             ->using(StudentSubject::class);
     }
 
-    public function isArchived(): Attribute
-    {
-        return new Attribute(
-            get: fn() => isset($this->archived_at),
-        );
-    }
-
     public function hasDependents()
     {
         $courseCount = isset($this->course_semesters_count) ? $this->course_semesters_count : $this->courseSemesters()->count();
@@ -66,17 +54,5 @@ class Subject extends Model
         }
 
         return false;
-    }
-
-    public function archive()
-    {
-        $this->user()->archive();
-        $this->baseArchive();
-    }
-
-    public function unarchive()
-    {
-        $this->user()->unarchive();
-        $this->baseUnarchive();
     }
 }

@@ -28,7 +28,6 @@ RUN git config --global --add safe.directory /var/www/html \
 FROM php:fpm-alpine AS build-main-base
 ARG ENV=development
 ENV ENV=$ENV
-LABEL authors="rencema"
 
 RUN set -ex \
     && apk --no-cache add postgresql-dev postgresql-libs icu-dev nginx supervisor \

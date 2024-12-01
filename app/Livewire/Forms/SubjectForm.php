@@ -4,9 +4,8 @@ namespace App\Livewire\Forms;
 
 use App\Models\Subject;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-class SubjectForm extends Form
+class SubjectForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -24,7 +23,7 @@ class SubjectForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         if (isset($this->id)) {
@@ -37,11 +36,5 @@ class SubjectForm extends Form
     public function set(Subject $subject)
     {
         $this->fill($subject->attributesToArray());
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
     }
 }

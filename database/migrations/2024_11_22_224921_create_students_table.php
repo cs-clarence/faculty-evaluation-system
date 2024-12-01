@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\Course;
 use App\Models\CourseSubject;
+use App\Models\SchoolYear;
 use App\Models\Semester;
 use App\Models\SemesterSection;
 use App\Models\Student;
 use App\Models\StudentSemester;
-use App\Models\Subject;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,17 +21,26 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('course_id')->nullable();
 
-            $table->string('student_number')->unique()->nullable();
-            $table->string('address');
+            $table->string('student_number')->unique();
+            $table->string('address')->nullable();
+            $table->foreignIdFor(SchoolYear::class, 'starting_school_year_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'user_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->foreignIdFor(Course::class, 'course_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
             // Add other student-specific fields here
             $table->timestampsTz();
 
             $table->timestampTz('archived_at')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade')->onUpdate('cascade');
         });
 
         Schema::create('student_semesters', function (Blueprint $table) {
@@ -54,11 +65,6 @@ return new class extends Migration
         Schema::create('student_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Subject::class, 'subject_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignIdFor(StudentSemester::class, 'student_semester_id')
                 ->constrained()
                 ->cascadeOnDelete()
@@ -74,7 +80,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->unique(['student_semester_id', 'subject_id']);
+            $table->unique(['student_semester_id', 'course_subject_id']);
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();

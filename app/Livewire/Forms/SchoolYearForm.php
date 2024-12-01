@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Forms;
 
+use App\Facades\Services\SchoolYearService;
 use App\Models\SchoolYear;
-use App\Models\Semester;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 use \DB;
 
-class SchoolYearForm extends Form
+class SchoolYearForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -21,13 +21,19 @@ class SchoolYearForm extends Form
 
         return [
             'id' => 'nullable|integer|exists:school_years,id',
-            'year_start' => 'required|numeric|gte:2000|lt:year_end',
+            'year_start' => ['required', 'numeric', 'gte:2000', 'lt:year_end',
+                Rule::unique('school_years', 'year_start')
+                    ->where('year_end', $this->year_end)
+                    ->ignore($this->id, 'id'),
+            ],
+
             'year_end' => ['required', 'numeric', 'gte:2000', 'gt:year_start', 'lte:' . $this->year_start + 1],
+
             'semesters' => ['required', 'numeric', 'gt:0', 'lt:4'],
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         if (isset($this->id)) {
@@ -38,31 +44,12 @@ class SchoolYearForm extends Form
                 $this->validate([
                     'semesters' => "gte:$currentSemesters",
                 ]);
-
-                $sy->update([
-                    'year_start' => $this->year_start,
-                    'year_end' => $this->year_end,
-                ]);
-
-                $sy->save();
-
-                $semesters = self::createNSemesters($sy, $this->semesters);
-
-                $sy->semesters()->saveMany($semesters);
+                SchoolYearService::update($sy, $this->year_start, $this->semesters);
             });
 
         } else {
             DB::transaction(function () {
-                $sy = new SchoolYear([
-                    'year_start' => $this->year_start,
-                    'year_end' => $this->year_end,
-                ]);
-
-                $sy->save();
-
-                $semesters = self::createNSemesters($sy, $this->semesters);
-
-                $sy->semesters()->saveMany($semesters);
+                SchoolYearService::create($this->year_start, $this->semesters);
             });
         }
     }
@@ -74,27 +61,5 @@ class SchoolYearForm extends Form
                  ...$sy->attributesToArray(),
                 'semesters' => $sy->semesters()->count()]
         );
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
-    }
-
-    private static function createNSemesters(SchoolYear $sy, int $semesters)
-    {
-        $semestersArr = [];
-        $count = $sy->semesters()->count();
-
-        $start = $count + 1;
-        for ($i = $start; $i <= $semesters; $i++) {
-            $semestersArr[] = new Semester([
-                'school_year_id' => $sy->id,
-                'semester' => $i,
-            ]);
-        }
-
-        return $semestersArr;
     }
 }

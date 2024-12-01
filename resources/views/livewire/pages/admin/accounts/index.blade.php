@@ -23,14 +23,18 @@
                 </thead>
                 <tbody class="text-gray-700">
                     @forelse($users as $user)
-                        <tr>
+                        <tr wire:key="{{ $user->id }}">
                             <td class="py-3 px-4 border-b">{{ $user->name }}</td>
                             <td class="py-3 px-4 border-b">{{ $user->email }}</td>
-                            <td class="py-3 px-4 border-b">{{ $user->role->name }}</td>
+                            <td class="py-3 px-4 border-b">{{ $user->role->display_name }}</td>
                             <td class="py-3 px-4 border-b">
                                 <button wire:click='edit({{ $user->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
+                                </button>
+                                <button wire:click='editPassword({{ $user->id }})'
+                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                                    Edit Password
                                 </button>
                                 @if ($user->is_archived)
                                     <button wire:click='unarchive({{ $user->id }})'
@@ -38,11 +42,13 @@
                                         Unarchive
                                     </button>
                                 @else
-                                    <button wire:click='archive({{ $user->id }})'
-                                        class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-                                        title="This department has courses associated with it. You can only archive it until you delete those courses.">
-                                        Archive
-                                    </button>
+                                    @if (!$user->isCurrentUser())
+                                        <button wire:click='archive({{ $user->id }})'
+                                            class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+                                            title="This department has courses associated with it. You can only archive it until you delete those courses.">
+                                            Archive
+                                        </button>
+                                    @endif
                                 @endif
                                 @if (!$user->hasDependents() && !$user->isCurrentUser())
                                     <button wire:click='delete({{ $user->id }})'
@@ -70,30 +76,44 @@
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
                 @isset($this->model)
-                    <h3 class="text-lg font-semibold mb-4">Edit Account</h3>
+                    @if ($this->form->include_base && !$this->form->include_password)
+                        <h3 class="text-lg font-semibold mb-4">Edit Account</h3>
+                    @elseif ($this->form->include_password)
+                        <h3 class="text-lg font-semibold mb-4">Edit Account Password</h3>
+                    @endif
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Account</h3>
                 @endisset
 
-                <!-- Add Subject Form -->
-                <form wire:submit.prevent="save">
-                    @csrf
-                    <input type="hidden" name="id" wire:model.defer="form.id">
-                    <div class="mb-4">
-                        <label for="code" class="block text-gray-700">Full Name</label>
-                        <input type="text" name="code" id="subjectID" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.name">
-                        @error('form.name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                <x-forms.user-form wire:submit.prevent="save" :departments="$departments" :roles="$roles" :courses="$courses"
+                    :schoolYears="$schoolYears">
+                    @if ($this->form->include_base)
+                        <x-slot:id name="form.id" wire:model="form.id"></x-slot:id>
+                        <x-slot:roleCode name="form.role_code" wire:model.live='form.role_code'></x-slot:roleCode>
+                        <x-slot:name name="form.name" wire:model="form.name"></x-slot:name>
+                        <x-slot:email name="form.email" wire:model="form.email"></x-slot:email>
+                        @if ($this->form->role_code === 'teacher')
+                            <x-slot:departmentId name="form.department_id" wire:model="form.department_id"></x-slot:departmentId>
+                        @endif
+                        @if ($this->form->role_code === 'student')
+                            <x-slot:courseId name="form.course_id" wire:model="form.course_id"></x-slot:courseId>
+                            <x-slot:studentNumber name="form.student_number" wire:model="form.student_number"></x-slot:studentNumber>
+                            <x-slot:startingSchoolYearId name="form.starting_school_year_id"
+                                wire:model="form.starting_school_year_id"></x-slot:startingSchoolYearId>
+                        @endif
+                    @endif
+                    @if ($this->form->include_password)
+                        <x-slot:password name="form.password" wire:model="form.password"></x-slot:password>
+                        <x-slot:passwordConfirmation name="form.password_confirmation" wire:model="form.password_confirmation">
+                        </x-slot:passwordConfirmation>
+                    @endif
                     <div class="flex justify-end">
                         <button type="button" id="cancelBtn" wire:click='closeForm'
                             class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
                         <button type="submit"
                             class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
                     </div>
-                </form>
+                </x-forms.user-form>
             </div>
         </div>
     @endif

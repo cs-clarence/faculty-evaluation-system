@@ -14,12 +14,12 @@ class Role extends Model
     use HasFactory;
 
     //
-    protected $fillable = ['name'];
+    protected $fillable = ['display_name', 'role'];
     protected $table = 'roles';
 
     //relationship in the user
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 }

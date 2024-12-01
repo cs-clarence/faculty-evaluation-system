@@ -108,7 +108,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_semester_subjects');
+        Schema::dropIfExists('course_subjects');
         Schema::dropIfExists('course_semesters');
         Schema::dropIfExists('courses');
         Schema::dropIfExists('subjects');

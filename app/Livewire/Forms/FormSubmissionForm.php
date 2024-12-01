@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Attributes\Validate;
-use Livewire\Form;
-
-class FormSubmissionForm extends Form
+class FormSubmissionForm extends BaseForm
 {
     //
+    public function submit()
+    {
+        //
+    }
 }

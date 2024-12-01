@@ -6,9 +6,8 @@ use App\Models\FormSubmissionPeriod;
 use Carbon\Carbon;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
-use Livewire\Form;
 
-class FormSubmissionPeriodForm extends Form
+class FormSubmissionPeriodForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -36,7 +35,7 @@ class FormSubmissionPeriodForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         if (isset($this->id)) {

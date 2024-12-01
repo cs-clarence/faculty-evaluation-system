@@ -5,9 +5,8 @@ namespace App\Livewire\Forms;
 use App\Models\Section;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-class SectionForm extends Form
+class SectionForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -31,7 +30,7 @@ class SectionForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
 
@@ -54,11 +53,5 @@ class SectionForm extends Form
     public function set(Section $section)
     {
         $this->fill($section->attributesToArray());
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
     }
 }

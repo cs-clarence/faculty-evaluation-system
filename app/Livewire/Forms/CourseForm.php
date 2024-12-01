@@ -4,9 +4,8 @@ namespace App\Livewire\Forms;
 
 use App\Models\Course;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-class CourseForm extends Form
+class CourseForm extends BaseForm
 {
     #[Locked]
     public ?int $id = null;
@@ -26,7 +25,7 @@ class CourseForm extends Form
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
         if (isset($this->id)) {
@@ -39,11 +38,5 @@ class CourseForm extends Form
     public function set(Course $course)
     {
         $this->fill($course->attributesToArray());
-    }
-
-    public function clear()
-    {
-        $this->reset();
-        $this->resetErrorBag();
     }
 }

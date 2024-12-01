@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\CourseSubject;
+use App\Models\Department;
 use App\Models\Section;
 use App\Models\Semester;
-use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherSemester;
 use App\Models\User;
@@ -24,6 +24,12 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Department::class, 'department_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
@@ -48,11 +54,6 @@ return new class extends Migration
         Schema::create('teacher_subjects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(Subject::class, 'subject_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignIdFor(TeacherSemester::class, 'teacher_semester_id')
                 ->constrained()
                 ->cascadeOnDelete()
@@ -68,7 +69,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->unique(['teacher_semester_id', 'subject_id']);
+            $table->unique(['teacher_semester_id', 'course_subject_id']);
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
