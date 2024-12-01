@@ -62,7 +62,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-3 px-4 text-center text-gray-500">No forms found
+                            <td colspan="5" class="py-3 px-4 text-center text-gray-500">No forms found
                             </td>
                         </tr>
                     @endforelse

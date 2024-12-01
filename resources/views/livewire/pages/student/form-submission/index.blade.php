@@ -26,6 +26,9 @@
         @endisset
     </div>
     <x-forms.form-submission-form :form="$formModel" :readonly="false" :createWireModel="$this->getCreateWireModel()" />
+    @error('form.questions.*')
+        <span class="text-red-500 text">Some fields have error. Please check.</span>
+    @enderror
     <div class="flex justify-end mb-16">
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Submit</button>
     </div>
