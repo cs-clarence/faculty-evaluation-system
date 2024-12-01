@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Facades\Services\StudentService;
+use App\Facades\Services\TeacherService;
+use App\Facades\Services\UserService;
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\Department;
 use App\Models\Role;
 use App\Models\RoleCode;
+use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
@@ -13,8 +19,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -24,9 +29,24 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
+        $courses = Course::withoutArchived()
+            ->orderBy('name')
+            ->orderBy('code')
+            ->orderBy('department_id')
+            ->lazy();
+
+        $departments = Department::withoutArchived()
+            ->orderBy('name')
+            ->orderBy('code')
+            ->lazy();
+
+        $schoolYear = SchoolYear::orderByDesc('year_start')->lazy();
+
         return view('auth.register', [
             'roles' => Role::where('hidden', false)->get(),
-            'studentRole' => Role::where('code', 'student')->first(),
+            'courses' => $courses,
+            'departments' => $departments,
+            'schoolYears' => $schoolYear,
         ]);
     }
 
@@ -37,34 +57,39 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $roleCode = $request->role_code;
+        $isStudent = $request->role_code === RoleCode::Student->value;
+        $isTeacher = $request->role_code === RoleCode::Teacher->value;
+
+        $valid = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'student_number' => 'nullable|string|unique:students,student_number',
+            'password' => ['required', 'confirmed', Password::default()],
+            'student_number' => $isStudent ? ['required', 'string', 'unique:students,student_number'] : [],
+            'course_id' => $isStudent ? ['required', 'integer', 'exists:courses,id'] : [],
+            'starting_school_year_id' => ['required', 'integer', 'exists:school_years,id'],
+            'department_id' => $isTeacher ? ['required', 'integer', 'exists:departments,id'] : [],
+            'role_code' => ['required', 'string', 'exists:roles,code'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => $request->role_id,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = UserService::create(
+            $valid['email'],
+            $valid['name'],
+            $valid['password'],
+            RoleCode::from($valid['role_code']),
+        );
 
-        // Save student data if role is "Student"
-        $roleCode = Role::whereId($request->role_id)->first(['code'])->code;
         if ($roleCode === RoleCode::Student->value) {
-            Student::create([
-                'user_id' => $user->id, // Link to the user
-                'student_number' => $request->student_number,
-                'address' => $request->address,
-            ]);
+            StudentService::create(
+                $user,
+                $valid['student_number'],
+                $valid['course_id'],
+                $valid['starting_school_year_id']
+            );
         }
 
         if ($roleCode === RoleCode::Teacher->value) {
-            Teacher::create([
-                'user_id' => $user->id, // Link to the user
-            ]);
+            TeacherService::create($user, $valid['department_id']);
         }
 
         event(new Registered($user));

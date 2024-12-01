@@ -1,12 +1,30 @@
+@php
+    use App\Models\RoleCode;
+@endphp
 <x-layouts.guest>
     <form method="POST" action="{{ route('register') }}">
         @csrf
+        <!-- Role -->
+        <div class="mt-4">
+            <x-input-label for="role_code" :value="__('Role')" />
+            <select id="role_code" name="role_code" class="block mt-1 w-full" onchange="toggleStudentFields()">
+                <option value="" disabled>Select Role</option>
+                @forelse ($roles as $role)
+                    @if (!$role->hidden)
+                        <option value="{{ $role->code }}">{{ $role->display_name }}</option>
+                    @endif
+                @empty
+                    <option value="" disabled>No roles</option>
+                @endforelse
+            </select>
+            <x-input-error :messages="$errors->get('role_code')" class="mt-2" />
+        </div>
 
         <!-- Name -->
-        <div>
+        <div class="mt-4">
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required
-                autofocus autocomplete="name" />
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"
+                required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
@@ -18,35 +36,54 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Role -->
-        <div class="mt-4">
-            <x-input-label for="role_id" :value="__('Role')" />
-            <select id="role_id" name="role_id" class="block mt-1 w-full" onchange="toggleStudentFields()">
-                <option value="" disabled>Select Role</option>
-                @forelse ($roles as $role)
-                    @if (!$role->hidden)
-                        <option value="{{ $role->id }}">{{ $role->display_name }}</option>
-                    @endif
-                @empty
-                    <option value="" disabled>No roles</option>
-                @endforelse
-            </select>
-            <x-input-error :messages="$errors->get('role_id')" class="mt-2" />
-        </div>
-
         <!-- Student Details -->
-        <div id="student-details" class="mt-4 hidden">
-            <div>
-                <x-input-label for="student_number" :value="__('Student Number')" />
-                <x-text-input id="student_number" class="block mt-1 w-full" type="text" name="student_number"
-                    :value="old('student_number')" />
-                <x-input-error :messages="$errors->get('student_number')" class="mt-2" />
+        <div id="student-details" class="hidden">
+            <div class="mt-4">
+                <div>
+                    <x-input-label for="student_number" :value="__('Student Number')" />
+                    <x-text-input id="student_number" class="block w-full" type="text" name="student_number"
+                        :value="old('student_number')" />
+                    <x-input-error :messages="$errors->get('student_number')" class="mt-2" />
+                </div>
             </div>
             <div class="mt-4">
-                <x-input-label for="address" :value="__('Address')" />
-                <x-text-input id="address" class="block mt-1 w-full" type="text" name="address"
-                    :value="old('address')" />
-                <x-input-error :messages="$errors->get('address')" class="mt-2" />
+                <x-input-label for="course_id" :value="__('Course')" />
+                <select id="course_id" name="course_id" class="block w-full">
+                    <option value="" disabled selected>Select Course</option>
+                    @forelse ($courses as $course)
+                        <option value="{{ $course->id }}">{{ $course->name }}</option>
+                    @empty
+                        <option value="" disabled>No courses</option>
+                    @endforelse
+                </select>
+                <x-input-error :messages="$errors->get('course_id')" class="mt-2" />
+            </div>
+            <div class="mt-4">
+                <x-input-label for="starting_school_year_id" :value="__('Batch Starting School Year')" />
+                <select id="starting_school_year_id" name="starting_school_year_id" class="block w-full">
+                    <option value="" disabled selected>Select School Year</option>
+                    @forelse ($schoolYears as $schoolYear)
+                        <option value="{{ $schoolYear->id }}">{{ $schoolYear }}</option>
+                    @empty
+                        <option value="" disabled>No school years</option>
+                    @endforelse
+                </select>
+                <x-input-error :messages="$errors->get('starting_school_year_id')" class="mt-2" />
+            </div>
+        </div>
+
+        <div id="teacher-details" class="hidden">
+            <div class="mt-4">
+                <x-input-label for="department_id" :value="__('Department')" />
+                <select id="deparment_id" name="department_id" class="block w-full">
+                    <option value="" disabled selected>Select Department</option>
+                    @forelse ($departments as $department)
+                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                    @empty
+                        <option value="" disabled>No departments</option>
+                    @endforelse
+                </select>
+                <x-input-error :messages="$errors->get('department_id')" class="mt-2" />
             </div>
         </div>
 
@@ -80,12 +117,18 @@
 
     <script>
         function toggleStudentFields() {
-            const roleSelect = document.getElementById('role_id');
+            const roleSelect = document.getElementById('role_code');
             const studentDetails = document.getElementById('student-details');
-            if (roleSelect.value == '{{ $studentRole->id }}') { // Role ID 3 is Student
+            if (roleSelect.value == '{{ RoleCode::Student->value }}') {
                 studentDetails.classList.remove('hidden');
             } else {
                 studentDetails.classList.add('hidden');
+            }
+            const teacherDetails = document.getElementById('teacher-details');
+            if (roleSelect.value == '{{ RoleCode::Teacher->value }}') {
+                teacherDetails.classList.remove('hidden');
+            } else {
+                teacherDetails.classList.add('hidden');
             }
         }
         toggleStudentFields();
