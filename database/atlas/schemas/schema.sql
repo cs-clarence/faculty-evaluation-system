@@ -167,6 +167,40 @@ ALTER SEQUENCE public.failed_jobs_id_seq OWNED BY public.failed_jobs.id;
 
 
 --
+-- Name: form_question_essay_type_configurations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_question_essay_type_configurations (
+    id bigint NOT NULL,
+    form_question_id bigint NOT NULL,
+    value_scale_from double precision NOT NULL,
+    value_scale_to double precision NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: form_question_essay_type_configurations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_question_essay_type_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_question_essay_type_configurations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_question_essay_type_configurations_id_seq OWNED BY public.form_question_essay_type_configurations.id;
+
+
+--
 -- Name: form_question_options; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -310,6 +344,7 @@ CREATE TABLE public.form_submission_answers (
     form_submission_id bigint NOT NULL,
     form_question_id bigint NOT NULL,
     value double precision NOT NULL,
+    text text,
     interpretation character varying(255),
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -1000,6 +1035,13 @@ ALTER TABLE ONLY public.failed_jobs ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: form_question_essay_type_configurations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_essay_type_configurations ALTER COLUMN id SET DEFAULT nextval('public.form_question_essay_type_configurations_id_seq'::regclass);
+
+
+--
 -- Name: form_question_options id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1238,6 +1280,14 @@ ALTER TABLE ONLY public.failed_jobs
 
 ALTER TABLE ONLY public.failed_jobs
     ADD CONSTRAINT failed_jobs_uuid_unique UNIQUE (uuid);
+
+
+--
+-- Name: form_question_essay_type_configurations form_question_essay_type_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_essay_type_configurations
+    ADD CONSTRAINT form_question_essay_type_configurations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1600,6 +1650,14 @@ ALTER TABLE ONLY public.courses
 
 
 --
+-- Name: form_question_essay_type_configurations form_question_essay_type_configurations_form_question_id_foreig; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_question_essay_type_configurations
+    ADD CONSTRAINT form_question_essay_type_configurations_form_question_id_foreig FOREIGN KEY (form_question_id) REFERENCES public.form_questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: form_question_options form_question_options_form_question_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1877,3 +1935,15 @@ ALTER TABLE ONLY public.teachers
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.0
+-- Dumped by pg_dump version 16.3

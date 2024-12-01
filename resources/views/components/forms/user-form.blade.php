@@ -13,7 +13,7 @@
                 {{ $roleCode->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected disabled>Select a role</option>
+                <option value="" selected>Select a role</option>
                 @forelse ($roles as $role)
                     <option value="{{ $role->code }}">
                         {{ $role->display_name }}
@@ -110,7 +110,7 @@
                 {{ $courseId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected disabled>Select a course</option>
+                <option value="" selected>Select a course</option>
                 @forelse ($courses as $course)
                     <option value="{{ $course->id }}">
                         {{ $course->name }}
@@ -133,7 +133,7 @@
                 {{ $startingSchoolYearId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected disabled>Select a school year</option>
+                <option value="" selected>Select a school year</option>
                 @forelse ($schoolYears as $startingSchoolYear)
                     <option value="{{ $startingSchoolYear->id }}">
                         {{ $startingSchoolYear->year_start }} - {{ $startingSchoolYear->year_end }}
@@ -188,7 +188,7 @@
                 {{ $departmentId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>
-                <option value="" selected disabled>Select a department</option>
+                <option value="" selected>Select a department</option>
                 @forelse ($departments as $department)
                     <option value="{{ $department->id }}">
                         {{ $department->name }}

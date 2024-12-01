@@ -49,6 +49,11 @@ class StudentSubject extends Pivot
         return Attribute::make(get: fn() => $this->courseSubject?->subject?->code);
     }
 
+    public function formSubmission()
+    {
+        return $this->hasOne(FormSubmission::class, 'student_subject_id');
+    }
+
     public function courseName(): Attribute
     {
         return Attribute::make(get: fn() => $this->courseSubject?->courseSemester?->course?->name);

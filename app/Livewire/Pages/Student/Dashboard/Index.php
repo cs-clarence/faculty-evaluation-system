@@ -26,6 +26,7 @@ class Index extends Component
                     'studentSemester',
                     'teacherSubject.teacherSemester.teacher',
                 ])
+                ->doesntHave('formSubmission')
                 ->whereIn('semester_id', $activePeriodSemesterIds),
             'user',
         ])->first();

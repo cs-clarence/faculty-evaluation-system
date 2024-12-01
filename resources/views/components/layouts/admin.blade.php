@@ -42,6 +42,10 @@
         'title' => 'Form Submission Periods',
     ],
     [
+        'href' => route('admin.form-submissions.index'),
+        'title' => 'Form Submissions',
+    ],
+    [
         'href' => route('admin.accounts.index'),
         'title' => 'Accounts',
     ],

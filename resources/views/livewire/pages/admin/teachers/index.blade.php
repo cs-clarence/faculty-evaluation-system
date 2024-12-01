@@ -29,36 +29,36 @@
                 <tbody class="text-gray-700">
                     @forelse($teachers as $teacher)
                         <tr>
-                            <td class="py-3 px-4 border-b">{{ $teacher->user->name }}</td>
-                            <td class="py-3 px-4 border-b">{{ $teacher->user->email }}</td>
-                            <td class="py-3 px-4 border-b">{{ $teacher->department->name }}
-                                ({{ $teacher->department->code }})
+                            <td class="py-3 px-4 border-b">{{ $teacher->name }}</td>
+                            <td class="py-3 px-4 border-b">{{ $teacher->email }}</td>
+                            <td class="py-3 px-4 border-b">{{ $teacher->teacher->department->name }}
+                                ({{ $teacher->teacher->department->code }})
                             </td>
-                            <td class="py-3 px-4 border-b">{{ $teacher->teacher_semesters_count }}</td>
-                            <td class="py-3 px-4 border-b">{{ $teacher->teacher_subjects_count }}</td>
+                            <td class="py-3 px-4 border-b">{{ $teacher->teacher->teacher_semesters_count }}</td>
+                            <td class="py-3 px-4 border-b">{{ $teacher->teacher->teacher_subjects_count }}</td>
                             <td class="py-3 px-4 border-b">
-                                <button wire:click='edit({{ $teacher->user_id }})'
+                                <button wire:click='edit({{ $teacher->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
-                                <button wire:click='editPassword({{ $teacher->user_id }})'
+                                <button wire:click='editPassword({{ $teacher->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit Password
                                 </button>
                                 @if ($teacher->is_archived)
-                                    <button wire:click='unarchive({{ $teacher->user_id }})'
+                                    <button wire:click='unarchive({{ $teacher->id }})'
                                         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
                                         Unarchive
                                     </button>
                                 @else
-                                    <button wire:click='archive({{ $teacher->user_id }})'
+                                    <button wire:click='archive({{ $teacher->id }})'
                                         class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
                                         title="This department has courses associated with it. You can only archive it until you delete those courses.">
                                         Archive
                                     </button>
                                 @endif
-                                @if (!$teacher->hasDependents() && !$teacher->user->isCurrentUser())
-                                    <button wire:click='delete({{ $teacher->user_id }})'
+                                @if (!$teacher->hasDependents() && !$teacher->isCurrentUser())
+                                    <button wire:click='delete({{ $teacher->id }})'
                                         wire:confirm='Are you sure you want to delete this teacher?'
                                         class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
                                         Delete

@@ -66,4 +66,9 @@ class FormSubmissionPeriod extends Model
             ->where('starts_at', '<=', $now)
             ->where('ends_at', '>=', $now);
     }
+
+    public function submissions()
+    {
+        return $this->hasMany(FormSubmission::class, 'form_submission_period_id');
+    }
 }

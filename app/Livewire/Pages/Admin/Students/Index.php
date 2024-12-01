@@ -8,7 +8,7 @@ use App\Models\RoleCode;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Livewire\Component;
 
 class Index extends Component
@@ -19,13 +19,12 @@ class Index extends Component
 
     public function render()
     {
-        $students = Student::with([
-            'user' => fn(BelongsTo $user) => $user->student(),
-            'course' => fn(BelongsTo $course) => $course->first(['name', 'code']),
-            'schoolYear' => fn(BelongsTo $schoolYear) => $schoolYear->first(['year_start', 'year_end']),
-        ])
-            ->withCount(['studentSubjects', 'studentSemesters'])
-            ->orderBy('student_number')
+        $students = User::roleStudent()
+            ->with([
+                'student' => fn(HasOne $student) =>
+                $student->with(['studentSubjects', 'studentSemesters', 'course'])
+                    ->withCount(['studentSubjects', 'studentSemesters']),
+            ])
             ->lazy();
 
         $courses = Course::withoutArchived()

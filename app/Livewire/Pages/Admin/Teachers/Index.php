@@ -7,7 +7,7 @@ use App\Models\Department;
 use App\Models\RoleCode;
 use App\Models\Teacher;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Livewire\Component;
 
 class Index extends Component
@@ -19,12 +19,13 @@ class Index extends Component
 
     public function render()
     {
-        $teachers = Teacher::with([
-            'user' => fn(BelongsTo $user) => $user->teacher(),
-            'department' => fn(BelongsTo $department) => $department->first(['code', 'name']),
-        ])
-            ->withCount(['teacherSubjects', 'teacherSemesters'])
+        $teachers = User::roleTeacher()
+            ->with(['teacher' => fn(HasOne $teacher) => $teacher
+                    ->withCount(['teacherSubjects', 'teacherSemesters'])
+                    ->with(['department']),
+            ])
             ->lazy();
+
         $exceptDepartmentIds = isset($this->model->department_id) ? [$this->model->department_id] : [];
 
         $departments = Department::withoutArchived($exceptDepartmentIds)

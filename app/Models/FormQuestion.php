@@ -17,4 +17,9 @@ class FormQuestion extends Model
     {
         return $this->hasMany(FormQuestionOption::class);
     }
+
+    public function essayTypeConfiguration()
+    {
+        return $this->hasOne(FormQuestionEssayTypeConfiguration::class);
+    }
 }

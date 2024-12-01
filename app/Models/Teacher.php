@@ -60,4 +60,9 @@ class Teacher extends Model
     {
         $this->user->unarchive();
     }
+
+    public function formSubmissions()
+    {
+        return $this->hasMany(FormSubmission::class, 'teacher_id');
+    }
 }

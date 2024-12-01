@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Admin\Dashboard;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Form;
+use App\Models\FormSubmission;
 use App\Models\FormSubmissionPeriod;
 use App\Models\SchoolYear;
 use App\Models\Section;
@@ -59,6 +60,11 @@ class Index extends Component
                 'label' => 'Form Submission Periods',
                 'value' => FormSubmissionPeriod::count(),
                 'href' => route('admin.form-submission-periods.index'),
+            ],
+            [
+                'label' => 'Form Submissions',
+                'value' => FormSubmission::count(),
+                'href' => route('admin.form-submissions.index'),
             ],
             [
                 'label' => 'School Years',

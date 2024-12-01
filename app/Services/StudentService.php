@@ -87,15 +87,25 @@ class StudentService
                 ->with(['semester.schoolYear'])
                 ->get();
             $startYearDiff = $startingSchoolYear->year_start - $previousSchoolYear->year_start;
-            foreach ($existingStudentSemesters as $studentSemester) {
-                $newStartYear = $studentSemester->semester->schoolYear->year_start + $startYearDiff;
-                $newSy = SchoolYear::whereYearStart($newStartYear)->first(['id']);
-                $newSem = Semester::whereBelongsTo($newSy)
-                    ->whereSemester($studentSemester->semester->semester)
-                    ->first(['id']);
-                $studentSemester->update([
-                    'semester_id' => $newSem->id,
-                ]);
+
+            $sorter = fn($sem) => $sem->semester->schoolYear->year_start;
+
+            if ($startYearDiff !== 0) {
+                $ordered = $startYearDiff < 0
+                ? $existingStudentSemesters->sortBy($sorter)
+                : $existingStudentSemesters->sortByDesc($sorter);
+
+                foreach ($ordered as $studentSemester) {
+                    $newStartYear = $studentSemester->semester->schoolYear->year_start + $startYearDiff;
+                    $newSy = SchoolYear::whereYearStart($newStartYear)->first(['id']);
+                    $newSem = Semester::whereBelongsTo($newSy)
+                        ->whereSemester($studentSemester->semester->semester)
+                        ->first(['id']);
+                    $studentSemester->update([
+                        'semester_id' => $newSem->id,
+                    ]);
+                }
+
             }
         }
 

@@ -32,7 +32,7 @@ class FormInitializer extends Initializer
         ],
         [
             'name' => 'Strongly Agree',
-            'value' => 4,
+            'value' => 5,
             'interpretation' => 'Strongly Agree',
         ],
     ];
@@ -172,10 +172,18 @@ class FormInitializer extends Initializer
                     [
                         'question' => 'What are the characterisitics that you like to your teacher?',
                         'type' => FormQuestionType::Essay->value,
+                        'essay_type_configuration' => [
+                            'value_scale_from' => 1.0,
+                            'value_scale_to' => 5.0,
+                        ],
                     ],
                     [
                         'question' => 'What are the different traits and qualities you like to improve by your teacher?',
                         'type' => FormQuestionType::Essay->value,
+                        'essay_type_configuration' => [
+                            'value_scale_from' => 1.0,
+                            'value_scale_to' => 5.0,
+                        ],
                     ],
                 ],
             ],
@@ -224,6 +232,13 @@ class FormInitializer extends Initializer
                             'interpretation' => $option['interpretation'] ?? null,
                             'form_question_id' => $q->id,
                         ]);
+                    }
+
+                    $essayTypeConfiguration = $question['essay_type_configuration'] ?? null;
+                    if (isset($essayTypeConfiguration)) {
+                        $q->essayTypeConfiguration()->create(
+                            $essayTypeConfiguration
+                        );
                     }
                 }
             }

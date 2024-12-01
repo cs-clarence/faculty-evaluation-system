@@ -57,6 +57,19 @@ return new class extends Migration
             $table->timestampsTz();
         });
 
+        Schema::create('form_question_essay_type_configurations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(FormQuestion::class, 'form_question_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->float('value_scale_from');
+            $table->float('value_scale_to');
+
+            $table->timestampTz('archived_at')->nullable();
+            $table->timestampsTz();
+        });
+
         Schema::create('form_question_options', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -140,6 +153,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->float('value');
+            $table->text('text')->nullable();
             $table->string('interpretation')->nullable();
 
             $table->timestampsTz();
@@ -172,6 +186,7 @@ return new class extends Migration
         Schema::dropIfExists('form_submissions');
         Schema::dropIfExists('form_submission_periods');
         Schema::dropIfExists('form_question_options');
+        Schema::dropIfExists('form_question_essay_type_configurations');
         Schema::dropIfExists('form_questions');
         Schema::dropIfExists('form_sections');
         Schema::dropIfExists('forms');

@@ -23,6 +23,10 @@
                 margin-left: 256px;
                 /* Same width as the sidebar */
             }
+
+            .hide-overflow {
+                overflow: hidden;
+            }
         </style>
         @isset($head)
             {{ $head }}
@@ -68,7 +72,7 @@
 
     <!-- Sidebar Toggle Button -->
     <button id="sidebarToggle"
-        class="fixed top-4 left-4 text-2xl text-gray-600 z-20 focus:outline-none hover:text-gray-400">
+        class="fixed top-4 left-4 text-2xl text-gray-600 z-50 focus:outline-none hover:text-gray-400">
         <i class="uil uil-bars"></i>
     </button>
 
@@ -76,7 +80,7 @@
     <div class="flex flex-col min-h-dvh">
         <!-- nav link -->
         <div id="navLink"
-            class="flex bg-indigo-950 h-16 text-white font-serif p-4 transition-all duration-300 sticky top-0 left-0">
+            class="flex bg-indigo-950 h-16 text-white font-serif p-4 transition-all duration-300 sticky top-0 left-0 z-40">
             <div class="flex ml-8 items-center justify-center text-xl">
                 <span>SPCF - TEACHERS EVALUATION SYSTEM</span>
             </div>
@@ -102,7 +106,7 @@
                 const open = () => {
                     sidebar.classList.remove('sidebar-closed');
                     sidebar.classList.add('sidebar-open');
-                    body.style.overflow = 'hidden'; // Prevent body scroll
+                    body.classList.add('hide-overflow'); // Prevent body scroll
                     mainContent.style.transform = 'translateX(256px)'; // Adjust margin to prevent content overlap
                     sidebarToggle.style.transform = 'translateX(256px)'; // Move the button along with sidebar
                     navLink.classList.add('nav-link-open'); // Add the margin class to nav link
@@ -111,8 +115,8 @@
                 const close = () => {
                     sidebar.classList.remove('sidebar-open');
                     sidebar.classList.add('sidebar-closed');
-                    body.style.overflow = 'auto'; // Enable body scroll
-                    mainContent.style.transform = 'translateX(0)'; // Reset margin
+                    body.classList.remove('hide-overflow'); // Enable body scroll
+                    mainContent.style.transform = ''; // Reset margin
                     sidebarToggle.style.transform = 'translateX(0)'; // Reset button position
                     navLink.classList.remove('nav-link-open'); // Remove the margin class from nav link
                 }

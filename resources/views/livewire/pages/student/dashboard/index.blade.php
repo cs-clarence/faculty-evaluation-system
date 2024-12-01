@@ -3,6 +3,9 @@
 
     <!-- Evaluation Forms List -->
     @forelse ($submissionPeriods as $submissionPeriod)
+        <h2 class="text-xl font-bold mb-6 text-gray-800">{{ $submissionPeriod->formSubmissionPeriod->name }}
+            ({{ $submissionPeriod->formSubmissionPeriod->semester }})
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach ($submissionPeriod->studentSubjects as $subject)
                 <a href="{{ route('student.form-submission.index', [

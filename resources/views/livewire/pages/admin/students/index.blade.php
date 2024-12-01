@@ -31,37 +31,38 @@
                 <tbody class="text-gray-700">
                     @forelse($students as $student)
                         <tr>
-                            <td class="py-3 px-4 border-b">{{ $student->student_number }}</td>
-                            <td class="py-3 px-4 border-b">{{ $student->user->name }}</td>
-                            <td class="py-3 px-4 border-b">{{ $student->user->email }}</td>
-                            <td class="py-3 px-4 border-b">{{ $student->course->name }} ({{ $student->course->code }})
+                            <td class="py-3 px-4 border-b">{{ $student->student->student_number }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->name }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->email }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->student->course->name }}
+                                ({{ $student->student->course->code }})
                             </td>
-                            <td class="py-3 px-4 border-b">{{ $student->schoolYear }}</td>
-                            <td class="py-3 px-4 border-b">{{ $student->student_semesters_count }}</td>
-                            <td class="py-3 px-4 border-b">{{ $student->student_subjects_count }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->student->schoolYear }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->student->student_semesters_count }}</td>
+                            <td class="py-3 px-4 border-b">{{ $student->student->student_subjects_count }}</td>
                             <td class="py-3 px-4 border-b">
-                                <button wire:click='edit({{ $student->user_id }})'
+                                <button wire:click='edit({{ $student->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit
                                 </button>
-                                <button wire:click='editPassword({{ $student->user_id }})'
+                                <button wire:click='editPassword({{ $student->id }})'
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     Edit Password
                                 </button>
                                 @if ($student->is_archived)
-                                    <button wire:click='unarchive({{ $student->user_id }})'
+                                    <button wire:click='unarchive({{ $student->id }})'
                                         class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
                                         Unarchive
                                     </button>
                                 @else
-                                    <button wire:click='archive({{ $student->user_id }})'
+                                    <button wire:click='archive({{ $student->id }})'
                                         class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
                                         title="This department has courses associated with it. You can only archive it until you delete those courses.">
                                         Archive
                                     </button>
                                 @endif
-                                @if (!$student->hasDependents() && !$student->user->isCurrentUser())
-                                    <button wire:click='delete({{ $student->user_id }})'
+                                @if (!$student->hasDependents() && !$student->isCurrentUser())
+                                    <button wire:click='delete({{ $student->id }})'
                                         wire:confirm='Are you sure you want to delete this teacher?'
                                         class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
                                         Delete

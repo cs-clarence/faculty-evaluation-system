@@ -117,16 +117,16 @@ class User extends Authenticatable
         });
     }
 
-    public function scopeAdmin(Builder $builder)
+    public function scopeRoleAdmin(Builder $builder)
     {
         $this->scopeRole($builder, RoleCode::Admin);
     }
 
-    public function scopeStudent(Builder $builder)
+    public function scopeRoleStudent(Builder $builder)
     {
         $this->scopeRole($builder, RoleCode::Student);
     }
-    public function scopeTeacher(Builder $builder)
+    public function scopeRoleTeacher(Builder $builder)
     {
         $this->scopeRole($builder, RoleCode::Teacher);
     }
