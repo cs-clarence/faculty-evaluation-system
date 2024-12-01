@@ -25,17 +25,24 @@ class GroqDriver implements ChatCompletionDriver, ToolCallingDriver
 
     private Groq $groq;
 
-    public function __construct(array $options)
+    public function __construct(array $options = [])
     {
-        $this->apiKey = $options['api_key'];
-        $this->model = $options['model'];
+        $this->apiKey = $options['api_key'] ?? '';
+        $this->model = $options['model'] ?? 'mixtral-8x7b-32768';
         if (isset($options['max_retries'])) {
             $this->maxRetries = $options['max_retries'];
         }
         if (isset($options['timeout'])) {
             $this->timeout = $options['timeout'];
         }
-        $this->groq = new Groq($this->apiKey);
+    }
+
+    private function groq()
+    {
+        if (!isset($this->groq)) {
+            $this->groq = new Groq($this->apiKey);
+        }
+        return $this->groq;
     }
 
     private function getOptions(): array
@@ -77,7 +84,7 @@ class GroqDriver implements ChatCompletionDriver, ToolCallingDriver
         $params = $this->getParams($messages, $stream, $tools, $options);
         $options = $this->getOptions();
 
-        return $this->groq->chat()->completions()->create($params, $options);
+        return $this->groq()->chat()->completions()->create($params, $options);
     }
 
     /**
