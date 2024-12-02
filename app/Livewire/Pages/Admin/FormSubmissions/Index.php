@@ -10,7 +10,7 @@ class Index extends Component
     public function render()
     {
         $formSubmissions = FormSubmission::with([
-            'studentSubject.studentSemester.student.user',
+            'studentSubject.studentSemester' => ['student.user', 'semester'],
             'teacher.user',
         ])->lazy();
         return view('livewire.pages.admin.form-submissions.index')

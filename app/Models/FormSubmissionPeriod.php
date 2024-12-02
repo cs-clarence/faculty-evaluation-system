@@ -49,6 +49,11 @@ class FormSubmissionPeriod extends Model
 
     public function hasDependents(): bool
     {
+        $submissionCount = isset($this->submissions_count) ? $this->submissions_count : $this->submissions()->count();
+
+        if ($submissionCount > 0) {
+            return true;
+        }
 
         return false;
     }

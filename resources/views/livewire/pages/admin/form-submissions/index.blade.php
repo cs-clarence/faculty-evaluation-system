@@ -10,6 +10,7 @@
                         <th class="py-3 px-4 text-left text-sm font-semibold">Student</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Teacher</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Subject</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold">Semester</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Rating</th>
                         <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
                     </tr>
@@ -22,6 +23,7 @@
                             <td class="py-3 px-4 border-b">{{ $i->teacher->user->name }}</td>
                             <td class="py-3 px-4 border-b">
                                 {{ $i->studentSubject->subject_name }} ({{ $i->studentSubject->subject_code }})</td>
+                            <td class="py-3 px-4 border-b">{{ $i->studentSubject->studentSemester->semester }}</td>
                             <td class="py-3 px-4 border-b">{{ $i->rating }}%</td>
                             <td class="py-3 px-4 border-b">
                                 <a href="{{ route('admin.form-submissions.form-submission', ['formSubmission' => $i->id]) }}"

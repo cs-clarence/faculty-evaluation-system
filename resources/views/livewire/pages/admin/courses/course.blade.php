@@ -45,7 +45,7 @@
         @forelse ($courseSemesters as $semester)
             <div class="text-gray-600 flex flex-row justify-between border border-gray-200 rounded-lg bg-white p-4
                     hover:bg-gray-100 cursor-pointer items-center"
-                wire:click.self='toggleAccordion({{ $semester->id }})'>
+                wire:click='toggleAccordion({{ $semester->id }})'>
                 <h2 class="text-xl">
                     {{ Number::ordinal($semester->year_level) }} Year - {{ Number::ordinal($semester->semester) }}
                     Semester
