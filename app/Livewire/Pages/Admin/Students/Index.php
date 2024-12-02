@@ -25,6 +25,7 @@ class Index extends Component
                 $student->with(['studentSubjects', 'studentSemesters', 'course'])
                     ->withCount(['studentSubjects', 'studentSemesters']),
             ])
+            ->has('student')
             ->lazy();
 
         $courses = Course::withoutArchived()

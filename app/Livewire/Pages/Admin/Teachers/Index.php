@@ -24,6 +24,7 @@ class Index extends Component
                     ->withCount(['teacherSubjects', 'teacherSemesters'])
                     ->with(['department']),
             ])
+            ->has('teacher')
             ->lazy();
 
         $exceptDepartmentIds = isset($this->model->department_id) ? [$this->model->department_id] : [];
