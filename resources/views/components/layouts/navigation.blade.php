@@ -62,7 +62,7 @@
             <form method="POST" action="{{ route('logout') }}" class="mt-auto">
                 @csrf
                 <button type="submit" onclick="event.preventDefault(); this.closest('form').submit();"
-                    class="flex items-center space-x-2 hover:text-gray-300">
+                    class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
                     <i class="uil uil-signout"></i>
                     <span>Logout</span>
                 </button>
@@ -72,7 +72,7 @@
 
     <!-- Sidebar Toggle Button -->
     <button id="sidebarToggle"
-        class="fixed top-4 left-4 text-2xl text-gray-600 z-50 focus:outline-none hover:text-gray-400">
+        class="fixed top-4 left-4 text-2xl text-gray-600 z-50 focus:outline-hidden hover:text-gray-400 cursor-pointer">
         <i class="uil uil-bars"></i>
     </button>
 

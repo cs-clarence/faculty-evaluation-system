@@ -80,8 +80,7 @@
 
     <!-- Add Subject Modal -->
     @if ($this->isFormOpen)
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
-            wire:click.self='closeForm'>
+        <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
                 @isset($this->course)
                     <h3 class="text-lg font-semibold mb-4">Edit Course</h3>

@@ -35,7 +35,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-3 px-4 text-center text-gray-500">No Form Submissions found
+                            <td colspan="6" class="py-3 px-4 text-center text-gray-500">No Form Submissions found
                             </td>
                         </tr>
                     @endforelse

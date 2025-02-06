@@ -54,8 +54,7 @@
     </div>
 
     @if ($this->isFormOpen)
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
-            wire:click.self='closeForm'>
+        <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
                 @isset($this->schoolYear)
                     <h3 class="text-lg font-semibold mb-4">Edit School Year</h3>
@@ -68,7 +67,7 @@
                     <div class="mb-4">
                         <label for="year_start" class="block text-gray-700">Year Start</label>
                         <input type="text" name="year_start" id="year_start" required type="number"
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur="form.year_start">
+                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur-sm="form.year_start">
                         @error('form.year_start')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror

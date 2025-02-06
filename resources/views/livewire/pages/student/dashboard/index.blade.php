@@ -1,4 +1,4 @@
-<div class="container mx-auto p-4 flex-grow flex flex-col gap-6">
+<div class="container mx-auto p-4 grow flex flex-col gap-6">
     <h1 class="text-2xl font-bold">Pending Evaluations</h1>
 
     <!-- Evaluation Forms List -->
@@ -33,7 +33,7 @@
             </div>
         </div>
     @empty
-        <div class="flex-grow flex flex-col justify-center items-center h-full">
+        <div class="grow flex flex-col justify-center items-center h-full">
             <div class="flex flex-col items-center justify-center bg-white shadow-md rounded-lg p-6">
                 <h1 class="text-2xl mb-2">No Pending Evaluations</h1>
                 <p class="text-gray-500 text">

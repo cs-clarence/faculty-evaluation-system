@@ -81,18 +81,18 @@
         </div>
     </div>
 
-    @if ($this->isFormOpen)
-        <div id="addSubjectModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
+    @if ($isFormOpen)
+        <div id="addSubjectModal" class="fixed inset-0 bg-gray-900/50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->model)
+                @isset($model)
                     <h3 class="text-lg font-semibold mb-4">Edit Student</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Student</h3>
                 @endisset
 
                 <x-forms.user-form wire:submit.prevent="save" :courses="$courses" :schoolYears="$schoolYears">
-                    @if ($this->form->include_base)
+                    @if ($form->include_base)
                         <input type="hidden" name="role_code" value="{{ RoleCode::Student->value }}"
                             wire:model="form.role_code">
 
@@ -104,20 +104,20 @@
                         <x-slot:startingSchoolYearId name="form.starting_school_year_id"
                             wire:model.live="form.starting_school_year_id"></x-slot:startingSchoolYearId>
 
-                        @isset($this->model)
+                        @isset($model)
                             @if (
-                                $this->form->course_id !== $this->model->student->course_id ||
-                                    $this->form->starting_school_year_id !== $this->model->student->starting_school_year_id)
+                                $form->course_id !== $model->student->course_id ||
+                                    $form->starting_school_year_id !== $model->student->starting_school_year_id)
                                 <x-slot:realignSubjects name="form.realign_subjects"
                                     wire:model="form.realign_subjects"></x-slot:realignSubjects>
                             @endif
-                            @if ($this->form->course_id !== $this->model->student->course_id)
+                            @if ($form->course_id !== $model->student->course_id)
                                 <x-slot:deleteSubjectsFromPreviousCourse name="form.delete_subjects_from_previous_course"
                                     wire:model="form.delete_subjects_from_previous_course"></x-slot:deleteSubjectsFromPreviousCourse>
                             @endif
                         @endisset
                     @endif
-                    @if ($this->form->include_password)
+                    @if ($form->include_password)
                         <x-slot:password name="form.password" wire:model="form.password"></x-slot:password>
                         <x-slot:passwordConfirmation name="form.password_confirmation" wire:model="form.password_confirmation">
                         </x-slot:passwordConfirmation>

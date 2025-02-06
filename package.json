@@ -1,7 +1,7 @@
 {
     "private": true,
     "type": "module",
-    "packageManager": "bun@1.1.36",
+    "packageManager": "bun@1.2.2",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -26,15 +26,16 @@
         "@biomejs/biome": "^1.9.4",
         "@rencedm112/biome-config": "^1.0.0",
         "@rencedm112/tsconfig": "^3.0.6",
-        "@rencedm112/with-env": "^0.0.39",
-        "@tailwindcss/forms": "^0.5.9",
-        "@types/alpinejs": "^3.13.10",
+        "@rencedm112/with-env": "^0.0.43",
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/vite": "^4.0.3",
+        "@types/alpinejs": "^3.13.11",
         "autoprefixer": "^10.4.20",
-        "axios": "^1.7.7",
-        "laravel-vite-plugin": "^1.0.6",
-        "postcss": "^8.4.49",
-        "tailwindcss": "^3.4.15",
-        "typescript": "^5.6.3",
-        "vite": "^5.4.11"
+        "axios": "^1.7.9",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.5.1",
+        "tailwindcss": "^4.0.3",
+        "typescript": "^5.7.3",
+        "vite": "^6.1.0"
     }
 }

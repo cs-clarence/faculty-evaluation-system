@@ -128,7 +128,7 @@
 
     <!-- Add Semester Modal -->
     @if ($this->isCourseSemesterFormOpen)
-        <div id="addSemesterModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div id="addSemesterModal" class="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div class="bg-white p-6 rounded-lg w-96">
                 @isset($this->courseSemester)
                     <h3 class="text-lg font-semibold mb-4">Edit Semester</h3>
@@ -194,7 +194,7 @@
     @endif
 
     @if ($this->isAddCourseSubjectsFormOpen)
-        <div id="addSemesterModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div id="addSemesterModal" class="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div class="bg-white p-6 rounded-lg w-96">
                 <h3 class="text-lg font-semibold mb-4">Add Subjects</h3>
 

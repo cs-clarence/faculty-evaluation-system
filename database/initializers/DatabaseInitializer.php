@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use Database\Initializers\Base\Initializer;
@@ -19,6 +18,7 @@ class DatabaseInitializer extends Initializer
                 CourseInitializer::class,
                 SectionInitializer::class,
                 FormInitializer::class,
+                AdminInitializer::class,
             ]);
         });
 
