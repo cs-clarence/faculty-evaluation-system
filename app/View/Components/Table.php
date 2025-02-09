@@ -40,7 +40,7 @@ class Table extends Component
             if (is_array($current)) {
                 $current = $current[$p];
             } else {
-                return $current->$p;
+                $current = $current->$p;
             }
         }
 

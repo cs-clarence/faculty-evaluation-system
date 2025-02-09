@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Features\ChatBot;
 
 use App\Features\ChatBot\Contracts\ChatCompletionDriver;
@@ -15,7 +14,7 @@ class ChatBotServiceProvider extends ServiceProvider
     public function register(): void
     {
         $config = Config::get('chatbot.completion_drivers.groq');
-        $groq = new GroqDriver($config);
+        $groq   = new GroqDriver($config);
 
         $this->app->singleton(
             ChatCompletionDriver::class, fn() => $groq

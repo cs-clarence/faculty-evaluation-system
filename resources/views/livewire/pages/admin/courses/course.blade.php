@@ -72,48 +72,34 @@
                 </div>
             </div>
             <div class="accordion-body {{ $this->isOpenAccordion($semester) ? 'accordion-body-open' : '' }}">
-                <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-                    <thead class="bg-gray-200 text-gray-600">
-                        <tr>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Name</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Subject Code</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-700">
-                        @forelse($semester->courseSubjects()->lazy() as $courseSubject)
-                            <tr>
-                                <td class="py-3 px-4 border-b">{{ $courseSubject->subject->code }}</td>
-                                <td class="py-3 px-4 border-b">{{ $courseSubject->subject->name }}</td>
-                                <td class="py-3 px-4 border-b">
-                                    @if ($courseSubject->is_archived)
-                                        <button wire:click='unarchiveCourseSubject({{ $courseSubject->id }})'
-                                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                                            Unarchive
-                                        </button>
-                                    @else
-                                        <button wire:click='archiveCourseSubject({{ $courseSubject->id }})'
-                                            class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
-                                            Archive
-                                        </button>
-                                    @endif
-                                    @if (!$courseSubject->hasDependents())
-                                        <button wire:click='deleteCourseSubject({{ $courseSubject->id }})'
-                                            wire:confirm='Are you sure you want to delete this subject?'
-                                            class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                            Delete
-                                        </button>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="py-3 px-4 text-center text-gray-500">No subjects found
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                @php
+                    $columns = [
+                        ['label' => 'Subject Code', 'render' => 'subject.code'],
+                        ['label' => 'Subject Name', 'render' => 'subject.name'],
+                        [
+                            'label' => 'Actions',
+                            'render' => 'blade:table.actions',
+                            'props' => [
+                                'actions' => [
+                                    'edit' => [
+                                        'condition' => false,
+                                    ],
+                                    'archive' => [
+                                        'wire:click' => fn($d) => "archiveCourseSubject({$d->id})",
+                                    ],
+                                    'unarchive' => [
+                                        'wire:click' => fn($d) => "unarchiveCourseSubject({$d->id})",
+                                    ],
+                                    'delete' => [
+                                        'wire:click' => fn($d) => "deleteCourseSubject({$d->id})",
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ];
+                @endphp
+                <x-table :data="$semester->courseSubjects()->lazy()" :columns="$columns">
+                </x-table>
             </div>
         @empty
             <div
@@ -127,10 +113,10 @@
     </div>
 
     <!-- Add Semester Modal -->
-    @if ($this->isCourseSemesterFormOpen)
+    @if ($isCourseSemesterFormOpen)
         <div id="addSemesterModal" class="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->courseSemester)
+                @isset($courseSemester)
                     <h3 class="text-lg font-semibold mb-4">Edit Semester</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Semester</h3>
@@ -161,7 +147,7 @@
                     </div>
 
                     <!-- Multi-Select Dropdown for Subjects -->
-                    <div class="mb-4 {{ isset($this->courseSemester) ? 'hidden' : '' }}">
+                    <div class="mb-4 {{ isset($courseSemester) ? 'hidden' : '' }}">
                         <label for="courseSemesterForm.subject_ids[]" class="block text-gray-700">Select
                             Subjects</label>
                         <select id="subjectDropdown" name="courseSemesterForm.subject_ids[]" multiple
@@ -193,7 +179,7 @@
         </div>
     @endif
 
-    @if ($this->isAddCourseSubjectsFormOpen)
+    @if ($isAddCourseSubjectsFormOpen)
         <div id="addSemesterModal" class="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div class="bg-white p-6 rounded-lg w-96">
                 <h3 class="text-lg font-semibold mb-4">Add Subjects</h3>
@@ -225,8 +211,7 @@
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="button" id="cancelBtn"
-                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
+                        <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
                             wire:click='closeAddCourseSubjectsForm'>Cancel</button>
                         <button type="submit"
                             class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>

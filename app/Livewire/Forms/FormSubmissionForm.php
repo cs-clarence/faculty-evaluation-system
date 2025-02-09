@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Facades\Services\FormSubmissionService;
@@ -27,10 +26,10 @@ class FormSubmissionForm extends BaseForm
             ->where('form_submission_period_id', $this->form_submission_period_id);
 
         $validators = [
-            'teacher_id' => ['required', 'integer', 'exists:teachers,id',
+            'teacher_id'                => ['required', 'integer', 'exists:teachers,id',
                 isset($this->id) ? $unique->ignore($this->id) : $unique,
             ],
-            'student_subject_id' => ['required', 'integer', 'exists:student_subjects,id'],
+            'student_subject_id'        => ['required', 'integer', 'exists:student_subjects,id'],
             'form_submission_period_id' => ['required', 'integer', 'exists:form_submission_periods,id'],
         ];
 
@@ -48,7 +47,7 @@ class FormSubmissionForm extends BaseForm
                 } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
                     $additional[$key] = ['required', 'integer', 'exists:form_question_options,id'];
                 } else if ($question->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
-                    $key = "{$key}.*";
+                    $key              = "{$key}.*";
                     $additional[$key] = ['required', 'integer', 'exists:form_question_options,id'];
                 } else {
                     throw new \Exception("Invalid question type '{$question->type}'");
@@ -86,12 +85,12 @@ class FormSubmissionForm extends BaseForm
     {
         $model->load(['answers.selectedOptions']);
         $this->fill([
-            'id' => $model->id,
-            'teacher_id' => $model->teacher_id,
-            'student_subject_id' => $model->student_subject_id,
+            'id'                        => $model->id,
+            'teacher_id'                => $model->teacher_id,
+            'student_subject_id'        => $model->student_subject_id,
             'form_submission_period_id' => $model->form_submission_period_id,
-            'form_id' => $model->form_id,
-            'questions' => $model->getAnswersArray(),
+            'form_id'                   => $model->form_id,
+            'questions'                 => $model->getAnswersArray(),
         ]);
     }
 }
