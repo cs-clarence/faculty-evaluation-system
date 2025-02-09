@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Sections;
 
 use App\Facades\Helpers\SectionHelper;
@@ -24,8 +23,7 @@ class Index extends Component
             ->orderBy('year_level')
             ->orderBy('semester')
             ->orderBy('name')
-            ->orderBy('code')
-            ->get();
+            ->orderBy('code');
 
         $courses = Course::query()
             ->withoutArchived()
@@ -33,8 +31,7 @@ class Index extends Component
             ->orderBy('code')
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at')
-            ->lazy();
+            ->orderBy('updated_at');
 
         return view('livewire.pages.admin.sections.index')
             ->with(compact('sections', 'courses'))
@@ -45,7 +42,7 @@ class Index extends Component
     {
         if (($name === 'form.year_level' || $name === 'form.semester' || $name === 'form.name' || $name === 'form.course_id') && (
             isset($this->form->name) && $this->form->name !== '' && isset($this->form->year_level) && isset($this->form->semester) && isset($this->form->course_id)
-        ) && (!isset($this->form->code) || $this->form->code === '')) {
+        ) && (! isset($this->form->code) || $this->form->code === '')) {
             $this->form->code = SectionHelper::generateCode($this->form->course_id, $this->form->year_level, $this->form->semester, $this->form->name);
         }
     }
@@ -64,7 +61,7 @@ class Index extends Component
 
     public function edit(Section $section)
     {
-        $this->model = $section;
+        $this->model      = $section;
         $this->isFormOpen = true;
         $this->form->set($section);
     }

@@ -1,3 +1,25 @@
+@php
+    use Illuminate\Pagination\{LengthAwarePaginator, CursorPaginator};
+    if (!function_exists('isPaginated')) {
+        function isPaginated($data)
+        {
+            return $data instanceof AbstractPaginator ||
+                $data instanceof LengthAwarePaginator ||
+                $data instanceof CursorPaginator;
+        }
+    }
+
+    $perPage = isset($paginate) ? (is_numeric($paginate) ? $paginate : $paginate['perPage']) : 15;
+
+    $data = isset($paginate) && !isPaginated($data) ? $data->cursorPaginate($perPage) : $data;
+
+@endphp
+
+
+@if (isPaginated($data))
+    {{ $data->links('components.table.pagination-links') }}
+@endif
+
 <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg table table-fixed">
     <thead class="bg-gray-200 text-gray-600">
         <tr>

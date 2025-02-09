@@ -14,7 +14,8 @@ class Table extends Component
         public $data,
         public $columns,
         public $key = 'id',
-        public $empty = 'No data found'
+        public $empty = 'No data found',
+        public $paginate = null,
     ) {
         //
     }
@@ -25,9 +26,10 @@ class Table extends Component
     public function render(): View | Closure | string
     {
         return view('components.table', [
-            'data'    => $this->data,
-            'columns' => $this->columns,
-            'key'     => $this->key,
+            'data'     => $this->data,
+            'columns'  => $this->columns,
+            'key'      => $this->key,
+            'paginate' => $this->paginate,
         ]);
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\SchoolYears;
 
 use App\Livewire\Forms\SchoolYearForm;
@@ -9,7 +8,7 @@ use Livewire\Component;
 class Index extends Component
 {
     public SchoolYearForm $form;
-    public bool $isFormOpen = false;
+    public bool $isFormOpen        = false;
     public ?SchoolYear $schoolYear = null;
 
     public function mount()
@@ -21,7 +20,7 @@ class Index extends Component
         $schoolYears = SchoolYear::withCount(['semesters'])
             ->orderBy('year_start')
             ->orderBy('year_end')
-            ->get();
+            ->cursorPaginate(15);
         return view('livewire.pages.admin.school-years.index')
             ->with(compact('schoolYears'))
             ->layout('components.layouts.admin');
@@ -30,7 +29,7 @@ class Index extends Component
     public function openForm()
     {
         $this->isFormOpen = true;
-        if (!isset($this->form->semesters)) {
+        if (! isset($this->form->semesters)) {
             $this->form->semesters = 2;
         }
     }

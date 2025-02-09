@@ -15,77 +15,28 @@
 
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md table-fixed table">
-                <thead class="bg-gray-200 text-gray-600">
-                    <tr>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Year Level</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Semester</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Section Name</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Section Code</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Course</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse($sections as $section)
-                        <tr wire:key="{{ $section->id }}">
-                            <td class="py-3 px-4 border-b">
-                                {{ Number::ordinal($section->year_level) }}
-                            </td>
-                            <td class="py-3 px-4 border-b">
-                                {{ Number::ordinal($section->semester) }}
-                            </td>
-                            <td class="py-3 px-4 border-b">
-                                {{ $section->name }}
-                            </td>
-                            <td class="py-3 px-4 border-b">
-                                {{ $section->code }}
-                            </td>
-                            <td class="py-3 px-4 border-b">
-                                {{ $section->course->name }}
-                            </td>
-                            <td class="py-3 px-4 text-right border-b">
-                                <button wire:click='edit({{ $section->id }})'
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                    Edit
-                                </button>
-                                @if ($section->is_archived)
-                                    <button wire:click='unarchive({{ $section->id }})'
-                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                                        Unarchive
-                                    </button>
-                                @else
-                                    <button wire:click='archive({{ $section->id }})'
-                                        class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-                                        title="This department has courses associated with it. You can only archive it until you delete those courses.">
-                                        Archive
-                                    </button>
-                                @endif
-                                @if (!$section->hasDependents())
-                                    <button wire:click='delete({{ $section->id }})'
-                                        wire:confirm='Are you sure you want to delete this section?'
-                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="py-3 px-4 text-center text-gray-500">
-                                No Sections Found
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            @php
+                $columns = [
+                    ['label' => 'Year Level', 'render' => fn($data) => Number::ordinal($data->year_level)],
+                    ['label' => 'Semester', 'render' => fn($data) => Number::ordinal($data->semester)],
+                    ['label' => 'Section Name', 'render' => 'name'],
+                    ['label' => 'Section Code', 'render' => 'code'],
+                    ['label' => 'Course', 'render' => 'course.name'],
+                    ['label' => 'Actions', 'render' => 'blade:table.actions'],
+                ];
+                $paginate = [
+                    'perPage' => 15,
+                ];
+            @endphp
+            <x-table :data="$sections" :$columns :$paginate>
+            </x-table>
         </div>
     </div>
 
-    @if ($this->isFormOpen)
+    @if ($isFormOpen)
         <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->model)
+                @isset($model)
                     <h3 class="text-lg font-semibold mb-4">Edit Section</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Section</h3>
