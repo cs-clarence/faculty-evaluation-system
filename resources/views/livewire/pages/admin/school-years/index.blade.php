@@ -11,52 +11,36 @@
 
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md table-fixed table">
-                <thead class="bg-gray-200 text-gray-600">
-                    <tr>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">School Year</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Semesters</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse($schoolYears as $schoolYear)
-                        <tr wire:key="{{ $schoolYear->id }}">
-                            <td class="py-3 px-4 border-b">
-                                {{ $schoolYear->year_start }}
-                                - {{ $schoolYear->year_end }}
-                            </td>
-                            <td class="py-3 px-4 border-b">{{ $schoolYear->semesters_count }}</td>
-                            <td class="py-3 px-4 text-right border-b">
-                                <button wire:click='edit({{ $schoolYear->id }})'
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                    Edit
-                                </button>
-                                @if (!$schoolYear->hasDependents())
-                                    <button wire:click='delete({{ $schoolYear->id }})'
-                                        wire:confirm='Are you sure you want to delete this school year?'
-                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="py-3 px-4 text-center text-gray-500">
-                                No school years found
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            @php
+                $columns = [
+                    ['label' => 'School Year', 'render' => fn($data) => $data->year_start . ' - ' . $data->year_end],
+                    ['label' => 'Semesters', 'render' => 'semesters_count'],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [
+                                'archive' => [
+                                    'condition' => fn($data) => false,
+                                ],
+                                'unarchive' => [
+                                    'condition' => fn($data) => false,
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+            @endphp
+
+            <x-table :data="$schoolYears" :columns="$columns">
+            </x-table>
         </div>
     </div>
 
-    @if ($this->isFormOpen)
+    @if ($isFormOpen)
         <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->schoolYear)
+                @isset($schoolYear)
                     <h3 class="text-lg font-semibold mb-4">Edit School Year</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New School Year</h3>

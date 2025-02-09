@@ -16,7 +16,13 @@
                 $columns = [
                     ['label' => 'Subject Code', 'render' => 'code'],
                     ['label' => 'Subject Name', 'render' => 'name'],
-                    ['label' => 'Actions', 'render' => 'blade:table.actions'],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [],
+                        ],
+                    ],
                 ];
             @endphp
             <x-table :data="$subjects" :columns="$columns">

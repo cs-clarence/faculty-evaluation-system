@@ -1,4 +1,4 @@
-<table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg">
+<table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg table table-fixed">
     <thead class="bg-gray-200 text-gray-600">
         <tr>
             @foreach ($columns as $column)
@@ -11,7 +11,9 @@
             <tr wire:key="{{ $getValue($key, $d) }}">
                 @foreach ($columns as $column)
                     <td class="py-3 px-4 border-b border-current/20">
-                        @if (str_starts_with($column['render'], 'blade:'))
+                        @if (is_callable($column['render']))
+                            {{ $column['render']($d) }}
+                        @elseif (str_starts_with($column['render'], 'blade:'))
                             @php
                                 $slotName = str_replace('blade:', '', $column['render']);
                                 $renderProps = $column['props'] ?? [];

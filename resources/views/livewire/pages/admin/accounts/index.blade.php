@@ -71,14 +71,14 @@
     </div>
 
     <!-- Add Subject Modal -->
-    @if ($this->isFormOpen)
+    @if ($isFormOpen)
         <div id="addSubjectModal" class="fixed inset-0 bg-gray-900/50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->model)
-                    @if ($this->form->include_base && !$this->form->include_password)
+                @isset($model)
+                    @if ($form->include_base && !$form->include_password)
                         <h3 class="text-lg font-semibold mb-4">Edit Account</h3>
-                    @elseif ($this->form->include_password)
+                    @elseif ($form->include_password)
                         <h3 class="text-lg font-semibold mb-4">Edit Account Password</h3>
                     @endif
                 @else
@@ -87,22 +87,22 @@
 
                 <x-forms.user-form wire:submit.prevent="save" :departments="$departments" :roles="$roles" :courses="$courses"
                     :schoolYears="$schoolYears">
-                    @if ($this->form->include_base)
+                    @if ($form->include_base)
                         <x-slot:id name="form.id" wire:model="form.id"></x-slot:id>
                         <x-slot:roleCode name="form.role_code" wire:model.live='form.role_code'></x-slot:roleCode>
                         <x-slot:name name="form.name" wire:model="form.name"></x-slot:name>
                         <x-slot:email name="form.email" wire:model="form.email"></x-slot:email>
-                        @if ($this->form->role_code === 'teacher')
+                        @if ($form->role_code === 'teacher')
                             <x-slot:departmentId name="form.department_id" wire:model="form.department_id"></x-slot:departmentId>
                         @endif
-                        @if ($this->form->role_code === 'student')
+                        @if ($form->role_code === 'student')
                             <x-slot:courseId name="form.course_id" wire:model="form.course_id"></x-slot:courseId>
                             <x-slot:studentNumber name="form.student_number" wire:model="form.student_number"></x-slot:studentNumber>
                             <x-slot:startingSchoolYearId name="form.starting_school_year_id"
                                 wire:model="form.starting_school_year_id"></x-slot:startingSchoolYearId>
                         @endif
                     @endif
-                    @if ($this->form->include_password)
+                    @if ($form->include_password)
                         <x-slot:password name="form.password" wire:model="form.password"></x-slot:password>
                         <x-slot:passwordConfirmation name="form.password_confirmation" wire:model="form.password_confirmation">
                         </x-slot:passwordConfirmation>
