@@ -32,7 +32,7 @@
                 ];
             @endphp
 
-            <x-table :data="$schoolYears" :columns="$columns">
+            <x-table :data="$schoolYears" :columns="$columns" :paginate="15">
             </x-table>
         </div>
     </div>

@@ -7,7 +7,7 @@
 <div>
     @if ($showFormName)
         @isset($form->name)
-            <h2 class="text-2xl font-bold text-gray-800">{{ $this->form->name }}</h2>
+            <h2 class="text-2xl font-bold text-gray-800">{{ $form->name }}</h2>
         @endisset
     @endif
 

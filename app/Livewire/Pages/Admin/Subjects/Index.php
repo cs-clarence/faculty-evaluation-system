@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Subjects;
 
 use App\Livewire\Forms\SubjectForm;
@@ -18,8 +17,7 @@ class Index extends Component
             ->orderBy('code')
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at')
-            ->get();
+            ->orderBy('updated_at');
 
         return view('livewire.pages.admin.subjects.index')
             ->with(compact('subjects'))
@@ -40,7 +38,7 @@ class Index extends Component
 
     public function edit(Subject $subject)
     {
-        $this->subject = $subject;
+        $this->subject    = $subject;
         $this->isFormOpen = true;
         $this->form->set($subject);
     }

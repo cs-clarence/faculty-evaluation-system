@@ -19,8 +19,8 @@ class Index extends Component
     {
         $schoolYears = SchoolYear::withCount(['semesters'])
             ->orderBy('year_start')
-            ->orderBy('year_end')
-            ->cursorPaginate(15);
+            ->orderBy('year_end');
+
         return view('livewire.pages.admin.school-years.index')
             ->with(compact('schoolYears'))
             ->layout('components.layouts.admin');

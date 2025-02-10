@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Departments;
 
 use App\Livewire\Forms\DepartmentForm;
@@ -18,8 +17,7 @@ class Index extends Component
             ->orderBy('code')
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at')
-            ->lazy();
+            ->orderBy('updated_at');
 
         return view('livewire.pages.admin.departments.index')
             ->with(compact('departments'))

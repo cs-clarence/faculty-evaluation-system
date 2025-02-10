@@ -42,7 +42,15 @@
         </tr>
     </thead>
     <tbody class="text-gray-700">
-        @forelse($data as $d)
+        @php
+            $queried = $data;
+
+            if (method_exists($data, 'lazy')) {
+                $queried = $data->lazy();
+            }
+        @endphp
+
+        @forelse($queried as $d)
             <tr wire:key="{{ $getValue($key, $d) }}">
                 @foreach ($columns as $column)
                     <td class="py-3 px-4 border-b border-current/20">

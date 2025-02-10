@@ -24,7 +24,7 @@
                     ],
                 ];
             @endphp
-            <x-table :data="$subjects" :columns="$columns">
+            <x-table :data="$subjects" :columns="$columns" :paginate="15">
             </x-table>
         </div>
 

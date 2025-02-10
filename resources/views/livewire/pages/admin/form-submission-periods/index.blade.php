@@ -11,76 +11,44 @@
 
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-                <thead class="bg-gray-200 text-gray-600">
-                    <tr>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Name</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Form</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Semester</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Start Date</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">End Date</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Open</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Submissions Editable</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse($formSubmissionPeriods as $period)
-                        <tr>
-                            <td class="py-3 px-4 border-b">{{ $period->name }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->form->name }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->semester }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->starts_at }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->ends_at }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->is_open ? 'Yes' : 'No' }}</td>
-                            <td class="py-3 px-4 border-b">{{ $period->is_submissions_editable ? 'Yes' : 'No' }}</td>
-                            <td class="py-3 px-4 border-b">
-                                <button wire:click='edit({{ $period->id }})'
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                    Edit
-                                </button>
-                                @if ($period->is_open)
-                                    <button wire:click='close({{ $period->id }})' wire:key="close-{{ $period->id }}"
-                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                                        wire:confirm='Are you sure you want to close this submission period?'>
-                                        Close
-                                    </button>
-                                @else
-                                    <button wire:click='open({{ $period->id }})' wire:key="open-{{ $period->id }}"
-                                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                        Open
-                                    </button>
-                                @endif
+            @php
+                $columns = [
+                    ['label' => 'Name', 'render' => 'name'],
+                    ['label' => 'Form', 'render' => 'form.name'],
+                    ['label' => 'Semester', 'render' => 'semester'],
+                    ['label' => 'Start Date', 'render' => 'starts_at'],
+                    ['label' => 'End Date', 'render' => 'ends_at'],
+                    ['label' => 'Open', 'render' => fn($data) => $data->is_open ? 'Yes' : 'No'],
+                    [
+                        'label' => 'Submissions Editable',
+                        'render' => fn($data) => $data->is_submissions_editable ? 'Yes' : 'No',
+                    ],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [
+                                'open' => [
+                                    'order' => 1.1,
+                                    'label' => 'Open',
+                                    'color' => 'primary',
+                                    'wire:click' => fn($data) => "open({$data->id})",
+                                    'condition' => fn($data) => !$data->is_open,
+                                ],
+                                'close' => [
+                                    'order' => 1.2,
+                                    'label' => 'Close',
+                                    'color' => 'danger',
+                                    'wire:click' => fn($data) => "close({$data->id})",
+                                    'condition' => fn($data) => $data->is_open,
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+            @endphp
 
-                                @if ($period->is_archived)
-                                    <button wire:click='unarchive({{ $period->id }})'
-                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                                        Unarchive
-                                    </button>
-                                @else
-                                    <button wire:click='archive({{ $period->id }})'
-                                        class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-                                        title="This period has courses associated with it. You can only archive it until you delete those courses.">
-                                        Archive
-                                    </button>
-                                @endif
-                                @if (!$period->hasDependents())
-                                    <button wire:click='delete({{ $period->id }})'
-                                        wire:confirm='Are you sure you want to delete this period?'
-                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="py-3 px-4 text-center text-gray-500">No submission periods found
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <x-table :data="$formSubmissionPeriods" :$columns />
         </div>
     </div>
 
@@ -163,8 +131,7 @@
                     <div class="mb-4 flex flex-row items-center gap-2">
                         <input type="checkbox" name="is_submissions_editable" id="is_submissions_editable"
                             wire:model="form.is_submissions_editable">
-                        <label for="is_submissions_editable"
-                            class="block text-sm font-medium text-gray-700">Submissions
+                        <label for="is_submissions_editable" class="block text-sm font-medium text-gray-700">Submissions
                             Editable</label>
                         @error('form.is_submissions_editable')
                             <span class="text-red-500 text-sm">{{ $message }}</span>

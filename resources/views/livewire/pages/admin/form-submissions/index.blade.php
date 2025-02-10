@@ -1,7 +1,5 @@
 <div class="contents">
-    <div class="top flex justify-start mb-4">
-        <h2 class="text-2xl font-bold">Form Submissions</h2>
-    </div>
+    <x-sections.header title="Form Submissions" />
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="col-span-1 md:col-span-3 overflow-auto">
             @php
@@ -31,7 +29,7 @@
                     ],
                 ];
             @endphp
-            <x-table :data="$formSubmissions" :$columns />
+            <x-table :data="$formSubmissions" :$columns :paginate="15" />
         </div>
     </div>
 </div>

@@ -19,7 +19,7 @@
 
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
-            <x-table :data="$departments" :columns="$columns">
+            <x-table :data="$departments" :columns="$columns" :paginate="15">
             </x-table>
         </div>
     </div>
