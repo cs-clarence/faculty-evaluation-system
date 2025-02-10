@@ -1,9 +1,11 @@
 @php
+    $defaultSize = 'sm';
     $defaultActions = [
         'edit' => [
             'order' => 1,
             'label' => 'Edit',
             'color' => 'secondary',
+            'size' => $defaultSize,
             'wire:click' => fn($data) => "edit({$data->id})",
         ],
         'archive' => [
@@ -11,6 +13,7 @@
             'label' => 'Archive',
             'variant' => 'outlined',
             'color' => 'warning',
+            'size' => $defaultSize,
             'wire:click' => fn($data) => "archive({$data->id})",
             'condition' => fn($data) => !$data->is_archived,
         ],
@@ -19,6 +22,7 @@
             'label' => 'Unarchive',
             'variant' => 'outlined',
             'color' => 'secondary',
+            'size' => $defaultSize,
             'wire:click' => fn($data) => "unarchive({$data->id})",
             'condition' => fn($data) => $data->is_archived,
         ],
@@ -27,6 +31,7 @@
             'label' => 'Delete',
             'variant' => 'outlined',
             'color' => 'danger',
+            'size' => $defaultSize,
             'wire:confirm' => 'Are you sure you want to delete this record?',
             'wire:click' => fn($data) => "delete({$data->id})",
             'condition' => fn($data) => !$data->hasDependents(),
@@ -70,7 +75,7 @@
 @endphp
 
 
-<div class="flex row gap-1">
+<div class="flex row gap-0.5">
     @foreach ($actions as $action)
         @php
             $color = $action['color'] ?? 'default';
@@ -81,6 +86,7 @@
             $wireConfirm = $action['wire:confirm'] ?? null;
             $type = $action['type'] ?? 'button';
             $href = $action['href'] ?? null;
+            $size = $action['size'] ?? $defaultSize;
 
             if (!function_exists('evalProp')) {
                 function evalProp($maybeCallable, ...$args)
@@ -108,11 +114,11 @@
 
         @if (evalCondition($condition, $data))
             @if ($type === 'link')
-                <x-button :$color :$variant x-on:click="Livewire.navigate('{{ $attrHref }}')">
+                <x-button :$color :$size :$variant x-on:click="Livewire.navigate('{{ $attrHref }}')">
                     {{ $label }}
                 </x-button>
             @elseif ($type === 'button')
-                <x-button :$color :$variant :wire:click="$attrWireClick" :wire:confirm="$attrWireConfirm">
+                <x-button :$color :$size :$variant :wire:click="$attrWireClick" :wire:confirm="$attrWireConfirm">
                     {{ $label }}
                 </x-button>
             @endif
