@@ -1,10 +1,9 @@
 <div class="contents">
-    <div class="top flex justify-end mb-4">
-        <button id="addSubjectBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            wire:click='openForm'>
+    <x-sections.header title="Departments">
+        <x-button id="addSubjectBtn" wire:click='openForm'>
             Add Department
-        </button>
-    </div>
+        </x-button>
+    </x-sections.header>
 
     <!-- Main Dashboard Content -->
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -56,11 +55,10 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="flex justify-end">
-                        <button type="button" id="cancelBtn" wire:click='closeForm'
-                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
-                        <button type="submit"
-                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    <div class="flex justify-end gap-1">
+                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                            variant="text">Cancel</x-button>
+                        <x-button type="submit">Save</x-button>
                     </div>
                 </form>
             </div>

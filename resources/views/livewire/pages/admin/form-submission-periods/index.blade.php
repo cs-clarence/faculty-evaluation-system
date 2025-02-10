@@ -1,9 +1,9 @@
 <div class="contents">
-    <div class="top flex justify-end mb-4">
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" wire:click='openForm'>
+    <x-sections.header title="Submission Periods">
+        <x-button wire:click='openForm'>
             Add Submission Period
-        </button>
-    </div>
+        </x-button>
+    </x-sections.header>
 
     <!-- Main Dashboard Content -->
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -85,11 +85,11 @@
     </div>
 
     <!-- Add Subject Modal -->
-    @if ($this->isFormOpen)
+    @if ($isFormOpen)
         <div id="addSubjectModal" class="fixed inset-0 bg-gray-900/50 flex justify-center items-center"
             wire:click.self='closeForm'>
             <div class="bg-white p-6 rounded-lg w-96">
-                @isset($this->model)
+                @isset($model)
                     <h3 class="text-lg font-semibold mb-4">Edit Submission Period</h3>
                 @else
                     <h3 class="text-lg font-semibold mb-4">Add New Submission Period</h3>
@@ -170,11 +170,10 @@
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="flex justify-end">
-                        <button type="button" id="cancelBtn" wire:click='closeForm'
-                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
-                        <button type="submit"
-                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    <div class="flex justify-end gap-1">
+                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                            variant="text">Cancel</x-button>
+                        <x-button type="submit">Save</x-button>
                     </div>
                 </form>
             </div>

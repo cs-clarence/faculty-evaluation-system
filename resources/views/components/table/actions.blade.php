@@ -3,12 +3,13 @@
         'edit' => [
             'order' => 1,
             'label' => 'Edit',
-            'color' => 'primary',
+            'color' => 'secondary',
             'wire:click' => fn($data) => "edit({$data->id})",
         ],
         'archive' => [
             'order' => 2,
             'label' => 'Archive',
+            'variant' => 'outlined',
             'color' => 'warning',
             'wire:click' => fn($data) => "archive({$data->id})",
             'condition' => fn($data) => !$data->is_archived,
@@ -16,6 +17,7 @@
         'unarchive' => [
             'order' => 3,
             'label' => 'Unarchive',
+            'variant' => 'outlined',
             'color' => 'secondary',
             'wire:click' => fn($data) => "unarchive({$data->id})",
             'condition' => fn($data) => $data->is_archived,
@@ -23,6 +25,7 @@
         'delete' => [
             'order' => 4,
             'label' => 'Delete',
+            'variant' => 'outlined',
             'color' => 'danger',
             'wire:confirm' => 'Are you sure you want to delete this record?',
             'wire:click' => fn($data) => "delete({$data->id})",
@@ -67,56 +70,52 @@
 @endphp
 
 
-@foreach ($actions as $action)
-    @php
-        $color = $action['color'] ?? 'default';
-        $condition = $action['condition'] ?? true;
-        $label = $action['label'];
-        $wireClick = $action['wire:click'] ?? null;
-        $wireConfirm = $action['wire:confirm'] ?? null;
-        $type = $action['type'] ?? 'button';
-        $href = $action['href'] ?? null;
+<div class="flex row gap-1">
+    @foreach ($actions as $action)
+        @php
+            $color = $action['color'] ?? 'default';
+            $variant = $action['variant'] ?? 'default';
+            $condition = $action['condition'] ?? true;
+            $label = $action['label'];
+            $wireClick = $action['wire:click'] ?? null;
+            $wireConfirm = $action['wire:confirm'] ?? null;
+            $type = $action['type'] ?? 'button';
+            $href = $action['href'] ?? null;
 
-        $cssClass = match ($color) {
-            'danger' => 'bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600',
-            'warning' => 'bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600',
-            'primary' => 'bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600',
-            'secondary' => 'bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600',
-            default => 'bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600',
-        };
-    @endphp
+            if (!function_exists('evalProp')) {
+                function evalProp($maybeCallable, ...$args)
+                {
+                    if (is_callable($maybeCallable)) {
+                        return $maybeCallable(...$args);
+                    } else {
+                        return $maybeCallable;
+                    }
+                }
+            }
+            $attrWireClick = null;
+            if (isset($wireClick)) {
+                $attrWireClick = evalProp($wireClick, $data);
+            }
+            $attrWireConfirm = null;
+            if (isset($wireConfirm)) {
+                $attrWireConfirm = evalProp($wireConfirm, $data);
+            }
+            $attrHref = null;
+            if (isset($href)) {
+                $attrHref = evalProp($href, $data);
+            }
+        @endphp
 
-    @if (evalCondition($condition, $data))
-        @if ($type === 'link')
-            <button class="{{ $cssClass }}"
-                @isset($href)
-                    @if (is_callable($href))
-                        x-on:click="Livewire.navigate('{{ $href($data) }}')"
-                    @else
-                        x-on:click="Livewire.navigate('{{ $href }}')"
-                    @endif
-                @endisset>
-                {{ $label }}
-            </button>
-        @elseif ($type === 'button')
-            <button
-                @isset($wireClick)
-                    @if (is_callable($wireClick))
-                        wire:click='{{ $wireClick($data) }}'
-                    @else
-                        wire:click='{{ $wireClick }}'
-                    @endif
-                @endisset
-                @isset($wireConfirm)
-                    @if (is_callable($wireConfirm))
-                        wire:confirm='{{ $wireConfirm($data) }}'
-                    @else
-                        wire:confirm='{{ $wireConfirm }}'
-                    @endif
-                @endisset
-                class="{{ $cssClass }}">
-                {{ $label }}
-            </button>
+        @if (evalCondition($condition, $data))
+            @if ($type === 'link')
+                <x-button :$color :$variant x-on:click="Livewire.navigate('{{ $attrHref }}')">
+                    {{ $label }}
+                </x-button>
+            @elseif ($type === 'button')
+                <x-button :$color :$variant :wire:click="$attrWireClick" :wire:confirm="$attrWireConfirm">
+                    {{ $label }}
+                </x-button>
+            @endif
         @endif
-    @endif
-@endforeach
+    @endforeach
+</div>

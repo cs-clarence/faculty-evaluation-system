@@ -155,6 +155,7 @@ return new class extends Migration
             $table->float('value');
             $table->text('text')->nullable();
             $table->string('interpretation')->nullable();
+            $table->string('reason')->nullable();
 
             $table->timestampsTz();
         });

@@ -1,14 +1,16 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Courses;
 
 use App\Livewire\Forms\CourseForm;
 use App\Models\Course;
 use App\Models\Department;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination;
     public CourseForm $form;
     public ?Course $course;
     public bool $isFormOpen = false;
@@ -20,8 +22,7 @@ class Index extends Component
             ->orderBy('code')
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at')
-            ->get();
+            ->orderBy('updated_at');
 
         $departments = Department::withoutArchived()
             ->orderBy('code')
@@ -41,7 +42,7 @@ class Index extends Component
     public function closeForm()
     {
         $this->isFormOpen = false;
-        $this->course = null;
+        $this->course     = null;
         $this->form->clear();
     }
 

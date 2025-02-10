@@ -9,15 +9,28 @@
         }
     }
 
+    if (!function_exists('isCursorPaginated')) {
+        function isCursorPaginated($data)
+        {
+            return $data instanceof CursorPaginator;
+        }
+    }
+
     $perPage = isset($paginate) ? (is_numeric($paginate) ? $paginate : $paginate['perPage']) : 15;
 
     $data = isset($paginate) && !isPaginated($data) ? $data->cursorPaginate($perPage) : $data;
-
 @endphp
 
 
 @if (isPaginated($data))
-    {{ $data->links('components.table.pagination-links') }}
+    <div class="mb-2 flex row">
+        <div class="grow"></div>
+        @if (isCursorPaginated($data))
+            {{ $data->links('components.table.simple-paginate') }}
+        @else
+            {{ $data->links('components.table.paginate') }}
+        @endif
+    </div>
 @endif
 
 <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg table table-fixed">

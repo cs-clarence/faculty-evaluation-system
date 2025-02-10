@@ -1,10 +1,9 @@
 <div class="contents">
-    <div class="top flex justify-end mb-4">
-        <button id="addSubjectBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            wire:click='openForm'>
+    <x-sections.header title="Accounts">
+        <x-button id="addSubjectBtn" wire:click='openForm'>
             Add Account
-        </button>
-    </div>
+        </x-button>
+    </x-sections.header>
 
     <!-- Main Dashboard Content -->
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -12,61 +11,35 @@
 
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-                <thead class="bg-gray-200 text-gray-600">
-                    <tr>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Name</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Email</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Role</th>
-                        <th class="py-3 px-4 text-left text-sm font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse($users as $user)
-                        <tr wire:key="{{ $user->id }}">
-                            <td class="py-3 px-4 border-b">{{ $user->name }}</td>
-                            <td class="py-3 px-4 border-b">{{ $user->email }}</td>
-                            <td class="py-3 px-4 border-b">{{ $user->role->display_name }}</td>
-                            <td class="py-3 px-4 border-b">
-                                <button wire:click='edit({{ $user->id }})'
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                    Edit
-                                </button>
-                                <button wire:click='editPassword({{ $user->id }})'
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-                                    Edit Password
-                                </button>
-                                @if ($user->is_archived)
-                                    <button wire:click='unarchive({{ $user->id }})'
-                                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                                        Unarchive
-                                    </button>
-                                @else
-                                    @if (!$user->isCurrentUser())
-                                        <button wire:click='archive({{ $user->id }})'
-                                            class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-                                            title="This department has courses associated with it. You can only archive it until you delete those courses.">
-                                            Archive
-                                        </button>
-                                    @endif
-                                @endif
-                                @if (!$user->hasDependents() && !$user->isCurrentUser())
-                                    <button wire:click='delete({{ $user->id }})'
-                                        wire:confirm='Are you sure you want to delete this user?'
-                                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="py-3 px-4 text-center text-gray-500">No users found
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            @php
+                $columns = [
+                    ['label' => 'Name', 'render' => 'name'],
+                    ['label' => 'Email', 'render' => 'email'],
+                    ['label' => 'Role', 'render' => 'role.display_name'],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [
+                                'edit_password' => [
+                                    'order' => 1.1,
+                                    'label' => 'Edit Password',
+                                    'color' => 'primary',
+                                    'wire:click' => fn($data) => "editPassword({$data->id})",
+                                ],
+                                'archive' => [
+                                    'condition' => fn($data) => !$data->is_archived && !$data->isCurrentUser(),
+                                ],
+                                'delete' => [
+                                    'condition' => fn($data) => !$data->hasDependents() && !$data->isCurrentUser(),
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+            @endphp
+            <x-table :columns="$columns" :data="$users">
+            </x-table>
         </div>
     </div>
 
@@ -107,11 +80,10 @@
                         <x-slot:passwordConfirmation name="form.password_confirmation" wire:model="form.password_confirmation">
                         </x-slot:passwordConfirmation>
                     @endif
-                    <div class="flex justify-end">
-                        <button type="button" id="cancelBtn" wire:click='closeForm'
-                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
-                        <button type="submit"
-                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    <div class="flex justify-end gap-1">
+                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                            variant="text">Cancel</x-button>
+                        <x-button type="submit">Save</x-button>
                     </div>
                 </x-forms.user-form>
             </div>

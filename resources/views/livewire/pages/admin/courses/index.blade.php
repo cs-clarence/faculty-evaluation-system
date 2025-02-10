@@ -1,10 +1,9 @@
 <div class="contents">
-    <div class="top flex justify-end mb-4">
-        <button id="addCourseBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            wire:click='openForm'>
+    <x-sections.header title="Courses">
+        <x-button id="addCourseBtn" wire:click='openForm'>
             Add Course
-        </button>
-    </div>
+        </x-button>
+    </x-sections.header>
 
     <!-- Main Dashboard Content -->
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -35,8 +34,7 @@
                     ],
                 ];
             @endphp
-            <x-table :data="$courses" :columns="$columns">
-            </x-table>
+            <x-table :data="$courses" :columns="$columns" :paginate="15" />
         </div>
 
     </div>
@@ -90,11 +88,10 @@
                         @enderror
                     </div>
 
-                    <div class="flex justify-end">
-                        <button type="button" id="cancelBtn" wire:click='closeForm'
-                            class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700">Cancel</button>
-                        <button type="submit"
-                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    <div class="flex justify-end gap-1">
+                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                            variant="text">Cancel</x-button>
+                        <x-button type="submit">Save</x-button>
                     </div>
                 </form>
             </div>

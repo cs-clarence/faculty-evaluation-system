@@ -7,9 +7,12 @@ use App\Models\Course;
 use App\Models\Section;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination;
     public ?Section $model;
     public bool $isFormOpen = false;
     public SectionForm $form;
@@ -31,7 +34,8 @@ class Index extends Component
             ->orderBy('code')
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at');
+            ->orderBy('updated_at')
+            ->get();
 
         return view('livewire.pages.admin.sections.index')
             ->with(compact('sections', 'courses'))
