@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\FormSubmissionPeriods;
 
 use App\Livewire\Forms\FormSubmissionPeriodForm;
@@ -18,11 +17,10 @@ class Index extends Component
 
     public function render()
     {
-        $formSubmissionPeriods = FormSubmissionPeriod::withoutArchived()
-            ->with([
-                'form',
-                'semester' => fn(BelongsTo $buidler) => $buidler->with('schoolYear'),
-            ])
+        $formSubmissionPeriods = FormSubmissionPeriod::with([
+            'form',
+            'semester' => fn(BelongsTo $buidler) => $buidler->with('schoolYear'),
+        ])
             ->orderBy('starts_at')
             ->orderBy('ends_at')
             ->orderBy('form_id')
@@ -71,7 +69,7 @@ class Index extends Component
 
     public function edit(FormSubmissionPeriod $model)
     {
-        $this->model = $model;
+        $this->model      = $model;
         $this->isFormOpen = true;
         $this->form->set($model);
     }

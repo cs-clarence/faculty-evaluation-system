@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\FormSubmissionPeriod;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Validate;
 
 class FormSubmissionPeriodForm extends BaseForm
 {
@@ -22,15 +21,20 @@ class FormSubmissionPeriodForm extends BaseForm
     public function rules()
     {
         return [
-            'id' => ['nullable', 'integer', 'exists:form_submission_periods,id'],
-            'form_id' => ['required', 'integer', 'exists:forms,id'],
-            'semester_id' => ['required', 'exists:semesters,id'],
-            'name' => ['required', 'string', 'unique:form_submission_periods,name' .
+            'id'                      => ['nullable', 'integer', 'exists:form_submission_periods,id'],
+            'form_id'                 => ['required', 'integer', 'exists:forms,id'],
+            'semester_id'             => ['required', 'exists:semesters,id',
+                Rule::unique(FormSubmissionPeriod::class)
+                    ->where('form_id', $this->form_id)
+                    ->where('semester_id', $this->semester_id)
+                    ->ignore($this->id, 'id'),
+            ],
+            'name'                    => ['required', 'string', 'unique:form_submission_periods,name' .
                 (isset($this->id) ? ",$this->id" : ''),
             ],
-            'starts_at' => ['required', 'date', 'before:ends_at'],
-            'ends_at' => ['required', 'date', 'after:starts_at'],
-            'is_open' => ['required', 'boolean'],
+            'starts_at'               => ['required', 'date', 'before:ends_at'],
+            'ends_at'                 => ['required', 'date', 'after:starts_at'],
+            'is_open'                 => ['required', 'boolean'],
             'is_submissions_editable' => ['required', 'boolean'],
         ];
     }
@@ -49,7 +53,7 @@ class FormSubmissionPeriodForm extends BaseForm
     {
         $this->fill([ ...$model->attributesToArray(),
             'starts_at' => Carbon::make($model->starts_at)->format('Y-m-d\TH:i'),
-            'ends_at' => Carbon::make($model->ends_at)->format('Y-m-d\TH:i'),
+            'ends_at'   => Carbon::make($model->ends_at)->format('Y-m-d\TH:i'),
         ]);
     }
 
