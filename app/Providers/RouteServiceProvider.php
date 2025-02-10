@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Providers;
 
+use App\Models\RoleCode;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -22,10 +22,10 @@ class RouteServiceProvider extends ServiceProvider
     public static function getDashboard(string $roleCode)
     {
         return match ($roleCode) {
-            'admin' => route('admin.dashboard.index'),
-            'student' => route('student.dashboard.index'),
-            'teacher' => route('teacher.dashboard.index'),
-            default => RouteServiceProvider::HOME,
+            RoleCode::Admin->value, RoleCode::Hr->value, RoleCode::Evaluator->value => route('admin.dashboard.index'),
+            RoleCode::Student->value => route('student.dashboard.index'),
+            RoleCode::Teacher->value => route('teacher.dashboard.index'),
+            default                  => RouteServiceProvider::HOME,
         };
     }
 

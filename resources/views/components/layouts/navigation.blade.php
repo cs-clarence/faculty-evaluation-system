@@ -48,13 +48,16 @@
             <!-- Navigation Links -->
             <ul class="flex-1 space-y-4">
                 @foreach ($links as $link)
-                    <li>
-                        <a href="{{ $link['href'] }}" @if ($link['use_wire_navigate'] ?? true) wire:navigate @endif
-                            class="flex items-center space-x-2 hover:text-gray-300">
-                            <i class='bx bx-user'></i>
-                            <span>{{ $link['title'] }}</span>
-                        </a>
-                    </li>
+                    @php($condition = $link['condition'] ?? true)
+                    @if (is_callable($condition) ? $condition() : $condition)
+                        <li>
+                            <a href="{{ $link['href'] }}" @if ($link['use_wire_navigate'] ?? true) wire:navigate @endif
+                                class="flex items-center space-x-2 hover:text-gray-300">
+                                <i class='bx bx-user'></i>
+                                <span>{{ $link['title'] }}</span>
+                            </a>
+                        </li>
+                    @endif
                 @endforeach
             </ul>
 

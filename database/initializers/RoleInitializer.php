@@ -1,8 +1,8 @@
 <?php
-
 namespace Database\Initializers;
 
 use App\Models\Role;
+use App\Models\RoleCode;
 use Database\Initializers\Base\Initializer;
 
 class RoleInitializer extends Initializer
@@ -12,16 +12,10 @@ class RoleInitializer extends Initializer
      */
     public function run(): void
     {
-        if (!Role::where('code', 'admin')->exists()) {
-            Role::factory()->admin()->create();
-        }
-
-        if (!Role::where('code', 'student')->exists()) {
-            Role::factory()->student()->create();
-        }
-
-        if (!Role::where('code', 'teacher')->exists()) {
-            Role::factory()->teacher()->create();
+        foreach (RoleCode::cases() as $roleCode) {
+            if (! Role::where('code', $roleCode->value)->exists()) {
+                Role::factory()->roleCode($roleCode)->create();
+            }
         }
     }
 }

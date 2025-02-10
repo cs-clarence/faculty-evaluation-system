@@ -37,7 +37,7 @@ Route::middleware(['auth'])
         Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)->name('account-archived.index');
     });
 
-Route::middleware(['auth:admin'])
+Route::middleware(['auth:admin,hr,dean,evaluator'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {

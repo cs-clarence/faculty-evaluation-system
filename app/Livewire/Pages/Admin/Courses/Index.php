@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Admin\Courses;
 use App\Livewire\Forms\CourseForm;
 use App\Models\Course;
 use App\Models\Department;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
@@ -17,6 +18,8 @@ class Index extends Component
 
     public function render()
     {
+        Gate::authorize('viewAny', Course::class);
+
         $courses = Course::withCount(['sections', 'courseSemesters', 'courseSubjects'])
             ->with(['department'])
             ->orderBy('code')

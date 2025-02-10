@@ -2,19 +2,18 @@
 namespace App\Policies;
 
 use App\Models\RoleCode;
-use App\Models\Teacher;
 use App\Models\User;
 use App\Policies\Base\BasePolicy;
 use Illuminate\Auth\Access\Response;
 
 /**
- * @extends parent<Teacher>
+ * @extends parent<User>
  */
-class TeacherPolicy extends BasePolicy
+class UserPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Teacher::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::Hr);
+        parent::__construct(User::class, RoleCode::Admin);
     }
 
     /**
@@ -28,7 +27,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Teacher $teacher): Response
+    public function view(User $user, User $other): Response
     {
         return $this->isInRoles($user);
     }
@@ -44,7 +43,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Teacher $teacher): Response
+    public function update(User $user, User $other): Response
     {
         return $this->isInRoles($user);
     }
@@ -52,7 +51,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Teacher $teacher): Response
+    public function delete(User $user, User $other): Response
     {
         return $this->isInRoles($user);
     }
@@ -60,7 +59,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Teacher $teacher): Response
+    public function restore(User $user, User $other): Response
     {
         //
         return $this->isInRoles($user);
@@ -69,7 +68,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Teacher $teacher): Response
+    public function forceDelete(User $user, User $other): Response
     {
         //
         return $this->isInRoles($user);

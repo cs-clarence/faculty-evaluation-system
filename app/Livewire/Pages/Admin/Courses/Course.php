@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Courses;
 
 use App\Livewire\Forms\AddCourseSubjectsForm;
@@ -8,12 +7,13 @@ use App\Models\Course as CourseModel;
 use App\Models\CourseSemester;
 use App\Models\CourseSubject;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class Course extends Component
 {
     public CourseModel $course;
-    public bool $isCourseSemesterFormOpen = false;
+    public bool $isCourseSemesterFormOpen    = false;
     public bool $isAddCourseSubjectsFormOpen = false;
     public ?CourseSemester $courseSemester;
     public ?int $openCourseSemesterId = null;
@@ -22,6 +22,8 @@ class Course extends Component
 
     public function render()
     {
+        Gate::authorize('view', $this->course);
+
         $subjectQuery = Subject::withoutArchived()
             ->orderBy('code')
             ->orderBy('name')
@@ -38,9 +40,9 @@ class Course extends Component
 
         return view('livewire.pages.admin.courses.course')
             ->with([
-                'hcourse' => $this->course,
-                'subjects' => $subjects,
-                'courseSemesters' => $this->course->courseSemesters()
+                'hcourse'          => $this->course,
+                'subjects'         => $subjects,
+                'courseSemesters'  => $this->course->courseSemesters()
                     ->withCount(['subjects'])
                     ->orderBy('year_level')
                     ->orderBy('semester')
@@ -53,14 +55,14 @@ class Course extends Component
 
     public function openCourseSemesterForm()
     {
-        $this->isCourseSemesterFormOpen = true;
+        $this->isCourseSemesterFormOpen      = true;
         $this->courseSemesterForm->course_id = $this->course->id;
     }
 
     public function closeCourseSemesterForm()
     {
         $this->isCourseSemesterFormOpen = false;
-        $this->courseSemester = null;
+        $this->courseSemester           = null;
         $this->courseSemesterForm->clear();
     }
 

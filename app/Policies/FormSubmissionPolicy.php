@@ -1,20 +1,20 @@
 <?php
 namespace App\Policies;
 
+use App\Models\FormSubmission;
 use App\Models\RoleCode;
-use App\Models\Teacher;
 use App\Models\User;
 use App\Policies\Base\BasePolicy;
 use Illuminate\Auth\Access\Response;
 
 /**
- * @extends parent<Teacher>
+ * @extends parent<FormSubmission>
  */
-class TeacherPolicy extends BasePolicy
+class FormSubmissionPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Teacher::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::Hr);
+        parent::__construct(FormSubmission::class, RoleCode::Admin, RoleCode::Hr);
     }
 
     /**
@@ -28,7 +28,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Teacher $teacher): Response
+    public function view(User $user, FormSubmission $formSubmission): Response
     {
         return $this->isInRoles($user);
     }
@@ -44,7 +44,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Teacher $teacher): Response
+    public function update(User $user, FormSubmission $formSubmission): Response
     {
         return $this->isInRoles($user);
     }
@@ -52,7 +52,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Teacher $teacher): Response
+    public function delete(User $user, FormSubmission $formSubmission): Response
     {
         return $this->isInRoles($user);
     }
@@ -60,7 +60,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Teacher $teacher): Response
+    public function restore(User $user, FormSubmission $formSubmission): Response
     {
         //
         return $this->isInRoles($user);
@@ -69,7 +69,7 @@ class TeacherPolicy extends BasePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Teacher $teacher): Response
+    public function forceDelete(User $user, FormSubmission $formSubmission): Response
     {
         //
         return $this->isInRoles($user);
