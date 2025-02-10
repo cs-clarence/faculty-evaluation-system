@@ -51,20 +51,18 @@
                     Semester
                     <span class="text-lg text-gray-400">({{ $semester->subjects_count }} Subject(s))</span>
                 </h2>
-                <div class="flex flex-row justify-end gap-2 items-center">
-                    <button wire:click.stop='openAddCourseSubjectsForm({{ $semester->id }})'
-                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                <div class="flex flex-row justify-end gap-1 items-center">
+                    <x-button wire:click.stop='openAddCourseSubjectsForm({{ $semester->id }})' color="primary">
                         Add Subjects
-                    </button>
-                    <button wire:click.stop='editCourseSemester({{ $semester->id }})' @disabled($semester->hasDependents())
-                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 {{ $semester->hasDependents() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    </x-button>
+                    <x-button wire:click.stop='editCourseSemester({{ $semester->id }})' :disabled="$semester->hasDependents()"
+                        color="secondary">
                         Edit
-                    </button>
-                    <button wire:click.stop='deleteCourseSemester({{ $semester->id }})' @disabled($semester->hasDependents())
-                        wire:confirm='Are you sure you want to delete this semester?'
-                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 {{ $semester->hasDependents() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    </x-button>
+                    <x-button wire:click.stop='deleteCourseSemester({{ $semester->id }})' :disabled="$semester->hasDependents()"
+                        wire:confirm='Are you sure you want to delete this semester?' color="danger">
                         Delete
-                    </button>
+                    </x-button>
                     <div>
                         <i
                             class="uil uil-angle-down accordion-toggle {{ $this->isOpenAccordion($semester) ? 'accordion-toggle-open' : '' }}"></i>
@@ -210,11 +208,10 @@
                         @enderror
                     </div>
 
-                    <div class="flex justify-end">
-                        <button type="button" id="cancelBtn" class="px-4 py-2 mr-2 text-gray-500 hover:text-gray-700"
-                            wire:click='closeAddCourseSubjectsForm'>Cancel</button>
-                        <button type="submit"
-                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                    <div class="flex justify-end gap-1">
+                        <x-button type="button" id="cancelBtn" wire:click='closeAddCourseSubjectsForm' color="neutral"
+                            variant="text">Cancel</x-button>
+                        <x-button type="submit">Save</x-button>
                     </div>
                 </form>
             </div>
