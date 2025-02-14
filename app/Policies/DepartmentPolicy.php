@@ -14,7 +14,7 @@ class DepartmentPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Department::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::Hr);
+        parent::__construct(Department::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::HumanResourcesStaff);
     }
 
     /**

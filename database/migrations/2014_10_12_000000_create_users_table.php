@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('display_name');
             $table->string('code');
             $table->boolean('hidden');
+            $table->boolean('can_be_evaluator')->default(false);
+            $table->boolean('can_be_evaluatee')->default(true);
 
             $table->unique('code');
             $table->timestampsTz();

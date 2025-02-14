@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -76,6 +75,22 @@ class User extends Authenticatable
         return $this->hasOne(Teacher::class);
     }
 
+    public function dean()
+    {
+        return $this->hasOne(Dean::class);
+    }
+
+    public function evaluator()
+    {
+        return $this->hasOne(Evaluator::class);
+    }
+
+    public function humanResourcesStaff()
+    {
+        return $this->hasOne(HumanResourcesStaff::class);
+
+    }
+
     public function archive()
     {
         $teacher = $this->teacher;
@@ -88,6 +103,24 @@ class User extends Authenticatable
 
         if (isset($student)) {
             $student->baseArchive();
+        }
+
+        $dean = $this->dean;
+
+        if (isset($dean)) {
+            $dean->baseArchive();
+        }
+
+        $evaluator = $this->evaluator;
+
+        if (isset($evaluator)) {
+            $evaluator->baseArchive();
+        }
+
+        $humanResourcesStaff = $this->humanResourcesStaff;
+
+        if (isset($humanResourcesStaff)) {
+            $evaluator->baseArchive();
         }
 
         $this->baseArchive();
@@ -105,6 +138,24 @@ class User extends Authenticatable
 
         if (isset($student)) {
             $student->baseUnarchive();
+        }
+
+        $dean = $this->dean;
+
+        if (isset($dean)) {
+            $dean->baseUnarchive();
+        }
+
+        $evaluator = $this->evaluator;
+
+        if (isset($evaluator)) {
+            $evaluator->baseUnarchive();
+        }
+
+        $humanResourcesStaff = $this->humanResourcesStaff;
+
+        if (isset($humanResourcesStaff)) {
+            $evaluator->baseUnarchive();
         }
 
         $this->baseUnarchive();
@@ -133,9 +184,12 @@ class User extends Authenticatable
 
     public function delete()
     {
-        $teacherId = $this->teacher()->first(['id'])?->id;
-        $studentId = $this->student()->first(['id'])?->id;
-        $userId = $this->id;
+        $teacherId             = $this->teacher()->first(['id'])?->id;
+        $studentId             = $this->student()->first(['id'])?->id;
+        $deanId                = $this->dean()->first(['id'])?->id;
+        $evaluatorId           = $this->evaluator()->first(['id'])?->id;
+        $humanResourcesStaffId = $this->humanResourcesStaff()->first(['id'])?->id;
+        $userId                = $this->id;
 
         if (isset($teacherId)) {
             Teacher::whereId($teacherId)->delete();
@@ -143,6 +197,18 @@ class User extends Authenticatable
 
         if (isset($studentId)) {
             Student::whereId($studentId)->delete();
+        }
+
+        if (isset($deanId)) {
+            Dean::whereId($deanId)->delete();
+        }
+
+        if (isset($evaluatorId)) {
+            Evaluator::whereId($evaluatorId)->delete();
+        }
+
+        if (isset($humanResourcesStaffId)) {
+            HumanResourcesStaff::whereId($humanResourcesStaffId)->delete();
         }
 
         User::whereId($userId)->delete();

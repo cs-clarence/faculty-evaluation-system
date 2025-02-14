@@ -22,7 +22,7 @@ class RouteServiceProvider extends ServiceProvider
     public static function getDashboard(string $roleCode)
     {
         return match ($roleCode) {
-            RoleCode::Admin->value, RoleCode::Hr->value, RoleCode::Evaluator->value => route('admin.dashboard.index'),
+            RoleCode::Admin->value, RoleCode::HumanResourcesStaff->value, RoleCode::Evaluator->value => route('admin.dashboard.index'),
             RoleCode::Student->value => route('student.dashboard.index'),
             RoleCode::Teacher->value => route('teacher.dashboard.index'),
             default                  => RouteServiceProvider::HOME,

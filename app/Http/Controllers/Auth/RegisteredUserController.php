@@ -1,7 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
+use App\Facades\Services\DeanService;
+use App\Facades\Services\EvaluatorService;
+use App\Facades\Services\HumanResourcesStaffService;
 use App\Facades\Services\StudentService;
 use App\Facades\Services\TeacherService;
 use App\Facades\Services\UserService;
@@ -46,8 +48,8 @@ class RegisteredUserController extends Controller
             ->lazy();
 
         return view('auth.register', [
-            'roles' => Role::where('hidden', false)->get(),
-            'courses' => $courses,
+            'roles'       => Role::where('hidden', false)->get(),
+            'courses'     => $courses,
             'departments' => $departments,
             'schoolYears' => $schoolYear,
         ]);
@@ -60,19 +62,19 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $roleCode = $request->role_code;
+        $roleCode  = $request->role_code;
         $isStudent = $request->role_code === RoleCode::Student->value;
         $isTeacher = $request->role_code === RoleCode::Teacher->value;
 
         $valid = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Password::default()],
-            'student_number' => $isStudent ? ['required', 'string', 'unique:students,student_number'] : [],
-            'course_id' => $isStudent ? ['required', 'integer', 'exists:courses,id'] : [],
+            'name'                    => ['required', 'string', 'max:255'],
+            'email'                   => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password'                => ['required', 'confirmed', Password::default()],
+            'student_number'          => $isStudent ? ['required', 'string', 'unique:students,student_number'] : [],
+            'course_id'               => $isStudent ? ['required', 'integer', 'exists:courses,id'] : [],
             'starting_school_year_id' => ['required', 'integer', 'exists:school_years,id'],
-            'department_id' => $isTeacher ? ['required', 'integer', 'exists:departments,id'] : [],
-            'role_code' => ['required', 'string', 'exists:roles,code'],
+            'department_id'           => $isTeacher ? ['required', 'integer', 'exists:departments,id'] : [],
+            'role_code'               => ['required', 'string', 'exists:roles,code'],
         ]);
 
         $user = UserService::create(
@@ -93,6 +95,18 @@ class RegisteredUserController extends Controller
 
         if ($roleCode === RoleCode::Teacher->value) {
             TeacherService::create($user, $valid['department_id']);
+        }
+
+        if ($roleCode === RoleCode::Dean->value) {
+            DeanService::create($user, $valid['department_id']);
+        }
+
+        if ($roleCode === RoleCode::Evaluator->value) {
+            EvaluatorService::create($user);
+        }
+
+        if ($roleCode === RoleCode::HumanResourcesStaff->value) {
+            HumanResourcesStaffService::create($user);
         }
 
         event(new Registered($user));

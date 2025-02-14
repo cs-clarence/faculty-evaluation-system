@@ -6,21 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperDean
+ * @mixin IdeHelperEvaluator
  */
-class Dean extends Model
+class Evaluator extends Model
 {
-    /** @use HasFactory<\Database\Factories\DeanFactory> */
+    /** @use HasFactory<\Database\Factories\EvaluatorFactory> */
     use HasFactory;
     use Archivable {
         archive as baseArchive;
         unarchive as baseUnarchive;
     }
 
-    protected $table = 'deans';
+    protected $table = 'evaluators';
 
     protected $fillable = [
         'user_id',
-        'department_id',
     ];
 }

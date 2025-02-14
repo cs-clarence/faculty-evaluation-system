@@ -14,7 +14,7 @@ class TeacherPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Teacher::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::Hr);
+        parent::__construct(Teacher::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::HumanResourcesStaff);
     }
 
     /**

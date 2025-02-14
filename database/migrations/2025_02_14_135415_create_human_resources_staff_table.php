@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,20 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deans', function (Blueprint $table) {
+        Schema::create('human_resources_staff', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class, 'user_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(Department::class, 'department_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->timestampTz('archived_at')->nullable();
-
             $table->timestampsTz();
         });
     }
@@ -36,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deans');
+        Schema::dropIfExists('human_resources_staff');
     }
 };

@@ -1,4 +1,5 @@
 {
+    "name": "@repo/root",
     "private": true,
     "type": "module",
     "packageManager": "bun@1.2.2",
@@ -28,13 +29,13 @@
         "@rencedm112/tsconfig": "^3.0.6",
         "@rencedm112/with-env": "^0.0.43",
         "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/vite": "^4.0.3",
+        "@tailwindcss/vite": "^4.0.6",
         "@types/alpinejs": "^3.13.11",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.9",
         "laravel-vite-plugin": "^1.2.0",
-        "postcss": "^8.5.1",
-        "tailwindcss": "^4.0.3",
+        "postcss": "^8.5.2",
+        "tailwindcss": "^4.0.6",
         "typescript": "^5.7.3",
         "vite": "^6.1.0"
     }

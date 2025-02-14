@@ -14,7 +14,7 @@ class FormSubmissionPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(FormSubmission::class, RoleCode::Admin, RoleCode::Hr);
+        parent::__construct(FormSubmission::class, RoleCode::Admin, RoleCode::HumanResourcesStaff);
     }
 
     /**

@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <div id="teacher-details" class="hidden">
+        <div id="department-details" class="hidden">
             <div class="mt-4">
                 <x-input-label for="department_id" :value="__('Department')" />
                 <select id="deparment_id" name="department_id" class="block w-full">
@@ -119,16 +119,17 @@
         function toggleStudentFields() {
             const roleSelect = document.getElementById('role_code');
             const studentDetails = document.getElementById('student-details');
-            if (roleSelect.value == '{{ RoleCode::Student->value }}') {
+            if (roleSelect.value === '{{ RoleCode::Student->value }}') {
                 studentDetails.classList.remove('hidden');
             } else {
                 studentDetails.classList.add('hidden');
             }
-            const teacherDetails = document.getElementById('teacher-details');
-            if (roleSelect.value == '{{ RoleCode::Teacher->value }}') {
-                teacherDetails.classList.remove('hidden');
+            const deptDetails = document.getElementById('department-details');
+            if (roleSelect.value === '{{ RoleCode::Teacher->value }}' || roleSelect.value ===
+                '{{ RoleCode::Dean->value }}') {
+                deptDetails.classList.remove('hidden');
             } else {
-                teacherDetails.classList.add('hidden');
+                deptDetails.classList.add('hidden');
             }
         }
         toggleStudentFields();

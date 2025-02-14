@@ -4,6 +4,7 @@ namespace Database\Factories;
 use App\Models\RoleCode;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Role>
@@ -65,9 +66,9 @@ class RoleFactory extends Factory
     {
         return $this->roleCode(RoleCode::Evaluator);
     }
-    public function hr()
+    public function humanResourcesStaff()
     {
-        return $this->roleCode(RoleCode::Hr);
+        return $this->roleCode(RoleCode::HumanResourcesStaff);
     }
     public function dean()
     {
@@ -80,9 +81,11 @@ class RoleFactory extends Factory
             return [
                  ...$attributes,
                 'id'           => self::getId($roleCode),
-                'display_name' => $roleCode->name,
+                'display_name' => Str::of(implode(' ', preg_split('/(?=[A-Z])/', $roleCode->name)))->title()->toString(),
                 'code'         => $roleCode->value,
-                'hidden'       => $roleCode === RoleCode::Admin,
+                'hidden'       => $roleCode === RoleCode::Admin
+                || $roleCode === RoleCode::HumanResourcesStaff
+                || $roleCode === RoleCode::Evaluator,
             ];
         });
     }

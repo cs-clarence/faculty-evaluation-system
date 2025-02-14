@@ -1,3 +1,7 @@
+@php
+    use App\Models\RoleCode;
+@endphp
+
 <div class="contents">
     <x-sections.header title="Accounts">
         <x-button id="addSubjectBtn" wire:click='openForm'>
@@ -65,10 +69,10 @@
                         <x-slot:roleCode name="form.role_code" wire:model.live='form.role_code'></x-slot:roleCode>
                         <x-slot:name name="form.name" wire:model="form.name"></x-slot:name>
                         <x-slot:email name="form.email" wire:model="form.email"></x-slot:email>
-                        @if ($form->role_code === 'teacher')
+                        @if ($form->role_code === RoleCode::Teacher->value || $form->role_code === RoleCode::Dean->value)
                             <x-slot:departmentId name="form.department_id" wire:model="form.department_id"></x-slot:departmentId>
                         @endif
-                        @if ($form->role_code === 'student')
+                        @if ($form->role_code === RoleCode::Student->value)
                             <x-slot:courseId name="form.course_id" wire:model="form.course_id"></x-slot:courseId>
                             <x-slot:studentNumber name="form.student_number" wire:model="form.student_number"></x-slot:studentNumber>
                             <x-slot:startingSchoolYearId name="form.starting_school_year_id"

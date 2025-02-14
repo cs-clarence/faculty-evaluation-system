@@ -14,7 +14,7 @@ class SubjectPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Subject::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::Hr);
+        parent::__construct(Subject::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::HumanResourcesStaff);
     }
 
     /**

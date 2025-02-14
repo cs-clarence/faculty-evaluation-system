@@ -7,9 +7,10 @@ use App\Models\FormSection;
 use App\Models\FormSubmission;
 use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
+use App\Models\Role;
 use App\Models\Semester;
-use App\Models\StudentSubject;
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -90,10 +91,23 @@ return new class extends Migration
             $table->boolean('is_open');
             $table->boolean('is_submissions_editable');
             $table->dateTimeTz('archived_at')->nullable();
-            $table->foreignIdFor(Semester::class, 'semester_id')
+
+            $table->foreignIdFor(Role::class, 'evaluator_role_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Role::class, 'evaluatee_role_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Semester::class, 'semester_id')
+                ->nullable()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->foreignIdFor(Form::class, 'form_id')
                 ->constrained()
                 ->cascadeOnDelete()
@@ -107,8 +121,12 @@ return new class extends Migration
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(StudentSubject::class, 'student_subject_id')
-                ->unique()
+            $table->foreignIdFor(User::class, 'evaluator_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(User::class, 'evaluatee_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
@@ -129,8 +147,8 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->unique([
-                'teacher_id',
-                'student_subject_id',
+                'evaluator_id',
+                'evaluatee_id',
                 'form_submission_period_id',
             ]);
 

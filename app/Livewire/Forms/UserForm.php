@@ -1,7 +1,9 @@
 <?php
-
 namespace App\Livewire\Forms;
 
+use App\Facades\Services\DeanService;
+use App\Facades\Services\EvaluatorService;
+use App\Facades\Services\HumanResourcesStaffService;
 use App\Facades\Services\StudentService;
 use App\Facades\Services\TeacherService;
 use App\Facades\Services\UserService;
@@ -40,19 +42,19 @@ class UserForm extends BaseForm
 
         if ($this->include_base) {
             $uniqueEmail = 'unique:users,email';
-            $validators = [
+            $validators  = [
                  ...$validators,
-                'email' => ['required', 'string', 'email', 'max:255', isset($this->id) ? $uniqueEmail . ',' . $this->id : $uniqueEmail],
-                'name' => ['required', 'string', 'max:255'],
-                'role_code' => ['required', 'string', 'exists:roles,code'],
-                'course_id' => [$isStudent ? 'required ' : 'nullable', 'integer', 'exists:courses,id'],
-                'student_number' => [$isStudent ? 'required ' : 'nullable', 'string', !isset($this->id) ? 'unique:students' :
+                'email'                   => ['required', 'string', 'email', 'max:255', isset($this->id) ? $uniqueEmail . ',' . $this->id : $uniqueEmail],
+                'name'                    => ['required', 'string', 'max:255'],
+                'role_code'               => ['required', 'string', 'exists:roles,code'],
+                'course_id'               => [$isStudent ? 'required ' : 'nullable', 'integer', 'exists:courses,id'],
+                'student_number'          => [$isStudent ? 'required ' : 'nullable', 'string', ! isset($this->id) ? 'unique:students' :
                     Rule::unique('students', 'student_number')
                         ->ignore($this->id, 'user_id'),
 
                 ],
                 'starting_school_year_id' => [$isStudent ? 'required ' : 'nullable', 'integer', 'exists:school_years,id'],
-                'department_id' => [$isTeacher ? 'required ' : 'nullable', 'integer', 'exists:departments,id'],
+                'department_id'           => [$isTeacher ? 'required ' : 'nullable', 'integer', 'exists:departments,id'],
             ];
         }
 
@@ -71,20 +73,25 @@ class UserForm extends BaseForm
         bool $includeBase = false,
     ) {
         $this->include_password = $includePassword;
-        $this->include_base = $includeBase;
+        $this->include_base     = $includeBase;
     }
 
     public function set(User $model)
     {
-        $role = Role::whereId($model->role_id)->first(['code']);
+        $role    = Role::whereId($model->role_id)->first(['code']);
         $student = $role->code === RoleCode::Student->value ? $model->student()->first(['course_id', 'student_number', 'starting_school_year_id']) : null;
         $teacher = $role->code === RoleCode::Teacher->value ? $model->teacher()->first(['department_id']) : null;
+        $dean    = $role->code === RoleCode::Dean->value ? $model->dean()->first(['department_id']) : null;
+        $dean    = $role->code === RoleCode::Dean->value ? $model->dean()->first(['department_id']) : null;
+        // $evaluator = $role->code === RoleCode::Evaluator->value ? $model->evaluator()->first(['user_id']) : null;
+        // $humanResourcesStaff = $role->code === RoleCode::Evaluator->value ? $model->evaluator()->first(['user_id']) : null;
 
         $this->fill([ ...$model->attributesToArray(),
-            'role_code' => $role->code,
+            'role_code'             => $role->code,
             ...($student?->attributesToArray() ?? []),
             ...($teacher?->attributesToArray() ?? []),
-            'password' => '',
+            ...($dean?->attributesToArray() ?? []),
+            'password'              => '',
             'password_confirmation' => '',
         ]);
     }
@@ -101,11 +108,16 @@ class UserForm extends BaseForm
 
                 if ($this->include_base) {
                     UserService::update($user, $this->name, $this->email, RoleCode::from($this->role_code));
-                    if ($this->role_code === 'student') {
+                    if ($this->role_code === RoleCode::Student->value) {
                         StudentService::update($user, $this->student_number, $this->course_id, $this->starting_school_year_id, $this->realign_subjects, $this->delete_subjects_from_previous_course);
                     }
-                    if ($this->role_code === 'teacher') {
+
+                    if ($this->role_code === RoleCode::Teacher->value) {
                         TeacherService::update($user, $this->department_id);
+                    }
+
+                    if ($this->role_code === RoleCode::Dean->value) {
+                        DeanService::update($user, $this->department_id);
                     }
                 }
             } else {
@@ -116,6 +128,18 @@ class UserForm extends BaseForm
                 }
                 if ($this->role_code === 'teacher') {
                     TeacherService::create($user, $this->department_id);
+                }
+
+                if ($this->role_code === RoleCode::Dean->value) {
+                    DeanService::create($user, $this->department_id);
+                }
+
+                if ($this->role_code === RoleCode::Evaluator->value) {
+                    EvaluatorService::create($user);
+                }
+
+                if ($this->role_code === RoleCode::HumanResourcesStaff->value) {
+                    HumanResourcesStaffService::create($user);
                 }
             }
         });
