@@ -227,4 +227,39 @@ class User extends Authenticatable
 
         return Auth::user()->id === $this->id;
     }
+
+    public function isInRole(RoleCode $roleCode)
+    {
+        return $this->role->code === $roleCode->value;
+    }
+
+    public function isAdmin()
+    {
+        return $this->isInRole(RoleCode::Admin);
+    }
+
+    public function isStudent()
+    {
+        return $this->isInRole(RoleCode::Student);
+    }
+
+    public function isTeacher()
+    {
+        return $this->isInRole(RoleCode::Teacher);
+    }
+
+    public function isDean()
+    {
+        return $this->isInRole(RoleCode::Dean);
+    }
+
+    public function isEvaluator()
+    {
+        return $this->isInRole(RoleCode::Evaluator);
+    }
+
+    public function isHumanResourcesStaff()
+    {
+        return $this->isInRole(RoleCode::HumanResourcesStaff);
+    }
 }

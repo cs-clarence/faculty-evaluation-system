@@ -4,16 +4,19 @@ namespace App\Livewire\Pages\Admin\FormSubmissionPeriods;
 use App\Livewire\Forms\FormSubmissionPeriodForm;
 use App\Models\Form;
 use App\Models\FormSubmissionPeriod;
+use App\Models\Role;
 use App\Models\Semester;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
+use Log;
 
 class Index extends Component
 {
     public ?FormSubmissionPeriod $model = null;
     public FormSubmissionPeriodForm $form;
-    public bool $isFormOpen = false;
+    public bool $isFormOpen   = false;
+    public bool $showSemester = false;
 
     public function render()
     {
@@ -39,9 +42,23 @@ class Index extends Component
             ->orderByDesc('semester')
             ->lazy();
 
+        $evaluatorRoles = Role::canBeEvaluator()
+            ->lazy();
+
+        $evaluateeRoles = Role::canBeEvaluatee()
+            ->lazy();
+
         return view('livewire.pages.admin.form-submission-periods.index')
-            ->with(compact('formSubmissionPeriods', 'forms', 'semesters'))
+            ->with(compact('formSubmissionPeriods', 'forms', 'semesters', 'evaluatorRoles', 'evaluateeRoles'))
             ->layout('components.layouts.admin');
+    }
+
+    public function updated(string $name, $value)
+    {
+        Log::info($name . " => " . $value);
+        if ($name === "form.evaluator_role_id" || $name = "form.evaluatee_role_id") {
+            $this->showSemester = $this->form->shouldRequireSemester();
+        }
     }
 
     public function save()

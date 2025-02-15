@@ -37,7 +37,7 @@ Route::middleware(['auth'])
         Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)->name('account-archived.index');
     });
 
-Route::middleware(['auth:admin,hr,dean,evaluator'])
+Route::middleware(['auth:admin,hr,evaluator'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -60,20 +60,12 @@ Route::middleware(['auth:admin,hr,dean,evaluator'])
         Route::get('/accounts', App\Livewire\Pages\Admin\Accounts\Index::class)->name('accounts.index');
     });
 
-Route::middleware(['auth:student'])
-    ->name('student.')
-    ->prefix('student')
+Route::middleware(['auth:student,teacher,dean'])
+    ->name('user.')
     ->group(function () {
-        Route::get('/dashboard', App\Livewire\Pages\Student\Dashboard\Index::class)->name('dashboard.index');
-        Route::get('/form-submission/{studentSubject}/{formSubmissionPeriod}/{teacher?}', App\Livewire\Pages\Student\FormSubmission\Index::class)->name('form-submission.index');
-    });
-
-Route::middleware(['auth:teacher'])
-    ->name('teacher.')
-    ->prefix('teacher')
-    ->group(function () {
-        Route::get('/dashboard', App\Livewire\Pages\Teacher\Dashboard\Index::class)->name('dashboard.index');
-        Route::get('/form-submissions/{formSubmission}', App\Livewire\Pages\Teacher\FormSubmissions\FormSubmission::class)
+        Route::get('/dashboard', App\Livewire\Pages\User\Dashboard\Index::class)->name('dashboard.index');
+        Route::get('/form-submission/{studentSubject}/{formSubmissionPeriod}/{evaluatee?}', App\Livewire\Pages\User\SubmitForm\Index::class)->name('form-submission.index');
+        Route::middleware(['auth:teacher'])->get('/form-submissions/{formSubmission}', App\Livewire\Pages\User\FormSubmissions\FormSubmission::class)
             ->name('form-submissions.form-submission');
     });
 

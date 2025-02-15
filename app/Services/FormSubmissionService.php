@@ -10,8 +10,8 @@ use App\Models\FormQuestionType;
 use App\Models\FormSubmission;
 use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
-use App\Models\StudentSubject;
 use App\Models\Teacher;
+use App\Models\User;
 
 class FormSubmissionService
 {
@@ -102,14 +102,9 @@ class FormSubmissionService
         return $formSubmissionPeriod instanceof FormSubmissionPeriod ? $formSubmissionPeriod->id : $formSubmissionPeriod;
     }
 
-    private static function getStudentSubjectId(StudentSubject | int $studentSubject)
+    private static function getUserId(User | int $user)
     {
-        return $studentSubject instanceof StudentSubject ? $studentSubject->id : $studentSubject;
-    }
-
-    private static function getTeacherId(Teacher | int $teacher)
-    {
-        return $teacher instanceof Teacher ? $teacher->id : $teacher;
+        return $user instanceof User ? $user->id : $user;
     }
 
     private static function getForm(Form | int $form)
@@ -184,13 +179,13 @@ class FormSubmissionService
     public function submit(
         Form | int $form,
         FormSubmissionPeriod | int $formSubmissionPeriod,
-        StudentSubject | int $studentSubject,
-        Teacher | int $teacher,
+        User | int $evaluator,
+        Teacher | int $evaluatee,
         array $answers,
     ) {
         $formSubmission = new FormSubmission([
-            'teacher_id'                => self::getTeacherId($teacher),
-            'student_subject_id'        => self::getStudentSubjectId($studentSubject),
+            'evaluator_id'              => self::getUserId($evaluatee),
+            'evaluatee_id'              => self::getUserId($evaluator),
             'form_submission_period_id' => self::getFormSubmissionPeriodId($formSubmissionPeriod),
             'form_id'                   => self::getFormId($form),
         ]);

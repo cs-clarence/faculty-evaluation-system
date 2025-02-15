@@ -9,7 +9,6 @@ use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Role;
 use App\Models\Semester;
-use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -131,17 +130,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(Teacher::class, 'teacher_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignIdFor(FormSubmissionPeriod::class, 'form_submission_period_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table->foreignIdFor(Form::class, 'form_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();

@@ -80,12 +80,15 @@ class RoleFactory extends Factory
         return $this->state(function (array $attributes) use ($roleCode) {
             return [
                  ...$attributes,
-                'id'           => self::getId($roleCode),
-                'display_name' => Str::of(implode(' ', preg_split('/(?=[A-Z])/', $roleCode->name)))->title()->toString(),
-                'code'         => $roleCode->value,
-                'hidden'       => $roleCode === RoleCode::Admin
+                'id'               => self::getId($roleCode),
+                'display_name'     => Str::of(implode(' ', preg_split('/(?=[A-Z])/', $roleCode->name)))->title()->toString(),
+                'code'             => $roleCode->value,
+                'hidden'           => $roleCode === RoleCode::Admin
                 || $roleCode === RoleCode::HumanResourcesStaff
-                || $roleCode === RoleCode::Evaluator,
+                || $roleCode === RoleCode::Evaluator
+                || $roleCode === RoleCode::Dean,
+                'can_be_evaluator' => $roleCode !== RoleCode::Admin,
+                'can_be_evaluatee' => $roleCode !== RoleCode::Admin,
             ];
         });
     }

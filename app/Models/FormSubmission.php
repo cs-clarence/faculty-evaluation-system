@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -12,16 +11,21 @@ class FormSubmission extends Model
 {
     //
     protected $table = 'form_submissions';
-    public $fillable = ['student_subject_id', 'teacher_id', 'form_submission_period_id', 'form_id'];
+    public $fillable = ['evaluator_id', 'evaluatee_id', 'form_submission_period_id', 'form_id'];
 
     public function studentSubject()
     {
         return $this->belongsTo(StudentSubject::class);
     }
 
-    public function teacher()
+    public function evaluator()
     {
-        return $this->belongsTo(Teacher::class);
+        return $this->belongsTo(User::class, 'evaluator_id');
+    }
+
+    public function evaluatee()
+    {
+        return $this->belongsTo(User::class, 'evaluatee_id');
     }
 
     public function submissionPeriod()
@@ -44,17 +48,17 @@ class FormSubmission extends Model
         $values = [];
 
         foreach ($this->answers as $answer) {
-            $questionId = $answer->form_question_id;
+            $questionId  = $answer->form_question_id;
             $questionKey = "{$questionId}";
-            $question = FormQuestion::whereId($questionId)->first(['type']);
+            $question    = FormQuestion::whereId($questionId)->first(['type']);
 
             if ($question->type === FormQuestionType::Essay->value) {
                 $values[$questionKey] = $answer->text;
             } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
-                $optionId = $answer->selectedOptions->first()->form_question_option_id;
+                $optionId             = $answer->selectedOptions->first()->form_question_option_id;
                 $values[$questionKey] = $optionId;
             } else if ($question->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
-                $optionIds = $answer->selectedOptions->pluck('form_question_option_id');
+                $optionIds              = $answer->selectedOptions->pluck('form_question_option_id');
                 $values[$questionKey][] = $optionIds;
             } else {
                 throw new \Exception("Invalid question type '{$question->type}'");
@@ -66,10 +70,10 @@ class FormSubmission extends Model
 
     public function getRating()
     {
-        $count = 0;
+        $count   = 0;
         $current = 0;
         foreach ($this->answers as $answer) {
-            $q = FormQuestion::whereId($answer->form_question_id)->first(['type']);
+            $q     = FormQuestion::whereId($answer->form_question_id)->first(['type']);
             $value = $answer->value;
             if ($q->type === FormQuestionType::Essay->value) {
                 $config = FormQuestionEssayTypeConfiguration::whereFormQuestionId($answer->form_question_id)

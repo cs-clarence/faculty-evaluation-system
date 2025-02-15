@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Livewire\Pages\Teacher\FormSubmissions;
+namespace App\Livewire\Pages\User\FormSubmissions;
 
 use App\Livewire\Forms\FormSubmissionForm;
 use App\Models\Form;
@@ -29,7 +28,7 @@ class FormSubmission extends Component
 
     public function render()
     {
-        return view('livewire.pages.teacher.form-submissions.form-submission')
+        return view('livewire.pages.user.form-submissions.form-submission')
             ->layout('components.layouts.teacher');
 
     }

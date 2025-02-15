@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
@@ -15,13 +14,13 @@ class FormSubmissionPeriod extends Model
     use Archivable;
     //
     protected $table = 'form_submission_periods';
-    public $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'semester_id', 'is_open', 'is_submissions_editable'];
+    public $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'semester_id', 'is_open', 'is_submissions_editable', 'evaluator_role_id', 'evaluatee_role_id'];
 
     public function casts()
     {
         return [
             'starts_at' => 'datetime:Y-m-d\Tg:i a',
-            'ends_at' => 'datetime:Y-m-d\Tg:i a',
+            'ends_at'   => 'datetime:Y-m-d\Tg:i a',
         ];
     }
 
@@ -75,5 +74,15 @@ class FormSubmissionPeriod extends Model
     public function submissions()
     {
         return $this->hasMany(FormSubmission::class, 'form_submission_period_id');
+    }
+
+    public function evaluatorRole()
+    {
+        return $this->belongsTo(Role::class, 'evaluator_role_id');
+    }
+
+    public function evaluateeRole()
+    {
+        return $this->belongsTo(Role::class, 'evaluatee_role_id');
     }
 }

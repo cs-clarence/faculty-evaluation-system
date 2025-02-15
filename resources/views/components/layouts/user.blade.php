@@ -1,8 +1,8 @@
-@props(['title' => 'SPCF-TES Student'])
+@props(['title' => 'SPCF-TES'])
 
 <x-layouts.navigation :title="$title" :links="[
     [
-        'href' => route('student.dashboard.index'),
+        'href' => route('user.dashboard.index'),
         'title' => 'Dashboard',
     ],
 ]">

@@ -21,7 +21,7 @@
                             <td class="py-3 px-4 border-b">{{ $i->submissionPeriod->semester }}</td>
                             <td class="py-3 px-4 border-b">{{ $i->rating }}%</td>
                             <td class="py-3 px-4 border-b">
-                                <a href="{{ route('teacher.form-submissions.form-submission', ['formSubmission' => $i->id]) }}"
+                                <a href="{{ route('user.form-submissions.form-submission', ['formSubmission' => $i->id]) }}"
                                     wire:navigate
                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
                                     View

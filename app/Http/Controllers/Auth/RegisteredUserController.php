@@ -13,8 +13,6 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\RoleCode;
 use App\Models\SchoolYear;
-use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -62,9 +60,9 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $roleCode  = $request->role_code;
-        $isStudent = $request->role_code === RoleCode::Student->value;
-        $isTeacher = $request->role_code === RoleCode::Teacher->value;
+        $roleCode      = $request->role_code;
+        $isStudent     = $roleCode === RoleCode::Student->value;
+        $hasDepartment = $roleCode === RoleCode::Teacher->value || $roleCode === RoleCode::Dean->value;
 
         $valid = $request->validate([
             'name'                    => ['required', 'string', 'max:255'],
@@ -72,8 +70,8 @@ class RegisteredUserController extends Controller
             'password'                => ['required', 'confirmed', Password::default()],
             'student_number'          => $isStudent ? ['required', 'string', 'unique:students,student_number'] : [],
             'course_id'               => $isStudent ? ['required', 'integer', 'exists:courses,id'] : [],
-            'starting_school_year_id' => ['required', 'integer', 'exists:school_years,id'],
-            'department_id'           => $isTeacher ? ['required', 'integer', 'exists:departments,id'] : [],
+            'starting_school_year_id' => $isStudent ? ['required', 'integer', 'exists:school_years,id'] : [],
+            'department_id'           => $hasDepartment ? ['required', 'integer', 'exists:departments,id'] : [],
             'role_code'               => ['required', 'string', 'exists:roles,code'],
         ]);
 
@@ -84,7 +82,7 @@ class RegisteredUserController extends Controller
             RoleCode::from($valid['role_code']),
         );
 
-        if ($roleCode === RoleCode::Student->value) {
+        if ($isStudent) {
             StudentService::create(
                 $user,
                 $valid['student_number'],

@@ -1,10 +1,10 @@
 <?php
-namespace App\Livewire\Pages\Teacher\Dashboard;
+namespace App\Livewire\Components\Teacher;
 
 use App\Models\FormSubmission;
 use Livewire\Component;
 
-class Index extends Component
+class DashboardContent extends Component
 {
     public function render()
     {
@@ -14,7 +14,7 @@ class Index extends Component
             ],
             'submissionPeriod.semester.schoolYear',
         ])->lazy();
-        return view('livewire.pages.teacher.dashboard.index')
+        return view('livewire.components.teacher.dashboard-content')
             ->with(compact('formSubmissions'))
             ->layout('components.layouts.user');
     }

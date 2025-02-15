@@ -1,13 +1,12 @@
 <?php
-namespace App\Livewire\Pages\Student\Dashboard;
+namespace App\Livewire\Components\Student;
 
 use App\Facades\Services\StudentService;
 use App\Models\FormSubmissionPeriod;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Livewire\Component;
-use stdClass;
 
-class Index extends Component
+class DashboardContent extends Component
 {
     public function render()
     {
@@ -35,7 +34,7 @@ class Index extends Component
             $studentSubjects = $student->studentSubjects->filter(fn($ss) =>
                 $ss->studentSemester->semester_id === $p->semester_id
             );
-            $o                       = new stdClass;
+            $o                       = new \stdClass;
             $o->formSubmissionPeriod = $p;
             $o->studentSubjects      = $studentSubjects;
 
@@ -44,7 +43,7 @@ class Index extends Component
             }
         }
 
-        return view('livewire.pages.student.dashboard.index')
+        return view('livewire.components.student.dashboard-content')
             ->with(compact('student', 'submissionPeriods'))
             ->layout('components.layouts.user');
     }

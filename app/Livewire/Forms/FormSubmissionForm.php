@@ -13,7 +13,8 @@ class FormSubmissionForm extends BaseForm
 {
     #[Locked]
     public ?int $id;
-    public ?int $teacher_id;
+    public ?int $evaluatee_id;
+    public ?int $evaluator_id;
     public ?int $student_subject_id;
     public ?int $form_submission_period_id;
     public ?int $form_id;
@@ -21,15 +22,15 @@ class FormSubmissionForm extends BaseForm
 
     public function rules()
     {
-        $unique = Rule::unique('form_submissions', 'teacher_id')
-            ->where('student_subject_id', $this->student_subject_id)
+        $unique = Rule::unique('form_submissions', 'evaluatee_id')
+            ->where('form_submissions', 'evaluator_id')
             ->where('form_submission_period_id', $this->form_submission_period_id);
 
         $validators = [
-            'teacher_id'                => ['required', 'integer', 'exists:teachers,id',
+            'evaluatee_id'              => ['required', 'integer', 'exists:user,id',
                 isset($this->id) ? $unique->ignore($this->id) : $unique,
             ],
-            'student_subject_id'        => ['required', 'integer', 'exists:student_subjects,id'],
+            'evaluator_id'              => ['required', 'integer', 'exists:user,id'],
             'form_submission_period_id' => ['required', 'integer', 'exists:form_submission_periods,id'],
         ];
 
@@ -73,8 +74,8 @@ class FormSubmissionForm extends BaseForm
                 FormSubmissionService::submit(
                     $this->form_id,
                     $this->form_submission_period_id,
-                    $this->student_subject_id,
-                    $this->teacher_id,
+                    $this->evaluator_id,
+                    $this->evaluatee_id,
                     $this->questions,
                 );
             }

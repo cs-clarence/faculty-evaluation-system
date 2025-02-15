@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Accounts;
 
 use App\Livewire\Forms\UserForm;
@@ -13,7 +12,7 @@ use Livewire\Component;
 class Index extends Component
 {
     public bool $isFormOpen = false;
-    public ?User $model = null;
+    public ?User $model     = null;
     public UserForm $form;
 
     public function render()
@@ -23,10 +22,11 @@ class Index extends Component
             ->orderBy('email')
             ->lazy();
 
-        $courseId = $this->model?->student?->course_id;
+        $courseId     = $this->model?->student?->course_id;
         $departmentId = $this->model?->teacher?->department_id;
 
         $courses = Course::withoutArchived(isset($courseId) ? [$courseId] : [])
+            ->whereHas('courseSemesters', fn($query) => $query->where('year_level', 1))
             ->orderBy('department_id')
             ->orderBy('code')
             ->orderBy('name')
@@ -51,8 +51,8 @@ class Index extends Component
 
     public function openForm()
     {
-        if (!isset($this->form->role_code)) {
-            $firstRoleCode = Role::whereCode('admin')->first(['code'])->code;
+        if (! isset($this->form->role_code)) {
+            $firstRoleCode         = Role::whereCode('admin')->first(['code'])->code;
             $this->form->role_code = $firstRoleCode;
         }
         $this->isFormOpen = true;
@@ -61,7 +61,7 @@ class Index extends Component
     public function closeForm()
     {
         $this->isFormOpen = false;
-        $this->model = null;
+        $this->model      = null;
         $this->form->clear();
     }
 

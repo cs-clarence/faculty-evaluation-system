@@ -106,7 +106,7 @@
         <div class="mb-4">
             @php($courseIdName = $courseId->attributes['name'] ?? 'form.course_id')
             <label for="{{ $courseIdName }}" class="block text-gray-700">Course</label>
-            <select name="{{ $courseIdName }}"
+            <select title="Courses must have semesters with first year level" name="{{ $courseIdName }}"
                 {{ $courseId->attributes->merge([
                     'class' => 'w-full px-3 py-2 border rounded-lg',
                 ]) }}>

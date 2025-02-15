@@ -2,6 +2,8 @@
 namespace App\Livewire\Forms;
 
 use App\Models\FormSubmissionPeriod;
+use App\Models\Role;
+use App\Models\RoleCode;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
@@ -17,18 +19,25 @@ class FormSubmissionPeriodForm extends BaseForm
     public bool $is_submissions_editable = false;
     public ?int $form_id = null;
     public ?int $semester_id = null;
+    public ?int $evaluator_role_id = null;
+    public ?int $evaluatee_role_id = null;
 
     public function rules()
     {
+        $semRules = [
+            'exists:semesters,id',
+            Rule::unique(FormSubmissionPeriod::class)
+                ->where('form_id', $this->form_id)
+                ->where('semester_id', $this->semester_id)
+                ->ignore($this->id, 'id'),
+
+        ];
         return [
             'id'                      => ['nullable', 'integer', 'exists:form_submission_periods,id'],
             'form_id'                 => ['required', 'integer', 'exists:forms,id'],
-            'semester_id'             => ['required', 'exists:semesters,id',
-                Rule::unique(FormSubmissionPeriod::class)
-                    ->where('form_id', $this->form_id)
-                    ->where('semester_id', $this->semester_id)
-                    ->ignore($this->id, 'id'),
-            ],
+            'evaluator_role_id'       => ['required', 'exists:roles,id'],
+            'evaluatee_role_id'       => ['required', 'exists:roles,id'],
+            'semester_id'             => $this->shouldRequireSemester() ? ['required', ...$semRules] : [],
             'name'                    => ['required', 'string', 'unique:form_submission_periods,name' .
                 (isset($this->id) ? ",$this->id" : ''),
             ],
@@ -45,7 +54,11 @@ class FormSubmissionPeriodForm extends BaseForm
         if (isset($this->id)) {
             FormSubmissionPeriod::whereId($this->id)->update($this->except(['id']));
         } else {
-            FormSubmissionPeriod::create($this->except(['id']));
+            FormSubmissionPeriod::create($this->except(
+                $this->shouldRequireSemester()
+                ? ['id']
+                : ['id', 'semester_id']
+            ));
         }
     }
 
@@ -61,5 +74,24 @@ class FormSubmissionPeriodForm extends BaseForm
     {
         $this->reset();
         $this->resetErrorBag();
+    }
+
+    public function shouldRequireSemester()
+    {
+        if (isset($this->evaluatee_role_id) && isset($this->evaluator_role_id)) {
+            $evaluator = Role::whereId($this->evaluator_role_id)->first(['code'])?->code;
+            $evaluatee = Role::whereId($this->evaluatee_role_id)->first(['code'])?->code;
+
+            if (
+                ($evaluator === RoleCode::Student->value && $evaluatee === RoleCode::Teacher->value)
+                || $evaluator === RoleCode::Teacher->value && $evaluatee === RoleCode::Teacher->value
+                || $evaluator === RoleCode::Dean->value && $evaluatee === RoleCode::Teacher->value
+            ) {
+                return true;
+            }
+            return false;
+        }
+
+        return false;
     }
 }

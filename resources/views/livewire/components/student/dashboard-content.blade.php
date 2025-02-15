@@ -9,7 +9,7 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($submissionPeriod->studentSubjects as $subject)
-                    <a href="{{ route('student.form-submission.index', [
+                    <a href="{{ route('user.form-submission.index', [
                         'studentSubject' => $subject->id,
                         'formSubmissionPeriod' => $submissionPeriod->formSubmissionPeriod->id,
                         'teacher' => $subject->teacherSubject?->teacherSemester->teacher->id,

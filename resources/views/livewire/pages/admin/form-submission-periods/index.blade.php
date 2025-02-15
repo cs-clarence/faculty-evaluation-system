@@ -15,7 +15,9 @@
                 $columns = [
                     ['label' => 'Name', 'render' => 'name'],
                     ['label' => 'Form', 'render' => 'form.name'],
-                    ['label' => 'Semester', 'render' => 'semester'],
+                    ['label' => 'Evaluator', 'render' => 'evaluatorRole'],
+                    ['label' => 'Evaluatee', 'render' => 'evaluateeRole'],
+                    ['label' => 'Semester', 'render' => fn($data) => isset($data->semester) ? $data->semester : 'None'],
                     ['label' => 'Start Date', 'render' => 'starts_at'],
                     ['label' => 'End Date', 'render' => 'ends_at'],
                     ['label' => 'Open', 'render' => fn($data) => $data->is_open ? 'Yes' : 'No'],
@@ -67,60 +69,70 @@
                 <form wire:submit.prevent="save">
                     @csrf
                     <input type="hidden" name="id" wire:model.defer="form.id">
-                    <div class="mb-4">
-                        <label for="name" class="block text-gray-700">Name</label>
-                        <input type="text" name="name" id="name" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model="form.name">
+                    <x-form-control>
+                        <x-form-control-label for="name">Name</x-form-control-label>
+                        <x-input type="text" name="name" id="name" required wire:model="form.name" />
                         @error('form.name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <x-form-control-error-text>
+                                {{ $message }}
+                            </x-form-control-error-text>
                         @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="starts_at" class="block text-gray-700">Start Date</label>
-                        <input type="datetime-local" name="starts_at" id="starts_at" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model="form.starts_at">
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control-label for="form.evaluator_role_id">Evaluator</x-form-control-label>
+                        <x-select key="form.evaluator_role_id" required :options="$evaluatorRoles" :label="fn($i) => $i->display_name"
+                            :value="fn($i) => $i->id" placeholder="Select evaluator" empty="No Evaluators Available"
+                            wire:model.change="form.evaluator_role_id" />
+                        @error('form.evaluator_role_id')
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
+                        @enderror
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control-label for="form.evaluatee_role_id">Evaluatee</x-form-control-label>
+                        <x-select key="form.evaluatee_role_id" required :options="$evaluateeRoles" :label="fn($i) => $i->display_name"
+                            :value="fn($i) => $i->id" placeholder="Select evaluatee" empty="No Evaluatees Available"
+                            wire:model.change="form.evaluatee_role_id" />
+                        @error('form.evaluatee_role_id')
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
+                        @enderror
+                    </x-form-control>
+                    @if ($showSemester)
+                        <x-form-control class="mb-4">
+                            <x-form-control-label for="ends_at"
+                                class="block text-gray-700">Semester</x-form-control-label>
+                            <x-select name="ends_at" id="semester_id" required wire:model="form.semester_id"
+                                :options="$semesters" :label="fn($i) => $i->__tostring()" :value="fn($i) => $i->id" placeholder="Select semester"
+                                empty="No Semesters Available" />
+                            @error('form.semester_id')
+                                <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
+                            @enderror
+                        </x-form-control>
+                    @endif
+                    <x-form-control class="mb-4">
+                        <x-form-control-label for="starts_at">Start Date</x-form-control-label>
+                        <x-input type="datetime-local" name="starts_at" id="starts_at" required
+                            wire:model="form.starts_at" />
                         @error('form.starts_at')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
                         @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="ends_at" class="block text-gray-700">End Date</label>
-                        <input type="datetime-local" name="ends_at" id="starts_at" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model="form.ends_at">
+                    </x-form-control>
+                    <x-form-control class="mb-4">
+                        <x-form-control-label for="ends_at">End Date</x-form-control-label>
+                        <x-input type="datetime-local" name="ends_at" id="starts_at" required
+                            wire:model="form.ends_at" />
                         @error('form.ends_at')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
                         @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="ends_at" class="block text-gray-700">Semester</label>
-                        <select name="ends_at" id="semester_id" required class="w-full px-3 py-2 border rounded-lg"
-                            wire:model="form.semester_id">
-                            <option value="">Select semester</option>
-                            @forelse ($semesters as $semester)
-                                <option value="{{ $semester->id }}">{{ $semester }}</option>
-                            @empty
-                                <option value="">No Semesters Available</option>
-                            @endforelse
-                        </select>
-                        @error('form.semester_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="form_id" class="block text-gray-700">Form</label>
-                        <select name="form_id" id="form_id" required class="w-full px-3 py-2 border rounded-lg"
-                            wire:model="form.form_id">
-                            <option value="">Select form</option>
-                            @forelse ($forms as $form)
-                                <option value="{{ $form->id }}">{{ $form->name }}</option>
-                            @empty
-                                <option value="">No Forms Available</option>
-                            @endforelse
-                        </select>
+                    </x-form-control>
+                    <x-form-control class="mb-4">
+                        <x-form-control-label for="form_id">Form</x-form-control-label>
+                        <x-select name="form_id" id="form_id" required :options="$forms" :label="fn($i) => $i->name"
+                            :value="fn($i) => $i->id" placeholder="Select form" empty="No Forms Available"
+                            wire:model="form.form_id" />
                         @error('form.form_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
                         @enderror
-                    </div>
+                    </x-form-control>
                     <div class="mb-4 flex flex-row items-center gap-2">
                         <input type="checkbox" name="is_open" id="is_open" wire:model="form.is_open">
                         <label for="is_open" class="block text-sm font-medium text-gray-700">Open</label>
