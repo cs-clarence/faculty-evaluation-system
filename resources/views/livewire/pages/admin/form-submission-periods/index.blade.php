@@ -133,22 +133,20 @@
                             <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
                         @enderror
                     </x-form-control>
-                    <div class="mb-4 flex flex-row items-center gap-2">
+                    <x-form-control flex="row" class="items-center gap-2">
                         <input type="checkbox" name="is_open" id="is_open" wire:model="form.is_open">
-                        <label for="is_open" class="block text-sm font-medium text-gray-700">Open</label>
+                        <x-form-control-label for="is_open"
+                            class="block text-sm font-medium text-gray-700">Open</x-form-control-label>
                         @error('form.is_open')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
                         @enderror
-                    </div>
-                    <div class="mb-4 flex flex-row items-center gap-2">
+                    </x-form-control>
+                    <x-form-control flex="row" class="items-center gap-2">
                         <input type="checkbox" name="is_submissions_editable" id="is_submissions_editable"
                             wire:model="form.is_submissions_editable">
-                        <label for="is_submissions_editable" class="block text-sm font-medium text-gray-700">Submissions
-                            Editable</label>
-                        @error('form.is_submissions_editable')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                        <x-form-control-label for="is_submissions_editable">Submissions
+                            Editable</x-form-control-label>
+                    </x-form-control>
                     <div class="flex justify-end gap-1">
                         <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
                             variant="text">Cancel</x-button>
