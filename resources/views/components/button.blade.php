@@ -1,22 +1,22 @@
-@props(['color' => 'primary', 'variant' => 'filled', 'size' => 'md', 'el' => 'button'])
+@props(['color' => 'primary', 'variant' => 'filled', 'size' => 'md', 'el' => 'button', 'icon' => false])
 
 @php
     $common =
-        'flex items-center justify-center font-bold items-center rounded-md disabled:pointer-events-none cursor-pointer disabled:opacity-50 transition-colors';
+        'flex items-center justify-center font-bold items-center rounded-md disabled:pointer-events-none cursor-pointer disabled:opacity-50 transition-colors gap-1';
 
     switch ($size) {
         case 'xs':
-            $common .= ' px-2 h-7 text-xs';
+            $common .= !$icon ? ' px-2 h-7 text-xs' : ' w-7 h-7 text-xs';
             break;
         case 'sm':
-            $common .= ' px-3 h-9 text-sm';
+            $common .= !$icon ? ' px-3 h-9 text-sm' : ' w-9 h-9 text-sm';
             break;
         case 'lg':
-            $common .= ' px-6 h-12 text-md';
+            $common .= !$icon ? ' px-6 h-12 text-md' : ' w-12 h-12 text-md';
             break;
         case 'md':
         default:
-            $common .= ' px-4 h-10 text-lg';
+            $common .= !$icon ? ' px-4 h-10 text-lg' : ' w-10 h-10 text-lg';
             break;
     }
 

@@ -3,6 +3,8 @@ namespace App\Livewire\Components\Forms;
 
 use App\Livewire\Forms\FormSectionForm;
 use App\Models\Form;
+use App\Models\FormQuestion;
+use App\Models\FormQuestionOption;
 use App\Models\FormSection;
 use Livewire\Component;
 
@@ -58,5 +60,58 @@ class Builder extends Component
         ])->validated();
 
         $formSection->update($data);
+    }
+
+    public function updateQuestionTitle(FormQuestion $formQuestion, string $title)
+    {
+        $data = validator(['title' => $title], [
+            'title' => ['required', 'min:0', 'max:255'],
+        ])->validated();
+        $formQuestion->update($data);
+    }
+
+    public function deleteSection(FormSection $model)
+    {
+        $model->delete();
+    }
+
+    public function moveBeforeSection(FormSection $model, FormSection $before)
+    {
+        $model->moveBefore($before);
+    }
+
+    public function moveAfterSection(FormSection $model, FormSection $after)
+    {
+        $model->moveAfter($after);
+    }
+
+    public function deleteQuestion(FormQuestion $model)
+    {
+        $model->delete();
+    }
+
+    public function moveBeforeQuestion(FormQuestion $model, FormQuestion $before)
+    {
+        $model->moveBefore($before);
+    }
+
+    public function moveAfterQuestion(FormQuestion $model, FormQuestion $after)
+    {
+        $model->moveAfter($after);
+    }
+
+    public function deleteOption(FormQuestionOption $model)
+    {
+        $model->delete();
+    }
+
+    public function moveBeforeOption(FormQuestionOption $model, FormQuestionOption $before)
+    {
+        $model->moveBefore($before);
+    }
+
+    public function moveAfterOption(FormQuestionOption $model, FormQuestionOption $after)
+    {
+        $model->moveAfter($after);
     }
 }

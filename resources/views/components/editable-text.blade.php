@@ -5,6 +5,7 @@
     'placeholder' => null,
     'empty' => null,
     'required' => false,
+    'inputContainerClass' => '',
 ])
 
 @php
@@ -37,24 +38,29 @@
     <{{ $el }} class="{{ $textClasses }}" x-text="savedText.trim() ? savedText : empty" x-show="!edit"
         x-on:click="edit = true; $focus.focus($refs['{{ $randomId }}'])">
         </{{ $el }}>
-        <div class="flex flex-col gap-2" x-show="edit" x-on:click.outside="cancel($event)">
-            <div class="{{ $cssClasses }}" x-bind:class="{ 'outline-red-500': error }">
-                @if ($multiline)
-                    <textarea x-bind:placeholder="placeholder" x-bind:rows="rows" required x-ref="{{ $randomId }}"
-                        id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"></textarea>
-                @else
-                    <input x-bind:placeholder="placeholder" required x-ref="{{ $randomId }}"
-                        id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"
-                        x-on:keyup.enter="save($event, $dispatch)" />
-                @endif
+        @isset($input)
+            <div
+                {{ $input->attributes->merge(['class' => 'flex flex-col gap-2', 'x-show' => 'edit', 'x-on:click.outside' => 'cancel($event)']) }}>
+            @else
+                <div class="flex flex-col gap-2" x-show="edit" x-on:click.outside="cancel($event)">
+                @endisset
+                <div class="{{ $cssClasses }}" x-bind:class="{ 'outline-red-500': error }">
+                    @if ($multiline)
+                        <textarea x-bind:placeholder="placeholder" x-bind:rows="rows" required x-ref="{{ $randomId }}"
+                            id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"></textarea>
+                    @else
+                        <input x-bind:placeholder="placeholder" required x-ref="{{ $randomId }}"
+                            id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"
+                            x-on:keyup.enter="save($event, $dispatch)" />
+                    @endif
 
-                <div class="flex flex-row gap-2">
-                    <x-button variant="text" size="sm" color="neutral" type="button" x-bind:disabled="unchanged"
-                        x-on:click="cancel($event)">Cancel</x-button>
-                    <x-button variant="outlined" size="sm" color="neutral" type="button"
-                        x-bind:disabled="error" x-on:click="save($event, $dispatch)">Save</x-button>
+                    <div class="flex flex-row gap-2">
+                        <x-button variant="text" size="sm" color="neutral" type="button"
+                            x-bind:disabled="unchanged" x-on:click="cancel($event)">Cancel</x-button>
+                        <x-button variant="outlined" size="sm" color="neutral" type="button"
+                            x-bind:disabled="error" x-on:click="save($event, $dispatch)">Save</x-button>
+                    </div>
                 </div>
+                <x-error-text x-show="error">This field is required</x-error-text>
             </div>
-            <x-error-text x-show="error">This field is required</x-error-text>
         </div>
-</div>
