@@ -56,104 +56,86 @@
 
     <!-- Add Subject Modal -->
     @if ($isFormOpen)
-        <div id="addSubjectModal" class="fixed inset-0 bg-gray-900/50 flex justify-center items-center"
-            wire:click.self='closeForm'>
-            <div class="bg-white p-6 rounded-lg w-96">
-                @isset($model)
-                    <h3 class="text-lg font-semibold mb-4">Edit Submission Period</h3>
-                @else
-                    <h3 class="text-lg font-semibold mb-4">Add New Submission Period</h3>
-                @endisset
-
-                <!-- Add Subject Form -->
-                <form wire:submit.prevent="save">
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self="closeForm">
+            <x-dialog el="form" wire:submit.prevent="save">
+                <x-dialog.title>
+                    @isset($model)
+                        Edit Submission Period
+                    @else
+                        Add New Submission Period
+                    @endisset
+                </x-dialog.title>
+                <x-dialog.content>
                     @csrf
-                    <input type="hidden" name="id" wire:model.defer="form.id">
+                    <x-input type="hidden" name="id" wire:model.defer="form.id" />
                     <x-form-control>
-                        <x-form-control-label for="name">Name</x-form-control-label>
+                        <x-form-control.label key="name">Name</x-form-control.label>
                         <x-input type="text" name="name" id="name" required wire:model="form.name" />
-                        @error('form.name')
-                            <x-form-control-error-text>
-                                {{ $message }}
-                            </x-form-control-error-text>
-                        @enderror
+                        <x-form-control.error-text key="form.name" />
                     </x-form-control>
                     <x-form-control>
-                        <x-form-control-label for="form.evaluator_role_id">Evaluator</x-form-control-label>
+                        <x-form-control.label for="form.evaluator_role_id">Evaluator</x-form-control.label>
                         <x-select key="form.evaluator_role_id" required :options="$evaluatorRoles" :label="fn($i) => $i->display_name"
                             :value="fn($i) => $i->id" placeholder="Select evaluator" empty="No Evaluators Available"
                             wire:model.change="form.evaluator_role_id" />
-                        @error('form.evaluator_role_id')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                        <x-form-control.error-text key="form.evaluator_role_id" />
                     </x-form-control>
                     <x-form-control>
-                        <x-form-control-label for="form.evaluatee_role_id">Evaluatee</x-form-control-label>
+                        <x-form-control.label key="form.evaluatee_role_id">Evaluatee</x-form-control.label>
                         <x-select key="form.evaluatee_role_id" required :options="$evaluateeRoles" :label="fn($i) => $i->display_name"
                             :value="fn($i) => $i->id" placeholder="Select evaluatee" empty="No Evaluatees Available"
                             wire:model.change="form.evaluatee_role_id" />
-                        @error('form.evaluatee_role_id')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                        <x-form-control.error-text key="form.evaluatee_role_id" />
                     </x-form-control>
                     @if ($showSemester)
-                        <x-form-control class="mb-4">
-                            <x-form-control-label for="ends_at"
-                                class="block text-gray-700">Semester</x-form-control-label>
+                        <x-form-control>
+                            <x-form-control.label key="ends_at"
+                                class="block text-gray-700">Semester</x-form-control.label>
                             <x-select name="ends_at" id="semester_id" required wire:model="form.semester_id"
                                 :options="$semesters" :label="fn($i) => $i->__tostring()" :value="fn($i) => $i->id" placeholder="Select semester"
                                 empty="No Semesters Available" />
-                            @error('form.semester_id')
-                                <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                            @enderror
+                            <x-form-control.error-text key="form.semester_id" />
                         </x-form-control>
                     @endif
-                    <x-form-control class="mb-4">
-                        <x-form-control-label for="starts_at">Start Date</x-form-control-label>
+                    <x-form-control>
+                        <x-form-control.label key="starts_at">Start Date</x-form-control.label>
                         <x-input type="datetime-local" name="starts_at" id="starts_at" required
                             wire:model="form.starts_at" />
-                        @error('form.starts_at')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                        <x-form-control.error-text key="form.starts_at" />
                     </x-form-control>
-                    <x-form-control class="mb-4">
-                        <x-form-control-label for="ends_at">End Date</x-form-control-label>
-                        <x-input type="datetime-local" name="ends_at" id="starts_at" required
-                            wire:model="form.ends_at" />
-                        @error('form.ends_at')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                    <x-form-control>
+                        <x-form-control.label key="form.ends_at">End Date</x-form-control.label>
+                        <x-input type="datetime-local" key="form.ends_at" required wire:model="form.ends_at" />
+                        <x-form-control.error-text key="form.ends_at" />
                     </x-form-control>
-                    <x-form-control class="mb-4">
-                        <x-form-control-label for="form_id">Form</x-form-control-label>
+                    <x-form-control>
+                        <x-form-control.label key="form_id">Form</x-form-control.label>
                         <x-select name="form_id" id="form_id" required :options="$forms" :label="fn($i) => $i->name"
                             :value="fn($i) => $i->id" placeholder="Select form" empty="No Forms Available"
                             wire:model="form.form_id" />
-                        @error('form.form_id')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                        <x-form-control.error-text key="form.form_id" />
                     </x-form-control>
                     <x-form-control flex="row" class="items-center gap-2">
-                        <input type="checkbox" name="is_open" id="is_open" wire:model="form.is_open">
-                        <x-form-control-label for="is_open"
-                            class="block text-sm font-medium text-gray-700">Open</x-form-control-label>
-                        @error('form.is_open')
-                            <x-form-control-error-text>{{ $message }}</x-form-control-error-text>
-                        @enderror
+                        <input type="checkbox" id="form.is_open" name="form.is_open" wire:model="form.is_open" />
+                        <x-form-control.label key="form.is_open"
+                            class="block text-sm font-medium text-gray-700">Open</x-form-control.label>
+                        <x-form-control.error-text key="form.is_open" />
                     </x-form-control>
                     <x-form-control flex="row" class="items-center gap-2">
-                        <input type="checkbox" name="is_submissions_editable" id="is_submissions_editable"
-                            wire:model="form.is_submissions_editable">
-                        <x-form-control-label for="is_submissions_editable">Submissions
-                            Editable</x-form-control-label>
+                        <input type="checkbox" id="form.is_submissions_editable" name="form.is_submissions_editable"
+                            wire:model="form.is_submissions_editable" />
+                        <x-form-control.label key="form.is_submissions_editable">Submissions
+                            Editable</x-form-control.label>
+                        <x-form-control.error-text key="form.is_submissions_editable" />
                     </x-form-control>
-                    <div class="flex justify-end gap-1">
-                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
-                            variant="text">Cancel</x-button>
-                        <x-button type="submit">Save</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                        variant="text">Cancel</x-button>
+                    <x-button type="submit">Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
     @endif
 </div>

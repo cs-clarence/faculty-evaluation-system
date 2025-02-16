@@ -1,12 +1,14 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\CourseSemester;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-class AddCourseSubjectsForm extends Form
+/**
+ * @extends parent<CourseSemester>
+ */
+
+class AddCourseSubjectsForm extends BaseForm
 {
     #[Locked]
     public ?int $course_semester_id = null;
@@ -16,12 +18,12 @@ class AddCourseSubjectsForm extends Form
     {
         return [
             'course_semester_id' => ['nullable', 'integer', 'exists:course_semesters,id'],
-            'subject_ids' => ['required', 'array', 'min:1'],
-            'subject_ids.*' => ['integer', 'exists:subjects,id'],
+            'subject_ids'        => ['required', 'array', 'min:1'],
+            'subject_ids.*'      => ['integer', 'exists:subjects,id'],
         ];
     }
 
-    public function save()
+    public function submit()
     {
         $this->validate();
 
@@ -30,11 +32,15 @@ class AddCourseSubjectsForm extends Form
         $courseSemester->subjects()->syncWithoutDetaching($this->subject_ids);
     }
 
-    public function set(CourseSemester $courseSemester)
+    /**
+     * @param CourseSemester $courseSemester
+     */
+
+    public function set(mixed $courseSemester)
     {
         $this->fill([
             'course_semester_id' => $courseSemester->id,
-            'subject_ids' => [],
+            'subject_ids'        => [],
         ]);
     }
 

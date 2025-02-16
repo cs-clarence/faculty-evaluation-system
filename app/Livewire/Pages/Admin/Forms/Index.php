@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Forms;
 
 use App\Livewire\Forms\FormForm;
@@ -50,7 +49,7 @@ class Index extends Component
 
     public function edit(Form $model)
     {
-        $this->model = $model;
+        $this->model      = $model;
         $this->isFormOpen = true;
         $this->form->set($model);
     }

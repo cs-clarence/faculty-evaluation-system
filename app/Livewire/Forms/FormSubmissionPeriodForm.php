@@ -8,6 +8,9 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 
+/**
+ * @extends parent<FormSubmissionPeriod>
+ */
 class FormSubmissionPeriodForm extends BaseForm
 {
     #[Locked]
@@ -62,7 +65,11 @@ class FormSubmissionPeriodForm extends BaseForm
         }
     }
 
-    public function set(FormSubmissionPeriod $model)
+    /**
+     * @param FormSubmissionPeriod $model
+     */
+
+    public function set(mixed $model)
     {
         $this->fill([ ...$model->attributesToArray(),
             'starts_at' => Carbon::make($model->starts_at)->format('Y-m-d\TH:i'),

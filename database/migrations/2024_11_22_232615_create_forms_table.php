@@ -21,6 +21,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE FUNCTION set_order_numerator()
+            RETURNS TRIGGER AS $$
+            DECLARE
+                current_max INTEGER;
+            BEGIN
+              IF NEW.order_numerator = 0 THEN
+                  -- Use dynamic SQL to query the maximum order_numerator value from the table
+                  EXECUTE format('SELECT COALESCE(MAX(order_numerator), 0) FROM %I', TG_TABLE_NAME)
+                    INTO current_max;
+
+                  NEW.order_numerator := current_max + 1;
+              END IF;
+              RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        SQL);
+
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -31,18 +49,30 @@ return new class extends Migration
 
         Schema::create('form_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('title');
             $table->string('description')->nullable();
             $table->foreignIdFor(Form::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->unsignedInteger('order_numerator');
+            $table->unsignedInteger('order_denominator')->default(1);
+            $table->unique(['order_numerator', 'order_denominator']);
+            $table->unique(['form_id', 'title']);
+            $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
 
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE TRIGGER set_order_numerator_form_sections
+            BEFORE INSERT ON form_sections
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
+
         Schema::create('form_questions', function (Blueprint $table) {
             $table->id();
-            $table->string('question');
+            $table->string('title');
             $table->string('description')->nullable();
             $table->string('type');
             $table->foreignIdFor(Form::class)
@@ -53,9 +83,19 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->unsignedInteger('order_numerator');
+            $table->unsignedInteger('order_denominator')->default(1);
+            $table->unique(['order_numerator', 'order_denominator']);
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });
+
+        DB::unprepared(<<<SQL
+            CREATE TRIGGER set_order_numerator_form_questions
+            BEFORE INSERT ON form_questions
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
 
         Schema::create('form_question_essay_type_configurations', function (Blueprint $table) {
             $table->id();
@@ -72,15 +112,26 @@ return new class extends Migration
 
         Schema::create('form_question_options', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('label');
             $table->string('interpretation')->nullable();
             $table->float('value');
             $table->foreignIdFor(FormQuestion::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->unsignedInteger('order_numerator');
+            $table->unsignedInteger('order_denominator')->default(1);
+            $table->unique(['order_numerator', 'order_denominator']);
+            $table->unique(['form_question_id', 'label']);
             $table->timestampsTz();
         });
+
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE TRIGGER set_order_numerator_form_question_options
+            BEFORE INSERT ON form_question_options
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
 
         Schema::create('form_submission_periods', function (Blueprint $table) {
             $table->id();
@@ -193,10 +244,14 @@ return new class extends Migration
         Schema::dropIfExists('form_submission_answers');
         Schema::dropIfExists('form_submissions');
         Schema::dropIfExists('form_submission_periods');
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_question_options ON form_question_options;');
         Schema::dropIfExists('form_question_options');
         Schema::dropIfExists('form_question_essay_type_configurations');
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_questions ON form_questions;');
         Schema::dropIfExists('form_questions');
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_sections ON form_sections;');
         Schema::dropIfExists('form_sections');
         Schema::dropIfExists('forms');
+        DB::unprepared('DROP FUNCTION IF EXISTS set_order_numerator;');
     }
 };

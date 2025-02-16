@@ -1,10 +1,12 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\Subject;
 use Livewire\Attributes\Locked;
 
+/**
+ * @extends parent<Subject>
+ */
 class SubjectForm extends BaseForm
 {
     #[Locked]
@@ -16,7 +18,7 @@ class SubjectForm extends BaseForm
     {
         $unique = 'unique:subjects,code';
         return [
-            'id' => ['nullable', 'integer', 'exists:subjects,id'],
+            'id'   => ['nullable', 'integer', 'exists:subjects,id'],
             'code' => ['required', 'string', 'max:255',
                 isset($this->id) ? $unique . ',' . $this->id : $unique],
             'name' => ['required', 'string', 'max:255'],
@@ -33,7 +35,12 @@ class SubjectForm extends BaseForm
         }
     }
 
-    public function set(Subject $subject)
+    /**
+     * Summary of set
+     * @param Subject $subject
+     * @return void
+     */
+    public function set(mixed $subject)
     {
         $this->fill($subject->attributesToArray());
     }

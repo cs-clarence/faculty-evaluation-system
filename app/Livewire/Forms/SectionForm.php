@@ -1,11 +1,13 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\Section;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 
+/**
+ * @extends parent<Section>
+ */
 class SectionForm extends BaseForm
 {
     #[Locked]
@@ -20,13 +22,13 @@ class SectionForm extends BaseForm
     {
         $unique = 'unique:sections,code';
         return [
-            'id' => ['nullable', 'integer', 'exists:subjects,id'],
-            'code' => ['required', 'string', 'max:255',
+            'id'         => ['nullable', 'integer', 'exists:subjects,id'],
+            'code'       => ['required', 'string', 'max:255',
                 isset($this->id) ? $unique . ',' . $this->id : $unique],
             'year_level' => ['required', 'integer', 'gt:0'],
-            'semester' => ['required', 'integer', 'gt:0'],
-            'name' => ['required', 'string', 'max:255'],
-            'course_id' => ['required', 'integer', 'exists:courses,id'],
+            'semester'   => ['required', 'integer', 'gt:0'],
+            'name'       => ['required', 'string', 'max:255'],
+            'course_id'  => ['required', 'integer', 'exists:courses,id'],
         ];
     }
 
@@ -50,7 +52,11 @@ class SectionForm extends BaseForm
         }
     }
 
-    public function set(Section $section)
+    /**
+     * @param Section $section
+     * @return void
+     */
+    public function set(mixed $section)
     {
         $this->fill($section->attributesToArray());
     }

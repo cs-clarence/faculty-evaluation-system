@@ -1,4 +1,4 @@
-@props(['color' => 'primary', 'variant' => 'filled', 'size' => 'md'])
+@props(['color' => 'primary', 'variant' => 'filled', 'size' => 'md', 'el' => 'button'])
 
 @php
     $common =
@@ -55,7 +55,7 @@
     }
 @endphp
 
-<button
+<{{ $el }}
     {{ $attributes->filter(fn($value) => isset($value) && $value != null)->merge(['class' => $cssClass . ' ' . $common]) }}>
     {{ $slot }}
-</button>
+    </{{ $el }}>

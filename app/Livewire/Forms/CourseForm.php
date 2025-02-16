@@ -1,9 +1,12 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\Course;
 use Livewire\Attributes\Locked;
+
+/**
+ * @extends parent<Course>
+ */
 
 class CourseForm extends BaseForm
 {
@@ -17,10 +20,10 @@ class CourseForm extends BaseForm
     {
         $unique = 'unique:courses,code';
         return [
-            'id' => ['nullable', 'integer', 'exists:courses,id'],
-            'code' => ['required', 'string', 'max:255',
+            'id'            => ['nullable', 'integer', 'exists:courses,id'],
+            'code'          => ['required', 'string', 'max:255',
                 isset($this->id) ? $unique . ',' . $this->id : $unique],
-            'name' => ['required', 'string', 'max:255'],
+            'name'          => ['required', 'string', 'max:255'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
         ];
     }
@@ -35,7 +38,11 @@ class CourseForm extends BaseForm
         }
     }
 
-    public function set(Course $course)
+    /**
+     * @param Course $course
+     */
+
+    public function set(mixed $course)
     {
         $this->fill($course->attributesToArray());
     }

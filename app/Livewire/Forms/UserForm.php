@@ -15,6 +15,9 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
 
+/**
+ * @extends parent<User>
+ */
 class UserForm extends BaseForm
 {
     #[Locked]
@@ -76,7 +79,11 @@ class UserForm extends BaseForm
         $this->include_base     = $includeBase;
     }
 
-    public function set(User $model)
+    /**
+     * @param \App\Models\User $model
+     * @return void
+     */
+    public function set(mixed $model)
     {
         $role    = Role::whereId($model->role_id)->first(['code']);
         $student = $role->code === RoleCode::Student->value ? $model->student()->first(['course_id', 'student_number', 'starting_school_year_id']) : null;

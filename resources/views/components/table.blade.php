@@ -1,3 +1,5 @@
+@props(['data', 'columns', 'paginate', 'key' => 'id', 'empty' => 'No records found'])
+
 @php
     use Illuminate\Pagination\{LengthAwarePaginator, CursorPaginator};
     if (!function_exists('isPaginated')) {
@@ -15,6 +17,36 @@
             return $data instanceof CursorPaginator;
         }
     }
+    if (!function_exists('walkAndGetValue')) {
+        function walkAndGetValue(string $property, $data)
+        {
+            $path = preg_split('/\./', $property);
+            $current = $data;
+
+            foreach ($path as $p) {
+                if (is_array($current)) {
+                    $current = $current[$p];
+                } else {
+                    $current = $current->$p;
+                }
+            }
+
+            return $current;
+        }
+    }
+
+    if (!function_exists('getValue')) {
+        function getValue(callable|string $property, $data)
+        {
+            if (is_callable($property)) {
+                return $property($data);
+            } elseif (is_array($data)) {
+                return walkAndGetValue($property, $data);
+            } else {
+                return walkAndGetValue($property, $data);
+            }
+        }
+    }
 
     $perPage = isset($paginate) ? (is_numeric($paginate) ? $paginate : $paginate['perPage']) : 15;
 
@@ -26,9 +58,9 @@
     <div class="mb-2 flex row">
         <div class="grow"></div>
         @if (isCursorPaginated($data))
-            {{ $data->links('components.table.simple-paginate') }}
+            {{ $data->links('components.table.livewire-simple-paginate') }}
         @else
-            {{ $data->links('components.table.paginate') }}
+            {{ $data->links('components.table.livewire-paginate') }}
         @endif
     </div>
 @endif
@@ -51,7 +83,7 @@
         @endphp
 
         @forelse($queried as $d)
-            <tr wire:key="{{ $getValue($key, $d) }}">
+            <tr wire:key="{{ getValue($key, $d) }}">
                 @foreach ($columns as $column)
                     <td class="py-3 px-4 border-b border-current/20">
                         @if (is_callable($column['render']))
@@ -63,7 +95,7 @@
                             @endphp
                             <x-dynamic-component :component="$slotName" :data="$d" :attributes="new Illuminate\View\ComponentAttributeBag($renderProps)" />
                         @else
-                            {{ $getValue($column['render'], $d) }}
+                            {{ getValue($column['render'], $d) }}
                         @endif
                     </td>
                 @endforeach

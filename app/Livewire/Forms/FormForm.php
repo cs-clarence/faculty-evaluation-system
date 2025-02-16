@@ -1,10 +1,12 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\Form as FormModel;
 use Livewire\Attributes\Locked;
 
+/**
+ * @extends parent<FormModel>
+ */
 class FormForm extends BaseForm
 {
     #[Locked]
@@ -15,8 +17,8 @@ class FormForm extends BaseForm
     public function rules()
     {
         return [
-            'id' => ['nullable', 'integer', 'exists:forms,id'],
-            'name' => ['required', 'string'],
+            'id'          => ['nullable', 'integer', 'exists:forms,id'],
+            'name'        => ['required', 'string'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -31,7 +33,11 @@ class FormForm extends BaseForm
         }
     }
 
-    public function set(FormModel $model)
+    /**
+     * @param FormModel $model
+     */
+
+    public function set(mixed $model)
     {
         $this->fill([ ...$model->attributesToArray()]);
     }

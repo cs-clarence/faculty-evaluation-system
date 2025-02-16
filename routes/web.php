@@ -47,6 +47,7 @@ Route::middleware(['auth:admin,hr,evaluator'])
         Route::get('/courses/{course}', App\Livewire\Pages\Admin\Courses\Course::class)->name('courses.course');
         Route::get('/departments', App\Livewire\Pages\Admin\Departments\Index::class)->name('departments.index');
         Route::get('/forms', App\Livewire\Pages\Admin\Forms\Index::class)->name('forms.index');
+        Route::get('/forms/{form}', App\Livewire\Pages\Admin\Forms\Form::class)->name('forms.form');
         Route::get('/form-submission-periods', App\Livewire\Pages\Admin\FormSubmissionPeriods\Index::class)
             ->name('form-submission-periods.index');
         Route::get('/form-submissions', App\Livewire\Pages\Admin\FormSubmissions\Index::class)

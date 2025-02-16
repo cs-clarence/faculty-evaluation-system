@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Facades\Services\SchoolYearService;
@@ -7,6 +6,10 @@ use App\Models\SchoolYear;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use \DB;
+
+/**
+ * @extends parent<SchoolYear>
+ */
 
 class SchoolYearForm extends BaseForm
 {
@@ -20,14 +23,14 @@ class SchoolYearForm extends BaseForm
     {
 
         return [
-            'id' => 'nullable|integer|exists:school_years,id',
+            'id'         => 'nullable|integer|exists:school_years,id',
             'year_start' => ['required', 'numeric', 'gte:2000', 'lt:year_end',
                 Rule::unique('school_years', 'year_start')
                     ->where('year_end', $this->year_end)
                     ->ignore($this->id, 'id'),
             ],
-            'year_end' => ['required', 'numeric', 'gte:2000', 'gt:year_start', 'lte:' . $this->year_start + 1],
-            'semesters' => ['required', 'numeric', 'gte:2'],
+            'year_end'   => ['required', 'numeric', 'gte:2000', 'gt:year_start', 'lte:' . $this->year_start + 1],
+            'semesters'  => ['required', 'numeric', 'gte:2'],
         ];
     }
 
@@ -36,7 +39,7 @@ class SchoolYearForm extends BaseForm
         $this->validate();
         if (isset($this->id)) {
             DB::transaction(function () {
-                $sy = SchoolYear::whereId($this->id)->first();
+                $sy               = SchoolYear::whereId($this->id)->first();
                 $currentSemesters = $sy->semesters()->count();
 
                 $this->validate([
@@ -52,7 +55,11 @@ class SchoolYearForm extends BaseForm
         }
     }
 
-    public function set(SchoolYear $sy)
+    /**
+     * @param SchoolYear $sy
+     */
+
+    public function set(mixed $sy)
     {
         $this->fill(
             [

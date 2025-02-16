@@ -120,7 +120,7 @@ class Course extends Component
 
     public function saveAddCourseSubjects()
     {
-        $this->addCourseSubjectsForm->save();
+        $this->addCourseSubjectsForm->submit();
         $this->closeAddCourseSubjectsForm();
     }
 

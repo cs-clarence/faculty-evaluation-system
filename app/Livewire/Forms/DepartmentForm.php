@@ -1,9 +1,12 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\Department;
 use Livewire\Attributes\Locked;
+
+/**
+ * @extends parent<Department>
+ */
 
 class DepartmentForm extends BaseForm
 {
@@ -16,7 +19,7 @@ class DepartmentForm extends BaseForm
     {
         $unique = 'unique:departments,code';
         return [
-            'id' => ['nullable', 'integer', 'exists:departments,id'],
+            'id'   => ['nullable', 'integer', 'exists:departments,id'],
             'code' => ['required', 'string', 'max:255',
                 isset($this->id) ? $unique . ',' . $this->id : $unique],
             'name' => ['required', 'string', 'max:255'],
@@ -34,7 +37,11 @@ class DepartmentForm extends BaseForm
         $this->clear();
     }
 
-    public function set(Department $department)
+    /**
+     * @param Department $department
+     */
+
+    public function set(mixed $department)
     {
         $this->fill($department->attributesToArray());
     }

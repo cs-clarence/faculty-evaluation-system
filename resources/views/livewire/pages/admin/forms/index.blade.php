@@ -17,7 +17,22 @@
                     ['label' => 'Description', 'render' => 'description'],
                     ['label' => 'Sections', 'render' => 'sections_count'],
                     ['label' => 'Questions', 'render' => 'questions_count'],
-                    ['label' => 'Actions', 'render' => 'blade:table.actions'],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [
+                                'view' => [
+                                    'type' => 'link',
+                                    'order' => 1.1,
+                                    'label' => 'View',
+                                    'href' => fn($data) => route('admin.forms.form', [
+                                        'form' => $data,
+                                    ]),
+                                ],
+                            ],
+                        ],
+                    ],
                 ];
             @endphp
             <x-table :data="$forms" :$columns>

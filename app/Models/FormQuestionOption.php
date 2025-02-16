@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Models;
 
+use App\Models\Traits\Reorderable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FormQuestionOption extends Model
 {
+    use Reorderable;
     //
     protected $table = 'form_question_options';
-    public $fillable = ['name', 'value', 'interpretation', 'form_question_id'];
+    public $fillable = ['label', 'value', 'interpretation', 'form_question_id', 'order_numerator', 'order_denominator'];
 }

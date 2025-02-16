@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Models;
 
+use App\Models\Traits\Reorderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class FormSection extends Model
 {
+    use Reorderable;
+
     protected $table = 'form_sections';
-    public $fillable = ['name', 'description', 'form_id'];
+    public $fillable = ['title', 'description', 'form_id', 'order_numerator', 'order_denominator'];
 
     public function questions(): HasMany
     {
         return $this->hasMany(FormQuestion::class);
     }
+
 }

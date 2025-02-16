@@ -82,7 +82,10 @@ class FormSubmissionForm extends BaseForm
         });
     }
 
-    public function set(FormSubmission $model)
+    /**
+     * @param FormSubmission $model
+     */
+    public function set(mixed $model)
     {
         $model->load(['answers.selectedOptions']);
         $this->fill([

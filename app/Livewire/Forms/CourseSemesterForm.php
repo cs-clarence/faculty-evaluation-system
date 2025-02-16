@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use App\Models\CourseSemester;
@@ -19,11 +18,11 @@ class CourseSemesterForm extends BaseForm
     public function rules()
     {
         return [
-            'id' => ['nullable', 'integer', 'exists:course_semesters,id'],
-            'year_level' => ['required', 'integer', 'gt:0'],
-            'course_id' => ['required', 'exists:courses,id'],
-            'semester' => ['required', 'integer', 'gt:0'],
-            'subject_ids' => ['required', 'array', 'min:1'],
+            'id'            => ['nullable', 'integer', 'exists:course_semesters,id'],
+            'year_level'    => ['required', 'integer', 'gt:0'],
+            'course_id'     => ['required', 'exists:courses,id'],
+            'semester'      => ['required', 'integer', 'gt:0'],
+            'subject_ids'   => ['required', 'array', 'min:1'],
             'subject_ids.*' => ['integer', 'exists:subjects,id'],
         ];
     }
@@ -39,8 +38,8 @@ class CourseSemesterForm extends BaseForm
 
         $this->validate([
             'year_level' => $uniqueRule,
-            'semester' => $uniqueRule,
-            'course_id' => $uniqueRule,
+            'semester'   => $uniqueRule,
+            'course_id'  => $uniqueRule,
         ]);
 
         DB::transaction(function () {
@@ -54,7 +53,11 @@ class CourseSemesterForm extends BaseForm
         });
     }
 
-    public function set(CourseSemester $courseSemester)
+    /**
+     * @param CourseSemester $courseSemester
+     */
+
+    public function set(mixed $courseSemester)
     {
         $this->fill([
              ...$courseSemester->attributesToArray(),

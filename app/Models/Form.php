@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
@@ -18,9 +17,10 @@ class Form extends Model
     protected $table = 'forms';
     public $fillable = ['name', 'description'];
 
-    public function sections(): HasMany
+    public function sections()
     {
-        return $this->hasMany(FormSection::class);
+        return $this->hasMany(FormSection::class)
+            ->reordered();
     }
 
     public function questions(): HasMany

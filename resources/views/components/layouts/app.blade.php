@@ -29,7 +29,7 @@
         Blank Page
     @endisset
 </body>
-@livewireScripts
+@livewireScriptConfig
 @stack('scripts')
 
 </html>

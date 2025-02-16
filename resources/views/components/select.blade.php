@@ -44,7 +44,7 @@
     'options' => [],
     'label' => $defaultGetLabel,
     'value' => $defaultGetValue,
-    'key' => $defaultGetValue,
+    'key' => null,
     'empty' => null,
     'placeholder' => null,
 ])

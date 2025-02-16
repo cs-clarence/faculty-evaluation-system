@@ -1,9 +1,11 @@
 <?php
-
 namespace App\Livewire\Forms;
 
 use Livewire\Form;
 
+/**
+ * @template T
+ */
 abstract class BaseForm extends Form
 {
     public function clear()
@@ -13,4 +15,9 @@ abstract class BaseForm extends Form
     }
 
     abstract public function submit();
+
+    /**
+     * @param T $model
+     */
+    abstract public function set(mixed $model);
 }
