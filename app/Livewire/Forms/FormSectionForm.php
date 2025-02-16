@@ -24,6 +24,7 @@ class FormSectionForm extends BaseForm
         return [
             'title'       => [isset($this->id) ? $unique->ignore($this->id) : $unique, 'max:255', 'min:1'],
             'description' => ['nullable', 'string', 'max:1025'],
+            'form_id'     => ['required', 'exists:forms,id'],
         ];
     }
 
@@ -34,7 +35,7 @@ class FormSectionForm extends BaseForm
         if (! isset($this->id)) {
             FormSection::create([ ...$this->except(['id']), 'order_numerator' => 0]);
         } else {
-            FormSection::whereId($this->id)->update([ ...$this->except(['id', 'form_id']), 'order_numerator' => 0]);
+            FormSection::whereId($this->id)->update($this->except(['id', 'form_id']));
         }
     }
 

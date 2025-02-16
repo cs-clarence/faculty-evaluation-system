@@ -7,6 +7,19 @@
             return "{$model->id}.{$model->order}";
         }
     }
+
+    if (!function_exists('pascalToTitle')) {
+        function pascalToTitle($pascal)
+        {
+            return trim(ucwords(preg_replace('/([a-z])([A-Z])/', '$1 $2', $pascal)));
+        }
+    }
+
+    $questionTypes = Type::cases();
+    $questionTypeOptions = collect($questionTypes)
+        ->filter(fn($d) => $d !== Type::MultipleChoicesMultipleSelect)
+        ->map(fn($d) => ['label' => pascalToTitle($d->name), 'value' => $d->value])
+        ->toArray();
 @endphp
 
 <div>
@@ -53,6 +66,11 @@
                 placeholder="Section description"
                 wire:save="updateSectionDescription({{ $section->id }}, $event.detail.text)"
                 class="text-md white whitespace-pre-line" />
+            <div class="flex flex-row gap-2">
+                <x-button size="sm" variant="outlined" wire:click='openQuestionForm({{ $section->id }})'>
+                    <i class="material-symbols-outlined">add</i>
+                    Add Question</x-button>
+            </div>
 
             <div class="flex flex-col gap-6">
                 @php($questions = $section->questions()->reordered()->get())
@@ -86,13 +104,29 @@
                                 <i class="material-symbols-outlined">delete</i>
                             </x-button>
                         </div>
+
+                        <div class="max-w-max items-center flex-row flex gap-2" x-data="{ questionType: '{{ addslashes($question->type) }}' }">
+                            <x-label class="text-lg min-w-max" key="{{ $question->id }}.type">Question Type</x-label>
+                            <x-select class="min-w-[280px]" x-model="questionType" key="{{ $question->id }}.type"
+                                wire:change="updateQuestionType({{ $question->id }}, $event.target.value)"
+                                :options="$questionTypeOptions" empty="No types available" />
+                            @if (
+                                $question->type === Type::MultipleChoicesMultipleSelect->value ||
+                                    $question->type === Type::MultipleChoicesSingleSelect->value)
+                                <x-button size="sm" variant="outlined" class="min-w-max"
+                                    wire:click='openOptionForm({{ $question->id }})'>
+                                    <i class="material-symbols-outlined">add</i>
+                                    Add Option</x-button>
+                            @endif
+                        </div>
+
                         @if ($question->type === Type::Essay->value)
                             <textarea class="w-full px-3 py-2 border rounded-lg min-h-32" rows="4" wire:model="{{ $wireModel }}"
                                 name="{{ $questionName }}"></textarea>
                         @elseif (
                             $question->type === Type::MultipleChoicesMultipleSelect->value ||
                                 $question->type === Type::MultipleChoicesSingleSelect->value)
-                            <fieldset class="flex flex-col gap-2">
+                            <div class="flex flex-col gap-2">
                                 @php($options = $question->options()->reordered()->orderByDesc('value')->get())
                                 @forelse ($options as $key => $option)
                                     <div class="flex flex-row gap-1 align-items text-gray-700 bg-gray-100/50 w-full rounded-lg p-4"
@@ -113,7 +147,7 @@
                                         </div>
                                         <div class="flex flex-col gap-1">
                                             <x-button icon size="sm" variant="outlined" color="secondary"
-                                                wire:click="editOption({{ $option->id }})">
+                                                wire:click="openOptionForm({{ $question->id }}, {{ $option->id }})">
                                                 <i class="material-symbols-outlined">edit</i>
                                             </x-button>
                                             <x-button icon size="sm" variant="outlined" color="danger"
@@ -142,7 +176,7 @@
                                         No options found
                                     </p>
                                 @endforelse
-                            </fieldset>
+                            </div>
                         @endif
                         @isset($formSubmission)
                             @php($value = $formSubmission->getValue($question->id))
@@ -180,8 +214,7 @@
             <x-dialog>
                 <x-dialog.title>New Section</x-dialog.title>
                 <x-dialog.content el="form">
-                    <x-input type="hidden" value="{{ $form->id }}" key="sectionForm.form_id"
-                        wire:model="sectionForm.form_id" />
+                    <x-input type="hidden" key="sectionForm.form_id" wire:model="sectionForm.form_id" />
                     <x-form-control>
                         <x-form-control.label key="sectionForm.title">Title</x-form-control.label>
                         <x-input key="sectionForm.title" wire:model="sectionForm.title" />
@@ -196,6 +229,72 @@
                 <x-dialog.actions>
                     <x-button variant="text" color="neutral" wire:click='closeSectionForm'>Cancel</x-button>
                     <x-button wire:click='saveSection'>Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
+    @endif
+
+    @if ($questionFormIsOpen)
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self='closeQuestionForm'>
+            <x-dialog>
+                <x-dialog.title>New Question</x-dialog.title>
+                <x-dialog.content el="form">
+                    <x-input type="hidden" key="questionForm.form_id" wire:model="questionForm.form_id" />
+                    <x-input type="hidden" key="questionForm.form_section_id"
+                        wire:model="questionForm.form_section_id" />
+                    <x-form-control>
+                        <x-form-control.label key="questionForm.title">Title</x-form-control.label>
+                        <x-input key="questionForm.title" wire:model="questionForm.title" />
+                        <x-form-control.error-text key="questionForm.title" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="questionForm.type">Type</x-form-control.label>
+                        <x-select key="questionForm.type" wire:model="questionForm.type" :options="$questionTypeOptions"
+                            placeholder="Select type" empty="No types available" />
+                        <x-form-control.error-text key="questionForm.type" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="questionForm.description">Description</x-form-control.label>
+                        <x-textarea key="questionForm.description" wire:model="questionForm.description" />
+                        <x-form-control.error-text key="questionForm.description" />
+                    </x-form-control>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button variant="text" color="neutral" wire:click='closeQuestionForm'>Cancel</x-button>
+                    <x-button wire:click='saveQuestion'>Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
+    @endif
+
+    @if ($optionFormIsOpen)
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self='closeOptionForm'>
+            <x-dialog>
+                <x-dialog.title>New Option</x-dialog.title>
+                <x-dialog.content el="form">
+                    <x-input type="hidden" key="optionForm.form_question_id"
+                        wire:model="optionForm.form_question_id" />
+                    <x-form-control>
+                        <x-form-control.label key="optionForm.label">Label</x-form-control.label>
+                        <x-input key="optionForm.label" wire:model="optionForm.label" />
+                        <x-form-control.error-text key="optionForm.label" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="optionForm.value">Value</x-form-control.label>
+                        <x-input type="number" key="optionForm.value" wire:model="optionForm.value" />
+                        <x-form-control.error-text key="optionForm.value" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="optionForm.interpretation">Interpretation</x-form-control.label>
+                        <x-textarea key="optionForm.interpretation" wire:model="optionForm.interpretation" />
+                        <x-form-control.error-text key="optionForm.interpretation" />
+                    </x-form-control>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button variant="text" color="neutral" wire:click='closeOptionForm'>Cancel</x-button>
+                    <x-button wire:click='saveOption'>Save</x-button>
                 </x-dialog.actions>
             </x-dialog>
         </x-dialog.container>

@@ -86,6 +86,7 @@ return new class extends Migration
             $table->unsignedInteger('order_numerator');
             $table->unsignedInteger('order_denominator')->default(1);
             $table->unique(['order_numerator', 'order_denominator']);
+            $table->unique(['title', 'form_section_id']);
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
         });

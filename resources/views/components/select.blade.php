@@ -50,9 +50,9 @@
 ])
 
 <select {{ $attributes->merge(['class' => 'w-full px-3 py-2 border rounded-lg', 'id' => $key, 'name' => $key]) }}>
-    @isset($placeholder)
+    @if (isset($placeholder) && count($options) > 0)
         <option selected value="">{{ execSelect($label, $placeholder) }}</option>
-    @endisset
+    @endif
     @forelse ($options as $option)
         <option value="{{ execSelect($value, $option) }}">{{ execSelect($label, $option) }}</option>
     @empty

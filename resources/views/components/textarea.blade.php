@@ -1,3 +1,5 @@
-<div>
-    <!-- The best way to take care of the future is to take care of the present moment. - Thich Nhat Hanh -->
-</div>
+@props(['key' => null])
+
+<textarea {{ $attributes->merge(['class' => 'w-full px-3 py-2 border rounded-lg', 'id' => $key, 'name' => $key]) }}>
+{{ $slot }}
+</textarea>
