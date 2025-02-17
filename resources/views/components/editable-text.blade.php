@@ -6,6 +6,7 @@
     'empty' => null,
     'required' => false,
     'inputContainerClass' => '',
+    'editable' => true,
 ])
 
 @php
@@ -28,6 +29,7 @@
         'placeholder' => $placeholder,
         'empty' => $empty,
         'required' => $required,
+        'editable' => $editable,
     ];
 
     $jsonData = json_encode($data);
@@ -47,11 +49,12 @@
                 <div class="{{ $cssClasses }}" x-bind:class="{ 'outline-red-500': error }">
                     @if ($multiline)
                         <textarea x-bind:placeholder="placeholder" x-bind:rows="rows" required x-ref="{{ $randomId }}"
-                            id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"></textarea>
+                            id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"
+                            x-on:keydown.esc="cancel($event)"></textarea>
                     @else
                         <input x-bind:placeholder="placeholder" required x-ref="{{ $randomId }}"
                             id="{{ $randomId }}" class="{{ $inputClasses }}" title="edit text" x-model="text"
-                            x-on:keyup.enter="save($event, $dispatch)" />
+                            x-on:keydown.esc="cancel($event)" x-on:keyup.enter="save($event, $dispatch)" />
                     @endif
 
                     <div class="flex flex-row gap-2">

@@ -75,6 +75,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('type');
+            $table->float('weight')->default(1);
             $table->foreignIdFor(Form::class)
                 ->constrained()
                 ->cascadeOnDelete()

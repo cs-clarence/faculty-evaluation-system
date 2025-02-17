@@ -6,17 +6,17 @@
 
     switch ($size) {
         case 'xs':
-            $common .= !$icon ? ' px-2 h-7 text-xs' : ' w-7 h-7 text-xs';
+            $common .= !$icon ? ' px-2 min-w-max min-h-7 text-xs' : ' min-w-7 min-h-7 text-xs';
             break;
         case 'sm':
-            $common .= !$icon ? ' px-3 h-9 text-sm' : ' w-9 h-9 text-sm';
+            $common .= !$icon ? ' px-3 min-w-max min-h-9 text-sm' : ' min-w-9 min-h-9 text-sm';
             break;
         case 'lg':
-            $common .= !$icon ? ' px-6 h-12 text-md' : ' w-12 h-12 text-md';
+            $common .= !$icon ? ' px-6 min-w-max min-h-12 text-md' : ' min-w-12 min-h-12 text-md';
             break;
         case 'md':
         default:
-            $common .= !$icon ? ' px-4 h-10 text-lg' : ' w-10 h-10 text-lg';
+            $common .= !$icon ? ' px-4 min-w-max min-h-10 text-lg' : ' min-w-10 min-h-10 text-lg';
             break;
     }
 

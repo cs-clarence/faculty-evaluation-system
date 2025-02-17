@@ -73,4 +73,9 @@ class Index extends Component
     {
         $model->close();
     }
+
+    public function duplicate(Form $model)
+    {
+        $model->duplicate();
+    }
 }

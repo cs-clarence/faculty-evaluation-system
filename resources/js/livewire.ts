@@ -8,6 +8,7 @@ type Data = {
     text: string;
     savedText: string;
     required: boolean;
+    editable: boolean;
 };
 
 type DispatchFn = (eventType: string, detail: unknown) => void;
@@ -15,6 +16,15 @@ type DispatchFn = (eventType: string, detail: unknown) => void;
 document.addEventListener("alpine:init", () => {
     Alpine.data("editableText", (data: Data) => ({
         ...data,
+        _privateEdit: data.edit,
+        get edit(): boolean {
+            return this._privateEdit && this.editable;
+        },
+        set edit(value: boolean) {
+            if (this.editable) {
+                this._privateEdit = value;
+            }
+        },
         get unchanged(): boolean {
             return this.text === this.savedText;
         },

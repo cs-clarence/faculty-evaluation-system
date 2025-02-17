@@ -15,6 +15,10 @@ class FormSection extends Model
     protected $table = 'form_sections';
     public $fillable = ['title', 'description', 'form_id', 'order_numerator', 'order_denominator'];
 
+    /**
+     * Summary of questions
+     * @return HasMany<FormQuestion, FormSection>
+     */
     public function questions(): HasMany
     {
         return $this->hasMany(FormQuestion::class);

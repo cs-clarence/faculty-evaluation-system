@@ -30,6 +30,12 @@
                                         'form' => $data,
                                     ]),
                                 ],
+                                'duplicate' => [
+                                    'order' => 5,
+                                    'variant' => 'outlined',
+                                    'label' => 'Duplicate',
+                                    'wire:click' => fn($data) => "duplicate({$data->id})",
+                                ],
                             ],
                         ],
                     ],
