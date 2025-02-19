@@ -18,6 +18,7 @@ class FormQuestionForm extends BaseForm
     public ?string $type = null;
     public ?string $description = null;
     public ?int $form_id = null;
+    public ?float $weight = 1;
     public ?int $form_section_id = null;
     public ?float $essay_value_scale_from = null;
     public ?float $essay_value_scale_to = null;
@@ -34,6 +35,7 @@ class FormQuestionForm extends BaseForm
             'type'            => ['required', Rule::enum(FormQuestionType::class)],
             'form_id'         => ['required', 'exists:forms,id'],
             'form_section_id' => ['required', 'exists:form_sections,id'],
+            'weight'          => ['required', 'numeric', 'gt:0'],
         ];
 
         if ($this->type === FormQuestionType::Essay->value) {

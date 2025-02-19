@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +13,7 @@ class SchoolYear extends Model
 {
     /** @use HasFactory<\Database\Factories\SchoolYearFactory> */
     use HasFactory;
-    protected $table = 'school_years';
+    protected $table    = 'school_years';
     protected $fillable = ['year_start', 'year_end'];
 
     public function semesters(): HasMany
@@ -41,10 +40,10 @@ class SchoolYear extends Model
 
     public function hasDependents()
     {
-        $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriods', 'studentSemesters'])->get();
+        $semesters = $this->semesters()->withCount(['sections', 'formSubmissionPeriodSemesters', 'studentSemesters'])->get();
 
         foreach ($semesters as $semester) {
-            if ($semester->sections_count > 0 || $semester->form_submission_periods_count > 0
+            if ($semester->sections_count > 0 || $semester->form_submission_period_semesters_count > 0
                 || $semester->student_semesters_count > 0
             ) {
                 return true;

@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,8 +16,9 @@ class Form extends Model
     /** @use HasFactory<\Database\Factories\FormFactory> */
     use HasFactory, Archivable;
 
-    protected $table = 'forms';
-    public $fillable = ['name', 'description'];
+    protected $table    = 'forms';
+    protected $fillable = ['name', 'description'];
+    protected $appends  = ['total_weight'];
 
     public function sections()
     {
@@ -31,6 +33,16 @@ class Form extends Model
     public function submissionPeriods(): HasMany
     {
         return $this->hasMany(FormSubmissionPeriod::class);
+    }
+
+    public function getTotalWeight()
+    {
+        return $this->questions->sum('weight');
+    }
+
+    protected function totalWeight(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->getTotalWeight())->shouldCache();
     }
 
     public function hasDependents(): bool
@@ -51,22 +63,25 @@ class Form extends Model
             $newForm->name = $this->name . ' (Copy)';
             $newForm->save();
 
-            foreach ($this->sections as $section) {
-                $newSection                  = $section->replicate();
-                $newSection->order_numerator = 0;
+            foreach ($this->sections()->reordered()->get() as $section) {
+                $newSection                    = $section->replicate();
+                $newSection->order_numerator   = 0;
+                $newSection->order_denominator = 1;
                 $newForm->sections()->save($newSection);
 
-                foreach ($section->questions as $question) {
-                    $newQuestion                  = $question->replicate();
-                    $newQuestion->order_numerator = 0;
-                    $newQuestion->form_id         = $newForm->id;
+                foreach ($section->questions()->reordered()->get() as $question) {
+                    $newQuestion                    = $question->replicate();
+                    $newQuestion->order_numerator   = 0;
+                    $newQuestion->order_denominator = 1;
+                    $newQuestion->form_id           = $newForm->id;
                     $newSection->questions()->save($newQuestion);
 
                     $options = [];
-                    foreach ($question->options as $option) {
-                        $newOption                  = $option->replicate();
-                        $newOption->order_numerator = 0;
-                        $options[]                  = $newOption;
+                    foreach ($question->options()->reordered()->get() as $option) {
+                        $newOption                    = $option->replicate();
+                        $newOption->order_numerator   = 0;
+                        $newOption->order_denominator = 1;
+                        $options[]                    = $newOption;
                     }
 
                     $newQuestion->options()->saveMany($options);

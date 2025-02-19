@@ -13,8 +13,8 @@ class FormSubmissionPeriod extends Model
 {
     use Archivable;
     //
-    protected $table = 'form_submission_periods';
-    public $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'semester_id', 'is_open', 'is_submissions_editable', 'evaluator_role_id', 'evaluatee_role_id'];
+    protected $table    = 'form_submission_periods';
+    protected $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'is_open', 'is_submissions_editable', 'evaluator_role_id', 'evaluatee_role_id'];
 
     public function casts()
     {
@@ -27,11 +27,6 @@ class FormSubmissionPeriod extends Model
     public function form()
     {
         return $this->belongsTo(Form::class);
-    }
-
-    public function semester()
-    {
-        return $this->belongsTo(Semester::class);
     }
 
     public function open()
@@ -84,5 +79,27 @@ class FormSubmissionPeriod extends Model
     public function evaluateeRole()
     {
         return $this->belongsTo(Role::class, 'evaluatee_role_id');
+    }
+
+    public function formSubmissionPeriodSemester()
+    {
+        return $this->hasOne(FormSubmissionPeriodSemester::class);
+    }
+
+    public function semester()
+    {
+        return $this->formSubmissionPeriodSemester()->first()?->semester();
+    }
+
+    public function scopeEvaluator(Builder $builder, RoleCode | string $roleCode)
+    {
+        $roleId = Role::whereCode(is_string($roleCode) ? $roleCode : $roleCode->value)->first(['id'])->id;
+        return $builder->whereEvaluatorRoleId($roleId);
+    }
+
+    public function scopeEvaluatee(Builder $builder, RoleCode | string $roleCode)
+    {
+        $roleId = Role::whereCode(is_string($roleCode) ? $roleCode : $roleCode->value)->first(['id'])->id;
+        return $builder->whereEvaluateeRoleId($roleId);
     }
 }

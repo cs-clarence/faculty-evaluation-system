@@ -19,17 +19,17 @@ class FormSubmission extends Component
     }
     public function mount()
     {
-        $this->formSubmission->load(['submissionPeriod.semester', 'studentSubject']);
+        $this->formSubmission->load(['submissionPeriod.formSubmissionPeriod', 'studentSubject']);
         $this->form->set($this->formSubmission);
         $this->formModel = Form::with(['sections.questions.options'])
-            ->whereId($this->formSubmission->form_id)
+            ->whereId($this->formSubmission->submissionPeriod->form_id)
             ->first();
     }
 
     public function render()
     {
         return view('livewire.pages.user.form-submissions.form-submission')
-            ->layout('components.layouts.teacher');
+            ->layout('components.layouts.user');
 
     }
 }

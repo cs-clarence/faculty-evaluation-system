@@ -9,7 +9,6 @@ use App\Models\Semester;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
-use Log;
 
 class Index extends Component
 {
@@ -48,6 +47,8 @@ class Index extends Component
         $evaluateeRoles = Role::canBeEvaluatee()
             ->lazy();
 
+        $this->showSemester = $this->form->shouldRequireSemester();
+
         return view('livewire.pages.admin.form-submission-periods.index')
             ->with(compact('formSubmissionPeriods', 'forms', 'semesters', 'evaluatorRoles', 'evaluateeRoles'))
             ->layout('components.layouts.admin');
@@ -55,7 +56,6 @@ class Index extends Component
 
     public function updated(string $name, $value)
     {
-        Log::info($name . " => " . $value);
         if ($name === "form.evaluator_role_id" || $name = "form.evaluatee_role_id") {
             $this->showSemester = $this->form->shouldRequireSemester();
         }

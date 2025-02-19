@@ -6,6 +6,12 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
+        "image:build-app": "with-env -- docker image build --build-arg=ENV=production -t rencedm112/spcf-tes:latest -f ./docker/app/Dockerfile .",
+        "image:build-database-migrator": "with-env -- docker image build --build-arg=ENV=production -t rencedm112/spcf-tes-database-migrator:latest -f ./docker/database-migrator/Dockerfile .",
+        "image:build": "bun run image:build-app && bun run image:build-database-migrator",
+        "image:push-app": "with-env -- docker image push rencedm112/spcf-tes:latest",
+        "image:push-database-migrator": "with-env -- docker image push rencedm112/spcf-tes-database-migrator:latest",
+        "image:push": "bun run image:push-app && bun run image:push-database-migrator",
         "schema:dump": "with-env --file=.env.local  -- php artisan schema:dump --path=./database/atlas/schemas/schema.sql",
         "db:seed": "with-env --file=.env.local -- php artisan db:seed",
         "migrate:install": "with-env --file=.env.local --file=.env.local -- php artisan migrate:install",
@@ -13,7 +19,7 @@
         "migrate:fresh": "with-env --file=.env.local -- php artisan migrate:fresh",
         "migrate:atlas-diff": "with-env --file=.env.local -- atlas migrate diff --env=local",
         "migrate:atlas-hash": "with-env --file=.env.local -- atlas migrate hash --env=local",
-        "migrate:atlas-new": "with-env --file=.env.local -- atlas migrate hash --env=local",
+        "migrate:atlas-new": "with-env --file=.env.local -- atlas migrate new --env=local",
         "migrate:atlas-validate": "with-env --file=.env.local -- atlas migrate validate --env=local",
         "migrate:atlas-status": "with-env --file=.env.local -- atlas migrate status --env=local",
         "migrate:atlas-test": "with-env --file=.env.local -- atlas migrate test --env=local",
@@ -29,14 +35,14 @@
         "@rencedm112/tsconfig": "^3.0.6",
         "@rencedm112/with-env": "^0.0.43",
         "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/vite": "^4.0.6",
+        "@tailwindcss/vite": "^4.0.7",
         "@types/alpinejs": "^3.13.11",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.9",
         "laravel-vite-plugin": "^1.2.0",
-        "postcss": "^8.5.2",
-        "tailwindcss": "^4.0.6",
+        "postcss": "^8.5.3",
+        "tailwindcss": "^4.0.7",
         "typescript": "^5.7.3",
-        "vite": "^6.1.0"
+        "vite": "^6.1.1"
     }
 }

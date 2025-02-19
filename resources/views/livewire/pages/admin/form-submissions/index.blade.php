@@ -4,11 +4,11 @@
         <div class="col-span-1 md:col-span-3 overflow-auto">
             @php
                 $columns = [
-                    ['label' => 'Student', 'render' => 'student.student.student_number'],
-                    ['label' => 'Teacher', 'render' => 'teacher.user.name'],
-                    ['label' => 'Subject', 'render' => 'student.studentSubject.subject_name'],
-                    ['label' => 'Semester', 'render' => 'student.studentSubject.studentSemester.semester'],
-                    ['label' => 'Rating', 'render' => 'rating'],
+                    ['label' => 'Evaluator Role', 'render' => 'evaluator.role.display_name'],
+                    ['label' => 'Evaluator', 'render' => 'evaluator.name'],
+                    ['label' => 'Evaluatee Role', 'render' => 'evaluatee.role.display_name'],
+                    ['label' => 'Evaluatee', 'render' => 'evaluatee.name'],
+                    ['label' => 'Rating', 'render' => fn($value) => $value->rating . '%'],
                     [
                         'label' => 'Actions',
                         'render' => 'blade:table.actions',

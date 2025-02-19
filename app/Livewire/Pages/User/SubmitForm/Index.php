@@ -5,9 +5,8 @@ use App\Livewire\Forms\FormSubmissionForm;
 use App\Models\Form;
 use App\Models\FormQuestion;
 use App\Models\FormSubmissionPeriod;
-use App\Models\StudentSubject;
-use App\Models\Teacher;
 use App\Models\User;
+use Auth;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
@@ -16,7 +15,6 @@ class Index extends Component
 {
 
     public FormSubmissionPeriod $formSubmissionPeriod;
-    public StudentSubject $studentSubject;
     public ?User $evaluatee = null;
     public FormSubmissionForm $form;
 
@@ -28,8 +26,8 @@ class Index extends Component
     public function mount()
     {
         $this->form->form_submission_period_id = $this->formSubmissionPeriod->id;
-        $this->form->student_subject_id        = $this->studentSubject->id;
         $this->form->evaluatee_id              = $this->evaluatee?->id;
+        $this->form->evaluator_id              = Auth::user()->id;
         $this->form->form_id                   = $this->formSubmissionPeriod->form_id;
     }
 
@@ -44,19 +42,18 @@ class Index extends Component
         ])->whereId($this->formSubmissionPeriod->form_id)
             ->first();
 
-        $teachers = isset($this->evaluatee) ? [] : Teacher::with(['user'])
-            ->where('department_id', $this->studentSubject->courseSubject->courseSemester->course->department_id)
+        $users = isset($this->evaluatee) ? [] : User::whereRoleId($this->formSubmissionPeriod->evaluatee_role_id)
             ->lazy();
 
         return view('livewire.pages.user.submit-form.index')
-            ->with(compact('formModel', 'teachers'))
-            ->layout('components.layouts.student');
+            ->with(compact('formModel', 'users'))
+            ->layout('components.layouts.user');
     }
 
     public function save()
     {
         $this->form->submit();
         Session::flash('success', 'Form submitted succcessfully.');
-        return $this->redirectRoute('student.dashboard.index');
+        return $this->redirectRoute('user.dashboard.index');
     }
 }

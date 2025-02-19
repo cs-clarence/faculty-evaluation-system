@@ -17,7 +17,12 @@
                     ['label' => 'Form', 'render' => 'form.name'],
                     ['label' => 'Evaluator', 'render' => 'evaluatorRole'],
                     ['label' => 'Evaluatee', 'render' => 'evaluateeRole'],
-                    ['label' => 'Semester', 'render' => fn($data) => isset($data->semester) ? $data->semester : 'None'],
+                    [
+                        'label' => 'Semester',
+                        'render' => fn($data) => isset($data->formSubmissionPeriodSemester)
+                            ? $data->semester()->first()
+                            : 'None',
+                    ],
                     ['label' => 'Start Date', 'render' => 'starts_at'],
                     ['label' => 'End Date', 'render' => 'ends_at'],
                     ['label' => 'Open', 'render' => fn($data) => $data->is_open ? 'Yes' : 'No'],
@@ -58,7 +63,7 @@
     @if ($isFormOpen)
         <x-modal-scrim />
         <x-dialog.container wire:click.self="closeForm">
-            <x-dialog el="form" wire:submit.prevent="save">
+            <x-dialog el="form" wire:submit.prevent="save" wire:key="submission-period">
                 <x-dialog.title>
                     @isset($model)
                         Edit Submission Period
@@ -77,15 +82,15 @@
                     <x-form-control>
                         <x-form-control.label for="form.evaluator_role_id">Evaluator</x-form-control.label>
                         <x-select key="form.evaluator_role_id" required :options="$evaluatorRoles" :label="fn($i) => $i->display_name"
-                            :value="fn($i) => $i->id" placeholder="Select evaluator" empty="No Evaluators Available"
-                            wire:model.change="form.evaluator_role_id" />
+                            :disabled="isset($model) ? $model->hasDependents() : false" :value="fn($i) => $i->id" placeholder="Select evaluator"
+                            empty="No Evaluators Available" wire:model.change="form.evaluator_role_id" />
                         <x-form-control.error-text key="form.evaluator_role_id" />
                     </x-form-control>
                     <x-form-control>
                         <x-form-control.label key="form.evaluatee_role_id">Evaluatee</x-form-control.label>
                         <x-select key="form.evaluatee_role_id" required :options="$evaluateeRoles" :label="fn($i) => $i->display_name"
-                            :value="fn($i) => $i->id" placeholder="Select evaluatee" empty="No Evaluatees Available"
-                            wire:model.change="form.evaluatee_role_id" />
+                            :disabled="isset($model) ? $model->hasDependents() : false" :value="fn($i) => $i->id" placeholder="Select evaluatee"
+                            empty="No Evaluatees Available" wire:model.change="form.evaluatee_role_id" />
                         <x-form-control.error-text key="form.evaluatee_role_id" />
                     </x-form-control>
                     @if ($showSemester)
@@ -93,8 +98,8 @@
                             <x-form-control.label key="ends_at"
                                 class="block text-gray-700">Semester</x-form-control.label>
                             <x-select name="ends_at" id="semester_id" required wire:model="form.semester_id"
-                                :options="$semesters" :label="fn($i) => $i->__tostring()" :value="fn($i) => $i->id" placeholder="Select semester"
-                                empty="No Semesters Available" />
+                                :disabled="isset($model) ? $model->hasDependents() : false" :options="$semesters" :label="fn($i) => $i->__tostring()" :value="fn($i) => $i->id"
+                                placeholder="Select semester" empty="No Semesters Available" />
                             <x-form-control.error-text key="form.semester_id" />
                         </x-form-control>
                     @endif

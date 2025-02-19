@@ -9,6 +9,7 @@ use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Role;
 use App\Models\Semester;
+use App\Models\StudentSubject;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -154,20 +155,29 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->foreignIdFor(Semester::class, 'semester_id')
-                ->nullable()
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignIdFor(Form::class, 'form_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->unique(['semester_id', 'form_id']);
-
             $table->timestampsTz();
+        });
+
+        Schema::create('form_submission_period_semesters', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignIdFor(FormSubmissionPeriod::class, 'form_submission_period_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(Semester::class, 'semester_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->unique('form_submission_period_id');
+            $table->unique('form_submission_period_id', 'semester_id');
         });
 
         Schema::create('form_submissions', function (Blueprint $table) {
@@ -199,6 +209,22 @@ return new class extends Migration
             $table->timestampsTz();
         });
 
+        Schema::create('form_submission_student_subject', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignIdFor(StudentSubject::class, 'student_subject_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(FormSubmission::class, 'form_submission_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->unique('form_submission_id');
+        });
+
         Schema::create('form_submission_answers', function (Blueprint $table) {
             $table->id();
 
@@ -214,7 +240,7 @@ return new class extends Migration
 
             $table->float('value');
             $table->text('text')->nullable();
-            $table->string('interpretation')->nullable();
+            $table->string('interpretation', 10239)->nullable();
             $table->string('reason')->nullable();
 
             $table->timestampsTz();

@@ -5,7 +5,6 @@ use App\Models\FormSubmissionPeriod;
 use App\Models\Role;
 use App\Models\RoleCode;
 use Carbon\Carbon;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 
 /**
@@ -27,20 +26,13 @@ class FormSubmissionPeriodForm extends BaseForm
 
     public function rules()
     {
-        $semRules = [
-            'exists:semesters,id',
-            Rule::unique(FormSubmissionPeriod::class)
-                ->where('form_id', $this->form_id)
-                ->where('semester_id', $this->semester_id)
-                ->ignore($this->id, 'id'),
-
-        ];
+        $semRules = ['required', 'exists:semesters,id'];
         return [
             'id'                      => ['nullable', 'integer', 'exists:form_submission_periods,id'],
             'form_id'                 => ['required', 'integer', 'exists:forms,id'],
             'evaluator_role_id'       => ['required', 'exists:roles,id'],
             'evaluatee_role_id'       => ['required', 'exists:roles,id'],
-            'semester_id'             => $this->shouldRequireSemester() ? ['required', ...$semRules] : [],
+            'semester_id'             => $this->shouldRequireSemester() ? $semRules : [],
             'name'                    => ['required', 'string', 'unique:form_submission_periods,name' .
                 (isset($this->id) ? ",$this->id" : ''),
             ],
@@ -55,13 +47,22 @@ class FormSubmissionPeriodForm extends BaseForm
     {
         $this->validate();
         if (isset($this->id)) {
-            FormSubmissionPeriod::whereId($this->id)->update($this->except(['id']));
+            $period = FormSubmissionPeriod::whereId($this->id)->first();
+            $period->update($this->except(['id']));
+
+            if (isset($this->semester_id)) {
+                $period->formSubmissionPeriodSemester()->update([
+                    'semester_id' => $this->semester_id]);
+            }
+
         } else {
-            FormSubmissionPeriod::create($this->except(
-                $this->shouldRequireSemester()
-                ? ['id']
-                : ['id', 'semester_id']
-            ));
+            $period = FormSubmissionPeriod::create($this->except(['id']));
+
+            if (isset($this->semester_id)) {
+                $period->formSubmissionPeriodSemester()->create([
+                    'semester_id' => $this->semester_id,
+                ]);
+            }
         }
     }
 
@@ -72,8 +73,9 @@ class FormSubmissionPeriodForm extends BaseForm
     public function set(mixed $model)
     {
         $this->fill([ ...$model->attributesToArray(),
-            'starts_at' => Carbon::make($model->starts_at)->format('Y-m-d\TH:i'),
-            'ends_at'   => Carbon::make($model->ends_at)->format('Y-m-d\TH:i'),
+            'semester_id' => $model->formSubmissionPeriodSemester?->semester_id,
+            'starts_at'   => Carbon::make($model->starts_at)->format('Y-m-d\TH:i'),
+            'ends_at'     => Carbon::make($model->ends_at)->format('Y-m-d\TH:i'),
         ]);
     }
 

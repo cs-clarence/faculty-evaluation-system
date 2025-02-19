@@ -3,6 +3,7 @@ namespace App\Livewire\Components\Student;
 
 use App\Facades\Services\StudentService;
 use App\Models\FormSubmissionPeriod;
+use App\Models\RoleCode;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Livewire\Component;
 
@@ -10,9 +11,12 @@ class DashboardContent extends Component
 {
     public function render()
     {
-        $activePeriods = FormSubmissionPeriod::with(['semester.schoolYear'])->isOpen()->get();
+        $activePeriods = FormSubmissionPeriod::evaluator(RoleCode::Student)
+            ->with(['semester.schoolYear', 'formSubmissionPeriodSemester'])
+            ->isOpen()
+            ->get();
 
-        $activePeriodSemesterIds = $activePeriods->map(fn($i) => $i->semester_id);
+        $activePeriodSemesterIds = $activePeriods->map(fn($i) => $i->formSubmissionPeriodSemester->semester_id);
 
         $student = StudentService::currentStudent()->with([
             'studentSubjects' => fn(HasManyThrough $studentSubjects) => $studentSubjects
@@ -32,7 +36,7 @@ class DashboardContent extends Component
 
         foreach ($activePeriods as $p) {
             $studentSubjects = $student->studentSubjects->filter(fn($ss) =>
-                $ss->studentSemester->semester_id === $p->semester_id
+                $ss->studentSemester->semester_id === $p->formSubmissionPeriodSemester->semester_id
             );
             $o                       = new \stdClass;
             $o->formSubmissionPeriod = $p;

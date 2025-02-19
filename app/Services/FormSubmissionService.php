@@ -12,6 +12,7 @@ use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Teacher;
 use App\Models\User;
+use Log;
 
 class FormSubmissionService
 {
@@ -19,15 +20,20 @@ class FormSubmissionService
     {
     }
 
-    private static function createSystemMessage(FormQuestionEssayTypeConfiguration $config)
+    private static function createSystemMessage(?FormQuestionEssayTypeConfiguration $config, $evaluator, $evaluatee)
     {
+        $scaleFrom = $config?->value_scale_from ?: 0;
+        $scaleTo   = $config?->value_scale_to ?: 0;
         return Message::system(<<<TXT
             You are a helpful assistant. You evaluate essay type answers to questions
-            and determine the value from the scale from {$config->value_scale_from} to {$config->value_scale_to}.
+            and determine the value from the scale from {$scaleFrom} to {$scaleTo}.
             The value can be a float value.
             You also determine the interpretation of the answer where it's Good or Bad.
             Also express the reason why you decided to give that score.
             You can only answer in json encoded format.
+            The questions are answered by a {$evaluator} used to evaluate a {$evaluatee}.
+            The value should the score of the {$evaluatee} in relation to the question
+            used to evaluate them.
 
             Examples:
             Question: What are the characteristics that you like to your teacher?
@@ -60,12 +66,14 @@ class FormSubmissionService
         return $min + ($diff / 2);
     }
 
-    private function getInterpretation(FormQuestionEssayTypeConfiguration $config,
+    private function getInterpretation(?FormQuestionEssayTypeConfiguration $config,
         string $question,
         string $answer,
+        string $evaluator,
+        string $evaluatee,
     ) {
 
-        $systemMessage = self::createSystemMessage($config);
+        $systemMessage = self::createSystemMessage($config, $evaluator, $evaluatee);
         $userMessage   = self::createUserMessage(
             $question,
             $answer,
@@ -81,7 +89,8 @@ class FormSubmissionService
             $aiResponse = json_decode($text, true);
 
             return $aiResponse;
-        } catch (\Exception) {
+        } catch (\Exception $e) {
+            Log::error($e);
             $half   = self::getHalf($config->value_scale_from, $config->value_scale_to);
             $random = self::randomBetweenFloat($config->value_scale_from, $config->value_scale_to);
             return [
@@ -90,11 +99,6 @@ class FormSubmissionService
                 'reason'         => '',
             ];
         }
-    }
-
-    private static function getFormId(Form | int $form)
-    {
-        return $form instanceof Form ? $form->id : $form;
     }
 
     private static function getFormSubmissionPeriodId(FormSubmissionPeriod | int $formSubmissionPeriod)
@@ -126,7 +130,10 @@ class FormSubmissionService
         FormSubmission $formSubmission,
         array $answers,
     ) {
-        $form = self::getForm($formSubmission->form_id);
+        $form = self::getForm($formSubmission->submissionPeriod->form_id);
+
+        $evaluateeRole = $formSubmission->submissionPeriod->evaluateeRole->display_name;
+        $evaluatorRole = $formSubmission->submissionPeriod->evaluatorRole->display_name;
 
         $newAnswers = [];
         foreach ($form->sections as $section) {
@@ -136,8 +143,10 @@ class FormSubmissionService
                     $config         = $question->essayTypeConfiguration;
                     $interpretation = $this->getInterpretation(
                         $config,
-                        $question->question,
+                        $question->title,
                         $value,
+                        $evaluatorRole,
+                        $evaluateeRole
                     );
 
                     $newAnswers[] = new FormSubmissionAnswer([
@@ -146,15 +155,16 @@ class FormSubmissionService
                         'value'              => $interpretation['value'],
                         'text'               => $value,
                         'interpretation'     => $interpretation['interpretation'],
+                        'reason'             => $interpretation['reason'],
                     ]);
                 } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
-                    $option = FormQuestionOption::whereId($value)->first(['id', 'value', 'interpretation', 'name']);
+                    $option = FormQuestionOption::whereId($value)->first(['id', 'value', 'interpretation', 'label']);
 
                     $answer = new FormSubmissionAnswer([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id'   => $question->id,
                         'value'              => $option->value,
-                        'text'               => $option->name,
+                        'text'               => $option->label,
                         'interpretation'     => $option->interpretation,
                     ]);
                     $answer->save();
@@ -164,7 +174,23 @@ class FormSubmissionService
                         'form_question_option_id'   => $option->id,
                     ]);
                 } else if ($question->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
-                    throw new \Exception("Currently unsupported question type '{$question->type}'");
+                    $options = FormQuestionOption::whereId($value)->get(['id', 'value', 'interpretation', 'label']);
+
+                    $answer = new FormSubmissionAnswer([
+                        'form_submission_id' => $formSubmission->id,
+                        'form_question_id'   => $question->id,
+                        'value'              => min($options->sum('value'), 0),
+                        'text'               => $options->pluck('label')->implode(', '),
+                        'interpretation'     => $options->pluck('interpretation')->implode('. '),
+                    ]);
+                    $answer->save();
+                    $answer->selectedOptions()->delete();
+                    $answer->selectedOptions()->createMany(
+                        $options->map(fn($o) => [
+                            'form_submission_answer_id' => $answer->id,
+                            'form_question_option_id'   => $option->id,
+                        ])
+                    );
                 } else {
                     throw new \Exception("Invalid question type '{$question->type}'");
                 }
@@ -184,10 +210,9 @@ class FormSubmissionService
         array $answers,
     ) {
         $formSubmission = new FormSubmission([
-            'evaluator_id'              => self::getUserId($evaluatee),
-            'evaluatee_id'              => self::getUserId($evaluator),
+            'evaluatee_id'              => self::getUserId($evaluatee),
+            'evaluator_id'              => self::getUserId($evaluator),
             'form_submission_period_id' => self::getFormSubmissionPeriodId($formSubmissionPeriod),
-            'form_id'                   => self::getFormId($form),
         ]);
 
         $formSubmission->save();

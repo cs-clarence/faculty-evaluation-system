@@ -27,11 +27,33 @@
         };
     }
 
+    if (!function_exists('walkPath')) {
+        function walkPath($data, $path)
+        {
+            $paths = preg_split('/\./', $path);
+            $currentValue = $data;
+
+            foreach ($paths as $path) {
+                if (is_array($currentValue)) {
+                    $currentValue = $currentValue[$path];
+                } elseif (is_object($data)) {
+                    $currentValue = $currentValue->$path;
+                }
+            }
+
+            return $currentValue;
+        }
+    }
+
     if (!function_exists('execSelect')) {
         function execSelect($fn, $option)
         {
             if (is_string($option) || is_integer($option) || is_float($option) || is_bool($option)) {
                 return $option;
+            }
+
+            if (is_string($fn)) {
+                return walkPath($option, $fn);
             }
 
             return $fn($option);
@@ -51,7 +73,7 @@
 
 <select
     {{ $attributes->merge(['class' => 'w-full px-3 py-2 border rounded-lg disabled:opacity-50', 'id' => $key, 'name' => $key]) }}>
-    @if (isset($placeholder) && count($options) > 0)
+    @if (isset($placeholder))
         <option selected value="">{{ execSelect($label, $placeholder) }}</option>
     @endif
     @forelse ($options as $option)

@@ -22,15 +22,16 @@ class FormSubmissionForm extends BaseForm
 
     public function rules()
     {
-        $unique = Rule::unique('form_submissions', 'evaluatee_id')
-            ->where('form_submissions', 'evaluator_id')
-            ->where('form_submission_period_id', $this->form_submission_period_id);
+        $unique = Rule::unique('form_submissions')
+            ->where('evaluatee_id', $this->evaluatee_id ?? 0)
+            ->where('evaluator_id', $this->evaluator_id ?? 0)
+            ->where('form_submission_period_id', $this->form_submission_period_id ?? 0);
 
         $validators = [
-            'evaluatee_id'              => ['required', 'integer', 'exists:user,id',
+            'evaluatee_id'              => ['required', 'integer', 'exists:users,id',
                 isset($this->id) ? $unique->ignore($this->id) : $unique,
             ],
-            'evaluator_id'              => ['required', 'integer', 'exists:user,id'],
+            'evaluator_id'              => ['required', 'integer', 'exists:users,id'],
             'form_submission_period_id' => ['required', 'integer', 'exists:form_submission_periods,id'],
         ];
 

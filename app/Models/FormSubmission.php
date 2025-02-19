@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class FormSubmission extends Model
 {
     //
-    protected $table = 'form_submissions';
-    public $fillable = ['evaluator_id', 'evaluatee_id', 'form_submission_period_id', 'form_id'];
+    protected $table    = 'form_submissions';
+    protected $fillable = ['evaluator_id', 'evaluatee_id', 'form_submission_period_id'];
+    protected $appends  = ['rating', 'total_weight'];
 
     public function studentSubject()
     {
@@ -31,11 +32,6 @@ class FormSubmission extends Model
     public function submissionPeriod()
     {
         return $this->belongsTo(FormSubmissionPeriod::class, 'form_submission_period_id');
-    }
-
-    public function form()
-    {
-        return $this->belongsTo(Form::class);
     }
 
     public function answers()
@@ -68,31 +64,34 @@ class FormSubmission extends Model
         return $values;
     }
 
+    public function getTotalWeight()
+    {
+
+        return $this->submissionPeriod->form->total_weight;
+    }
+
+    protected function totalWeight(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->getTotalWeight())->shouldCache();
+    }
+
     public function getRating()
     {
-        $count   = 0;
-        $current = 0;
-        foreach ($this->answers as $answer) {
-            $q     = FormQuestion::whereId($answer->form_question_id)->first(['type']);
-            $value = $answer->value;
-            if ($q->type === FormQuestionType::Essay->value) {
-                $config = FormQuestionEssayTypeConfiguration::whereFormQuestionId($answer->form_question_id)
-                    ->first(['value_scale_from', 'value_scale_to']);
+        $count       = 0;
+        $current     = 0;
+        $answers     = $this->answers;
+        $questions   = $this->submissionPeriod->form->questions;
+        $totalWeight = $this->total_weight;
+        foreach ($answers as $answer) {
+            $q        = $questions->filter(fn($x) => $x->id === $answer->form_question_id)->first();
+            $weight   = $q->weight;
+            $value    = $answer->value;
+            $maxValue = $answer->max_value;
 
-                ++$count;
-                $current += ($value / $config->value_scale_to) * 100;
-            } else if ($q->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
-                $maxValue = FormQuestionOption::whereFormQuestionId($answer->form_question_id)->max('value');
-                $current += ($value / $maxValue) * 100;
-
-                ++$count;
-            } else if ($q->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
-                throw new \Exception("Unsupported question type '{$q}'");
-            } else {
-                throw new \Exception("Invalid question type '{$q}'");
-            }
+            $current += (($value / $maxValue) * 100) * $weight;
+            ++$count;
         }
-        return round($current / $count, 2);
+        return round($current / $totalWeight, 2);
     }
 
     public function getValue(int $formQuestionId)
@@ -100,12 +99,66 @@ class FormSubmission extends Model
         if (isset($this->answers) && count($this->answers) > 0) {
             return $this->answers->filter(fn($i) => $i->form_question_id === $formQuestionId)->first()?->value;
         } else {
-            return $this->answers()->whereFormQuestionId($formQuestionId)->get()->value;
+            return $this->answers()->whereFormQuestionId($formQuestionId)->first()->value;
         }
     }
 
-    public function rating(): Attribute
+    public function getWeightedValue(int $formQuestionId)
     {
-        return Attribute::make(get: fn() => $this->getRating());
+        if (isset($this->answers) && count($this->answers) > 0) {
+            $answer = $this->answers->filter(fn($i) => $i->form_question_id === $formQuestionId)->first();
+        } else {
+            $answer = $this->answers()->whereFormQuestionId($formQuestionId)->first();
+        }
+        $rawValue     = $answer->value;
+        $maxValue     = $answer->max_value;
+        $totalWeights = $this->total_weight;
+
+        return round((($rawValue / $maxValue) * 100) / $totalWeights, 2);
+    }
+
+    public function getInterpretation(int $formQuestionId)
+    {
+        if (isset($this->answers) && count($this->answers) > 0) {
+            return $this->answers->filter(fn($i) => $i->form_question_id === $formQuestionId)->first()?->interpretation;
+        } else {
+            return $this->answers()->whereFormQuestionId($formQuestionId)->first()->interpretation;
+        }
+    }
+
+    public function getReason(int $formQuestionId)
+    {
+        if (isset($this->answers) && count($this->answers) > 0) {
+            return $this->answers->filter(fn($i) => $i->form_question_id === $formQuestionId)->first()?->reason;
+        } else {
+            return $this->answers()->whereFormQuestionId($formQuestionId)->first()->reason;
+        }
+    }
+
+    protected function rating(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->getRating())->shouldCache();
+    }
+
+    public function getSummary()
+    {
+        $breakdown = [];
+
+        foreach ($this->answers as $answer) {
+            $breakdown[] = [
+                'question'       => $answer->formQuestion->title,
+                'value'          => $answer->value,
+                'text'           => $answer->text,
+                'interpretation' => $answer->interpretation,
+                'percentage'     => $this->getWeightedValue($answer->formQuestion->id),
+            ];
+        }
+
+        return $breakdown;
+    }
+
+    protected function summary(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->getSummary())->shouldCache();
     }
 }

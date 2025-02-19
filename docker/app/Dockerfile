@@ -1,21 +1,10 @@
 ARG ENV=development
 
-FROM imbios/bun-node:latest-current-alpine AS build-support-js
-ARG ENV=development
+FROM composer:latest AS build-support-php
+ARG ENV
 ENV ENV=$ENV
-ENV NODE_ENV=$ENV
 WORKDIR /var/www/html
 COPY ./ ./
-RUN bun install \
-    && bun run build \
-    && rm -rf ./node_modules \
-    && rm -rf ./public/hot
-
-FROM composer:latest AS build-support-php
-ARG ENV=development
-ENV ENV=$ENV
-WORKDIR /var/www/html
-COPY --from=build-support-js /var/www/html/ ./
 RUN git config --global --add safe.directory /var/www/html \
     && composer install --no-dev --no-interaction --no-progress --optimize-autoloader --ignore-platform-reqs \
     && composer dump-autoload --no-dev --optimize  \
@@ -25,8 +14,21 @@ RUN git config --global --add safe.directory /var/www/html \
     && php artisan route:cache \
     && php artisan view:cache
 
+FROM imbios/bun-node:latest-current-alpine AS build-support-js
+ARG ENV
+ENV ENV=$ENV
+ENV NODE_ENV=$ENV
+WORKDIR /var/www/html
+COPY --from=build-support-php /var/www/html/ ./
+RUN bun install \
+    && bun run build \
+    && rm -rf ./node_modules \
+    && rm -rf ./public/hot
+
+FROM build-support-js AS build-support
+
 FROM php:fpm-alpine AS build-main-base
-ARG ENV=development
+ARG ENV
 ENV ENV=$ENV
 
 RUN set -ex \
@@ -38,7 +40,7 @@ RUN set -ex \
 
 FROM build-main-base AS build-main-production
 
-COPY --from=build-support-php /var/www/html/ ./
+COPY --from=build-support /var/www/html/ ./
 COPY ./docker/app/fs/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/app/fs/usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 COPY ./docker/app/fs/usr/local/etc/php-fpm.d /usr/local/etc/php-fpm.d

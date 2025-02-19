@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Awobaz\Compoships\Compoships;
@@ -21,5 +20,10 @@ class TeacherSubject extends Pivot
     public function teacherSemester()
     {
         return $this->belongsTo(TeacherSemester::class);
+    }
+
+    public function teacher()
+    {
+
     }
 }

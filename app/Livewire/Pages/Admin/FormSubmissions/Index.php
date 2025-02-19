@@ -9,9 +9,11 @@ class Index extends Component
     public function render()
     {
         $formSubmissions = FormSubmission::with([
-            'studentSubject.studentSemester' => ['student.user', 'semester'],
-            'teacher.user',
-        ]);
+            'evaluator',
+            'evaluatee',
+            'submissionPeriod.form.questions',
+        ])->cursorPaginate();
+
         return view('livewire.pages.admin.form-submissions.index')
             ->with(compact('formSubmissions'))
             ->layout('components.layouts.admin');

@@ -1,18 +1,17 @@
 <div class="container mx-auto p-4 grow flex flex-col gap-6">
-    <h1 class="text-2xl font-bold">Pending Evaluations</h1>
+    <x-sections.header title="Pending Evaluations" />
 
     <!-- Evaluation Forms List -->
     @forelse ($submissionPeriods as $submissionPeriod)
         <div class="flex flex-col gap-4">
             <h2 class="text-xl font-bold text-gray-800">{{ $submissionPeriod->formSubmissionPeriod->name }}
-                ({{ $submissionPeriod->formSubmissionPeriod->semester }})
+                ({{ $submissionPeriod->formSubmissionPeriod->semester()->first() }})
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($submissionPeriod->studentSubjects as $subject)
                     <a href="{{ route('user.form-submission.index', [
-                        'studentSubject' => $subject->id,
                         'formSubmissionPeriod' => $submissionPeriod->formSubmissionPeriod->id,
-                        'teacher' => $subject->teacherSubject?->teacherSemester->teacher->id,
+                        'evaluatee' => $subject->teacherSubject?->teacherSemester->teacher->user->id,
                     ]) }}"
                         wire:navigate wire:key="pending-evaluation-{{ $subject->id }}"
                         class="block bg-white shadow-md rounded-lg p-6 hover:shadow-lg hover:bg-blue-50 transition duration-200">

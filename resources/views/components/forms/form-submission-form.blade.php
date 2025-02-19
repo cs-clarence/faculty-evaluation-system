@@ -2,7 +2,15 @@
     use App\Models\FormQuestionType as Type;
 @endphp
 
-@props(['form', 'readonly' => false, 'showFormName' => false, 'createWireModel' => null, 'formSubmission' => null])
+@props([
+    'form',
+    'readonly' => false,
+    'showFormName' => false,
+    'createWireModel' => null,
+    'formSubmission' => null,
+    'showValues' => false,
+    'showSummary' => false,
+])
 
 <div>
     @if ($showFormName)
@@ -11,14 +19,41 @@
         @endisset
     @endif
 
-    @forelse ($form->sections as $section)
+    @if ($showSummary && isset($formSubmission))
+        <div class="bg-white shadow-md rounded-lg p-6 mb-4 flex flex-col gap-4 border-2 border-gray-300">
+            <h3 class="font-semibold text-xl">Summary</h3>
+            <p>
+                Total: {{ $formSubmission->getRating() }}% / 100
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Value</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($formSubmission->getSummary() as $breakdown)
+                        <tr>
+                            <td>{{ $breakdown['question'] }}</td>
+                            <td>{{ $breakdown['value'] }}</td>
+                            <td>{{ $breakdown['percentage'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    @forelse ($form->sections()->reordered()->get() as $section)
         <div class="bg-white shadow-md rounded-lg p-6 mb-4 flex flex-col gap-4">
             <h3 class="font-semibold text-xl">{{ $section->title }}</h3>
             @isset($section->description)
                 <p class="text-gray-700">{{ $section->description }}</p>
             @endisset
             <div class="flex flex-col gap-6">
-                @forelse ($section->questions as $question)
+                @forelse ($section->questions()->reordered()->get() as $question)
                     @php($questionName = "form.questions.{$question->id}")
                     @php($wireModel = isset($createWireModel) ? $createWireModel($question) : $questionName)
                     <div class="flex flex-col gap-3">
@@ -48,7 +83,7 @@
                             </fieldset>
                         @elseif ($question->type === Type::MultipleChoicesMultipleSelect->value)
                             <fieldset class="flex flex-col gap-2">
-                                @forelse ($question->options->sortByDesc('value') as $option)
+                                @forelse ($question->options()->reordered()->get()->sortByDesc('value') as $option)
                                     <div class="flex items-center gap-2">
                                         @php($optionId = 'option-' . $option->id)
                                         <input type="checkbox" wire:model="{{ $wireModel }}" class=""
@@ -67,14 +102,26 @@
                                 @endforelse
                             </fieldset>
                         @endif
-                        @isset($formSubmission)
+                        @if ($showValues && isset($formSubmission))
                             @php($value = $formSubmission->getValue($question->id))
+                            @php($interpretation = $formSubmission->getInterpretation($question->id))
+                            @php($reason = $formSubmission->getReason($question->id))
                             @isset($value)
                                 <p class="text-gray-500 text">
-                                    Value: {{ $value }}
+                                    Value: {{ $value }} ({{ $formSubmission->getWeightedValue($question->id) }}%)
                                 </p>
                             @endisset
-                        @endisset
+                            @isset($interpretation)
+                                <p class="text-gray-500 text">
+                                    Interpretation: {{ $interpretation }}
+                                </p>
+                            @endisset
+                            @isset($reason)
+                                <p class="text-gray-500 text">
+                                    Reason: {{ $reason }}
+                                </p>
+                            @endisset
+                        @endif
                         @error($questionName)
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -84,6 +131,8 @@
                         No questions found
                     </p>
                 @endforelse
+
+
             </div>
         </div>
     @empty
@@ -91,4 +140,5 @@
             No sections found
         </p>
     @endforelse
+
 </div>

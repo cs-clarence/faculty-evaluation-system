@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -36,14 +35,14 @@ class Semester extends Model
         return $this->hasMany(StudentSemester::class);
     }
 
-    public function formSubmissionPeriods(): HasMany
+    public function formSubmissionPeriodSemesters(): HasMany
     {
-        return $this->hasMany(FormSubmissionPeriod::class);
+        return $this->hasMany(FormSubmissionPeriodSemester::class);
     }
 
     public function __tostring()
     {
-        $sy = isset($this->schoolYear) ? $this->schoolYear : $this->schoolYear();
+        $sy  = isset($this->schoolYear) ? $this->schoolYear : $this->schoolYear();
         $ord = Number::ordinal($this->semester);
 
         return "{$ord} Semester, SY: {$sy}";
