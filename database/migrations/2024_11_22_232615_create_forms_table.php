@@ -46,6 +46,8 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
+
+            $table->fullText(['name', 'description']);
         });
 
         Schema::create('form_sections', function (Blueprint $table) {
@@ -62,6 +64,7 @@ return new class extends Migration
             $table->unique(['form_id', 'title']);
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
+            $table->fullText(['title', 'description']);
         });
 
         DB::unprepared(<<<SQL
@@ -91,6 +94,7 @@ return new class extends Migration
             $table->unique(['title', 'form_section_id']);
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
+            $table->fullText(['title', 'description']);
         });
 
         DB::unprepared(<<<SQL
@@ -127,6 +131,7 @@ return new class extends Migration
             $table->unique(['order_numerator', 'order_denominator']);
             $table->unique(['form_question_id', 'label']);
             $table->timestampsTz();
+            $table->fullText(['label', 'interpretation']);
         });
 
         DB::unprepared(<<<SQL
@@ -244,6 +249,8 @@ return new class extends Migration
             $table->string('reason')->nullable();
 
             $table->timestampsTz();
+
+            $table->fullText(['text', 'interpretation', 'reason']);
         });
 
         Schema::create('form_submission_answer_selected_options', function (Blueprint $table) {

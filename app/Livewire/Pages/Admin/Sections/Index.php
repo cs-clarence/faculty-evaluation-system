@@ -3,6 +3,7 @@ namespace App\Livewire\Pages\Admin\Sections;
 
 use App\Facades\Helpers\SectionHelper;
 use App\Livewire\Forms\SectionForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
 use App\Models\Section;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, WithSearch;
     public ?Section $model;
     public bool $isFormOpen = false;
     public SectionForm $form;
@@ -27,6 +28,19 @@ class Index extends Component
             ->orderBy('semester')
             ->orderBy('name')
             ->orderBy('code');
+
+        if ($this->shouldSearch()) {
+            $sections = $sections->fullTextSearch([
+                'columns'   => ['name', 'code'],
+                'relations' => [
+                    'course' => [
+                        'columns' => ['name', 'code'],
+                    ],
+                ],
+            ], $this->searchText);
+        }
+
+        $sections = $sections->cursorPaginate(15);
 
         $courses = Course::query()
             ->withoutArchived()

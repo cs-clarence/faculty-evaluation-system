@@ -9,7 +9,7 @@
     'createWireModel' => null,
     'formSubmission' => null,
     'showValues' => false,
-    'showSummary' => false,
+    'createQuestionId' => null,
 ])
 
 <div>
@@ -19,32 +19,6 @@
         @endisset
     @endif
 
-    @if ($showSummary && isset($formSubmission))
-        <div class="bg-white shadow-md rounded-lg p-6 mb-4 flex flex-col gap-4 border-2 border-gray-300">
-            <h3 class="font-semibold text-xl">Summary</h3>
-            <p>
-                Total: {{ $formSubmission->getRating() }}% / 100
-            </p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Question</th>
-                        <th>Value</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($formSubmission->getSummary() as $breakdown)
-                        <tr>
-                            <td>{{ $breakdown['question'] }}</td>
-                            <td>{{ $breakdown['value'] }}</td>
-                            <td>{{ $breakdown['percentage'] }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
 
     @forelse ($form->sections()->reordered()->get() as $section)
         <div class="bg-white shadow-md rounded-lg p-6 mb-4 flex flex-col gap-4">
@@ -54,9 +28,12 @@
             @endisset
             <div class="flex flex-col gap-6">
                 @forelse ($section->questions()->reordered()->get() as $question)
-                    @php($questionName = "form.questions.{$question->id}")
-                    @php($wireModel = isset($createWireModel) ? $createWireModel($question) : $questionName)
-                    <div class="flex flex-col gap-3">
+                    @php
+                        $questionName = "form.questions.{$question->id}";
+                        $wireModel = isset($createWireModel) ? $createWireModel($question) : $questionName;
+                        $questionId = isset($createQuestionId) ? $createQuestionId($question) : $question->id;
+                    @endphp
+                    <div class="flex flex-col gap-3" id="{{ $questionId }}">
                         <h4 class="font-semibold text-lg">{{ $question->title }}</h4>
                         @if ($question->type === Type::Essay->value)
                             <textarea @disabled($readonly) class="w-full px-3 py-2 border rounded-lg min-h-32" rows="4"
@@ -67,10 +44,10 @@
                                     <div class="flex items-center gap-2">
                                         @php($optionName = $question->id)
                                         @php($optionId = 'option-' . $option->id)
-                                        <input type="radio" wire:model="{{ $wireModel }}" class=""
-                                            wire:key='option-{{ $option->id }}' @disabled($readonly)
-                                            name="{{ $questionName }}" id="{{ $optionId }}"
-                                            value="{{ $option->id }}">
+                                        <input type="radio" wire:model="{{ $wireModel }}"
+                                            class="disabled:checked:bg-gray-400" wire:key='option-{{ $option->id }}'
+                                            @disabled($readonly) name="{{ $questionName }}"
+                                            id="{{ $optionId }}" value="{{ $option->id }}">
                                         <label for="{{ $optionId }}" class="block text font-medium text-gray-700">
                                             {{ $option->label }}
                                         </label>
@@ -86,10 +63,11 @@
                                 @forelse ($question->options()->reordered()->get()->sortByDesc('value') as $option)
                                     <div class="flex items-center gap-2">
                                         @php($optionId = 'option-' . $option->id)
-                                        <input type="checkbox" wire:model="{{ $wireModel }}" class=""
-                                            name="{{ $questionName }}" wire:key='option-{{ $option->id }}'
-                                            @disabled($readonly) wire:model="{{ $wireModel }}"
-                                            id="{{ $optionId }}" value="{{ $option->id }}">
+                                        <input type="checkbox" wire:model="{{ $wireModel }}"
+                                            class="disabled:checked:bg-gray-400" name="{{ $questionName }}"
+                                            wire:key='option-{{ $option->id }}' @disabled($readonly)
+                                            wire:model="{{ $wireModel }}" id="{{ $optionId }}"
+                                            value="{{ $option->id }}">
                                         >
                                         <label for="{{ $optionId }}" class="block text font-medium text-gray-700">
                                             {{ $option->label }}
@@ -140,5 +118,4 @@
             No sections found
         </p>
     @endforelse
-
 </div>

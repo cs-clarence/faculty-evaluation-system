@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
+use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Section extends Model
 {
     /** @use HasFactory<\Database\Factories\SectionFactory> */
-    use HasFactory, Archivable;
-    protected $table = 'sections';
+    use HasFactory, Archivable, FullTextSearchable;
+    protected $table    = 'sections';
     protected $fillable = ['year_level', 'code', 'name', 'course_id', 'semester'];
 
     public function course(): BelongsTo

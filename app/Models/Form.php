@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
+use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use \DB;
 class Form extends Model
 {
     /** @use HasFactory<\Database\Factories\FormFactory> */
-    use HasFactory, Archivable;
+    use HasFactory, Archivable, FullTextSearchable;
 
     protected $table    = 'forms';
     protected $fillable = ['name', 'description'];
@@ -43,6 +44,22 @@ class Form extends Model
     protected function totalWeight(): Attribute
     {
         return Attribute::make(get: fn() => $this->getTotalWeight())->shouldCache();
+    }
+
+    public function getTotalMaxValue()
+    {
+        $totalValue = 0;
+
+        foreach ($this->questions as $question) {
+            $totalValue += $question->max_value;
+        }
+
+        return $totalValue;
+    }
+
+    protected function totalMaxValue(): Attribute
+    {
+        return Attribute::make(fn() => $this->getTotalMaxValue());
     }
 
     public function hasDependents(): bool

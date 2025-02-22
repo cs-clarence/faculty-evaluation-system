@@ -136,16 +136,15 @@
                                             <i class="material-symbols-outlined">add</i>
                                             Add Option</x-button>
                                     @endif
-                                    @if ($question->type === Type::Essay->value)
-                                        <x-button size="sm" variant="outlined" color="secondary"
-                                            wire:click='openQuestionForm({{ $section->id }}, {{ $question->id }})'>
-                                            <i class="material-symbols-outlined">edit</i>
-                                            Edit Question
-                                        </x-button>
-                                    @endif
+                                    <x-button size="sm" variant="outlined" color="secondary"
+                                        wire:click='openQuestionForm({{ $section->id }}, {{ $question->id }})'>
+                                        <i class="material-symbols-outlined">edit</i>
+                                        Edit Question
+                                    </x-button>
                                 @endif
                             </div>
 
+                            <p class="min-w-max text-gray-600">Weight: {{ $question->weight }}</p>
                             @if ($question->type === Type::Essay->value)
                                 {{-- <textarea class="w-full px-3 py-2 border rounded-lg min-h-32" rows="4" wire:model="{{ $wireModel }}"
                                 name="{{ $questionName }}"></textarea> --}}
@@ -305,6 +304,12 @@
                             <x-form-control.label key="questionForm.type">Type</x-form-control.label>
                             <x-select key="questionForm.type" wire:model.live="questionForm.type" :options="$questionTypeOptions"
                                 placeholder="Select type" empty="No types available" :disabled="!$editable" />
+                            <x-form-control.error-text key="questionForm.type" />
+                        </x-form-control>
+                        <x-form-control>
+                            <x-form-control.label key="questionForm.weight">Weight</x-form-control.label>
+                            <x-input key="questionForm.weight" wire:model="questionForm.weight" type="number"
+                                :disabled="!$editable" />
                             <x-form-control.error-text key="questionForm.type" />
                         </x-form-control>
                         @if ($questionForm->type === Type::Essay->value)

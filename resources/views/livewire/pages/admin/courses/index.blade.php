@@ -34,7 +34,11 @@
                     ],
                 ];
             @endphp
-            <x-table :data="$courses" :columns="$columns" :paginate="15" />
+            <x-table :data="$courses" :columns="$columns">
+                <x-slot:actions>
+                    <x-search wire:input.debounce.500ms="search(search)" :value="$searchText" />
+                </x-slot:actions>
+            </x-table>
         </div>
 
     </div>

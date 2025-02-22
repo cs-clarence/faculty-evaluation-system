@@ -14,7 +14,6 @@ class FormQuestion extends Model
     use Reorderable;
     protected $table    = 'form_questions';
     protected $fillable = ['title', 'description', 'type', 'form_id', 'form_section_id', 'order_numerator', 'order_denominator'];
-    protected $appends  = ['max_value'];
 
     public function options(): HasMany
     {

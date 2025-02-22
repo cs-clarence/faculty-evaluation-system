@@ -45,6 +45,7 @@ return new class extends Migration
             $table->timestampTz('archived_at')->nullable();
 
             $table->timestampsTz();
+            $table->fullText(['name', 'code']);
         });
 
         Schema::create('subjects', function (Blueprint $table) {
@@ -54,6 +55,7 @@ return new class extends Migration
             $table->timestampTz('archived_at')->nullable();
 
             $table->timestampsTz();
+            $table->fullText(['name', 'code']);
         });
 
         Schema::create('courses', function (Blueprint $table) {
@@ -66,6 +68,7 @@ return new class extends Migration
 
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade')->onUpdate('cascade');
             $table->timestampsTz();
+            $table->fullText(['name', 'code']);
         });
 
         Schema::create('course_semesters', function (Blueprint $table) {

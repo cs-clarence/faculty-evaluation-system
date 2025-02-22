@@ -2,15 +2,20 @@
 namespace App\Livewire\Pages\Admin\Accounts;
 
 use App\Livewire\Forms\UserForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\SchoolYear;
 use App\Models\User;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination, WithSearch;
+
     public bool $isFormOpen = false;
     public ?User $model     = null;
     public UserForm $form;
@@ -19,8 +24,20 @@ class Index extends Component
     {
         $users = User::with(['role'])
             ->orderBy('name')
-            ->orderBy('email')
-            ->lazy();
+            ->orderBy('email');
+
+        if ($this->shouldSearch()) {
+            $users = $users->fullTextSearch([
+                'columns'   => ['name', 'email'],
+                'relations' => [
+                    'role' => [
+                        'columns' => ['code', 'display_name'],
+                    ],
+                ],
+            ], $this->searchText);
+        }
+
+        $users = $users->cursorPaginate(15);
 
         $courseId     = $this->model?->student?->course_id;
         $departmentId = $this->model?->teacher?->department_id;
@@ -100,5 +117,15 @@ class Index extends Component
     public function unarchive(User $model)
     {
         $model->unarchive();
+    }
+
+    public function activate(User $model)
+    {
+        $model->activate();
+    }
+
+    public function deactivate(User $model)
+    {
+        $model->deactivate();
     }
 }

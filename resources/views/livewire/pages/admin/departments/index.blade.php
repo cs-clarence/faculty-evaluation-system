@@ -20,6 +20,9 @@
         <!-- Responsive Table -->
         <div class="col-span-1 md:col-span-3 overflow-auto">
             <x-table :data="$departments" :columns="$columns" :paginate="15">
+                <x-slot:actions>
+                    <x-search wire:input.debounce.500ms="search(search)" :value="$searchText" />
+                </x-slot:actions>
             </x-table>
         </div>
     </div>

@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
+use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Course extends Model
 {
-    use HasFactory, Archivable;
+    use HasFactory, Archivable, FullTextSearchable;
 
     protected $fillable = ['code', 'name', 'department_id'];
-    protected $table = 'courses';
+    protected $table    = 'courses';
 
     public function courseSubjects()
     {

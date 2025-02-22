@@ -1,4 +1,4 @@
-@props(['data', 'columns', 'paginate', 'key' => 'id', 'empty' => 'No records found'])
+@props(['data', 'columns', 'paginate', 'key' => 'id', 'empty' => 'No records found', 'search' => null])
 
 @php
     use Illuminate\Pagination\{LengthAwarePaginator, CursorPaginator};
@@ -54,13 +54,20 @@
 @endphp
 
 
-@if (isPaginated($data))
-    <div class="mb-2 flex row">
+@if (isPaginated($data) || isset($actions))
+    <div class="mb-2 flex flex-row">
+        @isset($actions)
+            <div class="flex flex-row gap-2">
+                {{ $actions }}
+            </div>
+        @endisset
         <div class="grow"></div>
-        @if (isCursorPaginated($data))
-            {{ $data->links('components.table.livewire-simple-paginate') }}
-        @else
-            {{ $data->links('components.table.livewire-paginate') }}
+        @if (isPaginated($data))
+            @if (isCursorPaginated($data))
+                {{ $data->links('components.table.livewire-simple-paginate') }}
+            @else
+                {{ $data->links('components.table.livewire-paginate') }}
+            @endif
         @endif
     </div>
 @endif

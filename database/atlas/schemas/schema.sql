@@ -9,7 +9,7 @@
 -- Name: set_order_numerator(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.set_order_numerator() RETURNS trigger
+CREATE OR REPLACE FUNCTION public.set_order_numerator() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     DECLARE
@@ -451,8 +451,8 @@ CREATE TABLE public.form_submission_answers (
     form_question_id bigint NOT NULL,
     value double precision NOT NULL,
     text text,
-    interpretation character varying(255),
-    reason character varying(10239),
+    interpretation character varying(10239),
+    reason character varying(255),
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
 );
@@ -1175,6 +1175,7 @@ CREATE TABLE public.users (
     password character varying(255) NOT NULL,
     remember_token character varying(100),
     archived_at timestamp(0) with time zone,
+    active boolean DEFAULT true NOT NULL,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
 );
@@ -1943,6 +1944,55 @@ ALTER TABLE ONLY public.school_years
 
 
 --
+-- Name: courses_name_code_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX courses_name_code_fulltext ON public.courses USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: departments_name_code_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX departments_name_code_fulltext ON public.departments USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: form_question_options_label_interpretation_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX form_question_options_label_interpretation_fulltext ON public.form_question_options USING gin (((to_tsvector('english'::regconfig, (label)::text) || to_tsvector('english'::regconfig, (interpretation)::text))));
+
+
+--
+-- Name: form_questions_title_description_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX form_questions_title_description_fulltext ON public.form_questions USING gin (((to_tsvector('english'::regconfig, (title)::text) || to_tsvector('english'::regconfig, (description)::text))));
+
+
+--
+-- Name: form_sections_title_description_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX form_sections_title_description_fulltext ON public.form_sections USING gin (((to_tsvector('english'::regconfig, (title)::text) || to_tsvector('english'::regconfig, (description)::text))));
+
+
+--
+-- Name: form_submission_answers_text_interpretation_reason_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX form_submission_answers_text_interpretation_reason_fulltext ON public.form_submission_answers USING gin ((((to_tsvector('english'::regconfig, text) || to_tsvector('english'::regconfig, (interpretation)::text)) || to_tsvector('english'::regconfig, (reason)::text))));
+
+
+--
+-- Name: forms_name_description_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX forms_name_description_fulltext ON public.forms USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (description)::text))));
+
+
+--
 -- Name: personal_access_tokens_tokenable_type_tokenable_id_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1950,24 +2000,52 @@ CREATE INDEX personal_access_tokens_tokenable_type_tokenable_id_index ON public.
 
 
 --
+-- Name: roles_display_name_code_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX roles_display_name_code_fulltext ON public.roles USING gin (((to_tsvector('english'::regconfig, (display_name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: sections_name_code_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX sections_name_code_fulltext ON public.sections USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: subjects_name_code_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX subjects_name_code_fulltext ON public.subjects USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: users_name_email_fulltext; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_name_email_fulltext ON public.users USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (email)::text))));
+
+
+--
 -- Name: form_question_options set_order_numerator_form_question_options; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_order_numerator_form_question_options BEFORE INSERT ON public.form_question_options FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
+CREATE OR REPLACE TRIGGER set_order_numerator_form_question_options BEFORE INSERT ON public.form_question_options FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
 
 
 --
 -- Name: form_questions set_order_numerator_form_questions; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_order_numerator_form_questions BEFORE INSERT ON public.form_questions FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
+CREATE OR REPLACE TRIGGER set_order_numerator_form_questions BEFORE INSERT ON public.form_questions FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
 
 
 --
 -- Name: form_sections set_order_numerator_form_sections; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_order_numerator_form_sections BEFORE INSERT ON public.form_sections FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
+CREATE OR REPLACE TRIGGER set_order_numerator_form_sections BEFORE INSERT ON public.form_sections FOR EACH ROW EXECUTE FUNCTION public.set_order_numerator();
 
 
 --

@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
+use App\Models\Traits\FullTextSearchable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FormSubmissionPeriod extends Model
 {
-    use Archivable;
+    use Archivable, FullTextSearchable;
     //
     protected $table    = 'form_submission_periods';
     protected $fillable = ['form_id', 'name', 'starts_at', 'ends_at', 'is_open', 'is_submissions_editable', 'evaluator_role_id', 'evaluatee_role_id'];

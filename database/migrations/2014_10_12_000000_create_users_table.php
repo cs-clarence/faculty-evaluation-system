@@ -21,6 +21,7 @@ return new class extends Migration
 
             $table->unique('code');
             $table->timestampsTz();
+            $table->fullText(['display_name', 'code']);
         });
 
         Schema::create('users', function (Blueprint $table) {
@@ -35,7 +36,9 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestampTz('archived_at')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestampsTz();
+            $table->fullText(['name', 'email']);
         });
     }
 

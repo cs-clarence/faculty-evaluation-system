@@ -25,6 +25,9 @@
                 ];
             @endphp
             <x-table :data="$subjects" :columns="$columns" :paginate="15">
+                <x-slot:actions>
+                    <x-search wire:input="search(search)" :value="$searchText" />
+                </x-slot:actions>
             </x-table>
         </div>
 

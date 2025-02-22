@@ -35,6 +35,7 @@ Route::get('/evaluation-form', [EvaluationFormController::class, 'index'])->name
 Route::middleware(['auth'])
     ->group(function () {
         Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)->name('account-archived.index');
+        Route::get('/account-deactivated', App\Livewire\Pages\AccountDeactivated\Index::class)->name('account-deactivated.index');
     });
 
 Route::middleware(['auth:admin,hr,evaluator'])

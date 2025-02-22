@@ -2,11 +2,15 @@
 namespace App\Livewire\Pages\Admin\Forms;
 
 use App\Livewire\Forms\FormForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Form;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination, WithSearch;
     public bool $isFormOpen = false;
     public FormForm $form;
     public ?Form $model;
@@ -16,8 +20,15 @@ class Index extends Component
         $forms = Form::withCount(['sections', 'questions'])
             ->orderBy('name')
             ->orderBy('created_at')
-            ->orderBy('updated_at')
-            ->lazy();
+            ->orderBy('updated_at');
+
+        if ($this->shouldSearch()) {
+            $forms = $forms->fullTextSearch([
+                'columns' => ['name', 'description'],
+            ], $this->searchText);
+        }
+
+        $forms = $forms->cursorPaginate(15);
 
         return view('livewire.pages.admin.forms.index')
             ->with(compact('forms'))

@@ -37,48 +37,57 @@
     </div>
 
     @if ($isFormOpen)
-        <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
-            <div class="bg-white p-6 rounded-lg w-96">
-                @isset($schoolYear)
-                    <h3 class="text-lg font-semibold mb-4">Edit School Year</h3>
-                @else
-                    <h3 class="text-lg font-semibold mb-4">Add New School Year</h3>
-                @endisset
-                <form id="addForm" wire:submit.prevent='save'>
-                    @csrf
-                    <input type="hidden" name="id" wire:model.defer="form.id">
-                    <div class="mb-4">
-                        <label for="year_start" class="block text-gray-700">Year Start</label>
-                        <input type="text" name="year_start" id="year_start" required type="number"
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur="form.year_start">
-                        @error('form.year_start')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="year_end" class="block text-gray-700">Year End</label>
-                        <input type="text" name="year_end" id="year_end" required
-                            class="w-full px-3 py-2 border rounded-lg opacity-50" type="number"
-                            wire:model.defer="form.year_end" disabled>
-                        @error('form.year_end')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="semesters" class="block text-gray-700">Semesters</label>
-                        <input type="text" name="semesters" id="semesters" required type="number"
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.semesters">
-                        @error('form.semesters')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="flex justify-end gap-1">
-                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
-                            variant="text">Cancel</x-button>
-                        <x-button type="submit">Save</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self='closeForm'>
+            <x-dialog el="form" wire:submit.prevent='save' wire:key='school-year-form'>
+                <x-dialog.title>
+                    @isset($schoolYear)
+                        Edit School Year
+                    @else
+                        Add New School Year
+                    @endisset
+                </x-dialog.title>
+                @csrf
+                <input type="hidden" name="id" wire:model.defer="form.id">
+                <x-form-control>
+                    <x-form-control.label key="form.year_start">
+                        Year Start
+                    </x-form-control.label>
+                    <x-input key="form.year_start" type="text" required type="number"
+                        wire:model.blur="form.year_start">
+                    </x-input>
+                    <x-form-control.error-text key="form.year_start" />
+                </x-form-control>
+                {{-- <div class="mb-4">
+                    <label for="year_end" class="block text-gray-700">Year End</label>
+                    @error('form.year_end')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div> --}}
+                <x-form-control>
+                    <x-form-control.label key="form.year_end">
+                        Year End
+                    </x-form-control.label>
+
+                    <x-input type="text" key="form.year_end" required type="number" wire:model.defer="form.year_end"
+                        disabled />
+                    <x-form-control.error-text key="form.year_end" />
+                </x-form-control>
+                <x-form-control>
+                    <x-form-control.label key="form.semesters">
+                        Semesters
+                    </x-form-control.label>
+                    <x-input type="text" key="form.semesters" required type="number"
+                        wire:model.defer="form.semesters" />
+                    <x-form-control.error-text key="form.semesters" />
+                </x-form-control>
+
+                <x-dialog.actions>
+                    <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                        variant="text">Cancel</x-button>
+                    <x-button type="submit">Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
     @endif
 </div>

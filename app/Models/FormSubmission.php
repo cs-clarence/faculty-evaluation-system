@@ -1,14 +1,17 @@
 <?php
 namespace App\Models;
 
+use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use stdClass;
 
 /**
  * @mixin IdeHelperFormSubmission
  */
 class FormSubmission extends Model
 {
+    use FullTextSearchable;
     //
     protected $table    = 'form_submissions';
     protected $fillable = ['evaluator_id', 'evaluatee_id', 'form_submission_period_id'];
@@ -117,6 +120,19 @@ class FormSubmission extends Model
         return round((($rawValue / $maxValue) * 100) / $totalWeights, 2);
     }
 
+    public function getAnswer(int $formQuestionId)
+    {
+        return $this->answers->filter(fn($i) => $i->form_question_id === $formQuestionId)->first();
+    }
+
+    public function getMaxWeightedValue(int $formQuestionId)
+    {
+        $question     = $this->form->questions->filter(fn($i) => $i->id === $formQuestionId)->first();
+        $totalWeights = $this->total_weight;
+
+        return round((($question->max_value / $question->max_value) * 100) / $totalWeights, 2);
+    }
+
     public function getInterpretation(int $formQuestionId)
     {
         if (isset($this->answers) && count($this->answers) > 0) {
@@ -135,6 +151,16 @@ class FormSubmission extends Model
         }
     }
 
+    public function getTotalValue()
+    {
+        return $this->answers->sum('value');
+    }
+
+    public function totalValue(): Attribute
+    {
+        return Attribute::make(fn() => $this->getTotalValue());
+    }
+
     protected function rating(): Attribute
     {
         return Attribute::make(get: fn() => $this->getRating())->shouldCache();
@@ -145,13 +171,18 @@ class FormSubmission extends Model
         $breakdown = [];
 
         foreach ($this->answers as $answer) {
-            $breakdown[] = [
-                'question'       => $answer->formQuestion->title,
-                'value'          => $answer->value,
-                'text'           => $answer->text,
-                'interpretation' => $answer->interpretation,
-                'percentage'     => $this->getWeightedValue($answer->formQuestion->id),
-            ];
+            $class                     = new stdClass;
+            $class->question           = $answer->formQuestion->title;
+            $class->value              = $answer->value;
+            $class->max_value          = $answer->max_value;
+            $class->text               = $answer->text;
+            $class->interpretation     = $answer->interpretation;
+            $class->weighted_value     = $this->getWeightedValue($answer->form_question_id);
+            $class->max_weighted_value = $this->getMaxWeightedValue($answer->form_question_id);
+            $class->id                 = $answer->form_question_id;
+            $class->reason             = $answer->reason;
+
+            $breakdown[] = $class;
         }
 
         return $breakdown;
@@ -160,5 +191,10 @@ class FormSubmission extends Model
     protected function summary(): Attribute
     {
         return Attribute::make(get: fn() => $this->getSummary())->shouldCache();
+    }
+
+    protected function form(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->submissionPeriod->form);
     }
 }

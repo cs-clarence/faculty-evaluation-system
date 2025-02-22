@@ -4,22 +4,27 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\RoleCode;
 use App\Models\Traits\Archivable;
+use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
 
 /**
  * @mixin IdeHelperUser
  */
 class User extends Authenticatable
 {
-
     /**
      * @use HasFactory<\Database\Factories\UserFactory>
      */
+    use Searchable;
+    use FullTextSearchable;
     use HasFactory;
     use HasApiTokens, Notifiable;
     use Archivable {
@@ -37,6 +42,7 @@ class User extends Authenticatable
         'email',
         'role_id',
         'password',
+        'active',
     ];
     protected $table = 'users';
 
@@ -58,6 +64,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    #[SearchUsingFullText(['name', 'email'])]
+    #[SearchUsingPrefix(['id'])]
+
+    public function toSearchableArray()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+            'email' => $this->email,
+        ];
+    }
 
     //Relationship for the role
     public function role()
@@ -261,5 +279,22 @@ class User extends Authenticatable
     public function isHumanResourcesStaff()
     {
         return $this->isInRole(RoleCode::HumanResourcesStaff);
+    }
+
+    public function activate()
+    {
+        $this->active = true;
+        $this->save();
+    }
+
+    public function deactivate()
+    {
+        $this->active = false;
+        $this->save();
+    }
+
+    public function scopeActive(Builder $builder)
+    {
+        return $builder->whereActive(true);
     }
 }

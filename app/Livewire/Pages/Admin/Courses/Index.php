@@ -2,6 +2,7 @@
 namespace App\Livewire\Pages\Admin\Courses;
 
 use App\Livewire\Forms\CourseForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Support\Facades\Gate;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, WithSearch;
     public CourseForm $form;
     public ?Course $course;
     public bool $isFormOpen = false;
@@ -26,6 +27,19 @@ class Index extends Component
             ->orderBy('name')
             ->orderBy('created_at')
             ->orderBy('updated_at');
+
+        if ($this->shouldSearch()) {
+            $courses = $courses->fullTextSearch([
+                'columns'   => ['name', 'code'],
+                'relations' => [
+                    'department' => [
+                        'columns' => ['name', 'code'],
+                    ],
+                ],
+            ], $this->searchText);
+        }
+
+        $courses = $courses->cursorPaginate(15);
 
         $departments = Department::withoutArchived()
             ->orderBy('code')

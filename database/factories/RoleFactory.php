@@ -81,7 +81,7 @@ class RoleFactory extends Factory
             return [
                  ...$attributes,
                 'id'               => self::getId($roleCode),
-                'display_name'     => Str::of(implode(' ', preg_split('/(?=[A-Z])/', $roleCode->name)))->title()->toString(),
+                'display_name'     => Str::of(implode(' ', preg_split('/(?=[A-Z])/', $roleCode->name)))->title()->trim()->toString(),
                 'code'             => $roleCode->value,
                 'hidden'           => $roleCode === RoleCode::Admin
                 || $roleCode === RoleCode::HumanResourcesStaff

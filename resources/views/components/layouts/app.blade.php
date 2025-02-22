@@ -28,6 +28,7 @@
     @stack('head')
 </head>
 
+
 <body class="min-h-dvh bg-gray-100">
     @isset($slot)
         {{ $slot }}

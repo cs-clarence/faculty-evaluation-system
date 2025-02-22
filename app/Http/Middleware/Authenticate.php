@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use App\Models\Role;
@@ -22,7 +21,7 @@ class Authenticate extends Middleware
     {
         $user = $request->user();
 
-        if (!isset($user)) {
+        if (! isset($user)) {
             return Response::redirectTo('/');
         }
 
@@ -34,8 +33,12 @@ class Authenticate extends Middleware
             return Response::redirectToRoute('account-archived.index');
         }
 
+        if (! $user->active) {
+            return Response::redirectToRoute('account-deactivated.index');
+        }
+
         $userRoleId = $user->role_id;
-        $roleCode = Role::whereId($userRoleId)->first()->code;
+        $roleCode   = Role::whereId($userRoleId)->first()->code;
         foreach ($guards as $guard) {
             if ($guard === $roleCode) {
                 return $next($request);

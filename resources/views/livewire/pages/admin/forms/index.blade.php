@@ -42,6 +42,9 @@
                 ];
             @endphp
             <x-table :data="$forms" :$columns>
+                <x-slot:actions>
+                    <x-search wire:input.debounce.500ms="search(search)" :value="$searchText" />
+                </x-slot:actions>
             </x-table>
         </div>
     </div>

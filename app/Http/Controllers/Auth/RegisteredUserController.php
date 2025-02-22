@@ -80,6 +80,7 @@ class RegisteredUserController extends Controller
             $valid['name'],
             $valid['password'],
             RoleCode::from($valid['role_code']),
+            false,
         );
 
         if ($isStudent) {

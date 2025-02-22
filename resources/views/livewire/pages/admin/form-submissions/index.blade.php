@@ -29,7 +29,11 @@
                     ],
                 ];
             @endphp
-            <x-table :data="$formSubmissions" :$columns :paginate="15" />
+            <x-table :data="$formSubmissions" :$columns>
+                <x-slot:actions>
+                    <x-search wire:input.debounce.500ms="search(search)" :value="$searchText" />
+                </x-slot:actions>
+            </x-table>
         </div>
     </div>
 </div>

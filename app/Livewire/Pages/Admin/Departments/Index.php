@@ -2,11 +2,16 @@
 namespace App\Livewire\Pages\Admin\Departments;
 
 use App\Livewire\Forms\DepartmentForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Department;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination, WithSearch;
+
     public DepartmentForm $form;
     public bool $isFormOpen = false;
     public ?Department $department;
@@ -18,6 +23,14 @@ class Index extends Component
             ->orderBy('name')
             ->orderBy('created_at')
             ->orderBy('updated_at');
+
+        if ($this->shouldSearch()) {
+            $departments = $departments->fullTextSearch([
+                'columns' => ['name', 'code'],
+            ], $this->searchText);
+        }
+
+        $departments = $departments->cursorPaginate(15);
 
         return view('livewire.pages.admin.departments.index')
             ->with(compact('departments'))

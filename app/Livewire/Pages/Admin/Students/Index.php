@@ -1,18 +1,20 @@
 <?php
-
 namespace App\Livewire\Pages\Admin\Students;
 
 use App\Livewire\Forms\UserForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
 use App\Models\RoleCode;
 use App\Models\SchoolYear;
-use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithSearch, WithPagination, WithoutUrlPagination;
     public bool $isFormOpen = false;
     public ?User $model;
     public UserForm $form;
@@ -25,8 +27,25 @@ class Index extends Component
                 $student->with(['studentSubjects', 'studentSemesters', 'course'])
                     ->withCount(['studentSubjects', 'studentSemesters']),
             ])
-            ->has('student')
-            ->lazy();
+            ->has('student');
+
+        if ($this->shouldSearch()) {
+            $students = $students->fullTextSearch([
+                'columns'   => ['name', 'email'],
+                'relations' => [
+                    'student' => [
+                        'columns'   => ['student_number'],
+                        'relations' => [
+                            'course' => [
+                                'columns' => ['name', 'code'],
+                            ],
+                        ],
+                    ],
+                ],
+            ], $this->searchText);
+        }
+
+        $students = $students->cursorPaginate(15);
 
         $courses = Course::withoutArchived()
             ->has('courseSubjects')
@@ -48,13 +67,13 @@ class Index extends Component
     public function openForm()
     {
         $this->form->role_code = RoleCode::Student->value;
-        $this->isFormOpen = true;
+        $this->isFormOpen      = true;
     }
 
     public function closeForm()
     {
         $this->isFormOpen = false;
-        $this->model = null;
+        $this->model      = null;
         $this->form->clear();
     }
 

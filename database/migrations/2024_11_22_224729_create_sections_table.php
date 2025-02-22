@@ -29,6 +29,7 @@ return new class extends Migration
 
             $table->timestampTz('archived_at')->nullable();
             $table->timestampsTz();
+            $table->fullText(['name', 'code']);
         });
 
         Schema::create('semester_sections', function (Blueprint $table) {

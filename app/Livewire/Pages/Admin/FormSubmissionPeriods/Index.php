@@ -2,6 +2,7 @@
 namespace App\Livewire\Pages\Admin\FormSubmissionPeriods;
 
 use App\Livewire\Forms\FormSubmissionPeriodForm;
+use App\Livewire\Traits\WithSearch;
 use App\Models\Form;
 use App\Models\FormSubmissionPeriod;
 use App\Models\Role;
@@ -9,9 +10,12 @@ use App\Models\Semester;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination, WithoutUrlPagination, WithSearch;
     public ?FormSubmissionPeriod $model = null;
     public FormSubmissionPeriodForm $form;
     public bool $isFormOpen   = false;
@@ -25,8 +29,26 @@ class Index extends Component
         ])
             ->orderBy('starts_at')
             ->orderBy('ends_at')
-            ->orderBy('form_id')
-            ->lazy();
+            ->orderBy('form_id');
+
+        if ($this->shouldSearch()) {
+            $formSubmissionPeriods = $formSubmissionPeriods->fullTextSearch([
+                'columns'   => ['name'],
+                'relations' => [
+                    'form'          => [
+                        'columns' => ['name', 'description'],
+                    ],
+                    'evaluateeRole' => [
+                        'columns' => ['display_name', 'code'],
+                    ],
+                    'evaluatorRole' => [
+                        'columns' => ['display_name', 'code'],
+                    ],
+                ],
+            ], $this->searchText);
+        }
+
+        $formSubmissionPeriods = $formSubmissionPeriods->cursorPaginate(15);
 
         $exeptFormIds = isset($this->model?->form_id) ? [$this->model->form_id] : [];
 
