@@ -36,7 +36,11 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
 
             <span>
                 {{-- Next Page Link --}}
-                @if ($paginator->hasMorePages())
+                @if ($paginator->onLastPage())
+                    <x-button variant="outlined" color="neutral" disabled size="sm">
+                        {!! __('pagination.next') !!}
+                    </x-button>
+                @else
                     @if(method_exists($paginator,'getCursorName'))
                         <x-button type="button" dusk="nextPage" wire:key="cursor-{{ $paginator->getCursorName() }}-{{ $paginator->nextCursor()?->encode() }}" wire:click="setPage('{{$paginator->nextCursor()?->encode()}}','{{ $paginator->getCursorName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" variant="outlined" color="neutral" size="sm">
                                 {!! __('pagination.next') !!}
@@ -46,10 +50,6 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                                 {!! __('pagination.next') !!}
                         </x-button>
                     @endif
-                @else
-                    <x-button variant="outlined" color="neutral" disabled size="sm">
-                        {!! __('pagination.next') !!}
-                    </x-button>
                 @endif
             </span>
         </nav>

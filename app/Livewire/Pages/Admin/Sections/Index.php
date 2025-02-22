@@ -18,6 +18,8 @@ class Index extends Component
     public bool $isFormOpen = false;
     public SectionForm $form;
 
+    public string $pageName = 'cursor';
+
     public function render()
     {
         $sections = Section::with(['course' => function (BelongsTo $builder) {
@@ -40,7 +42,9 @@ class Index extends Component
             ], $this->searchText);
         }
 
-        $sections = $sections->cursorPaginate(15);
+        $sections = $sections->cursorPaginate(15,
+            cursorName: $this->pageName
+        )->withQueryString();
 
         $courses = Course::query()
             ->withoutArchived()
