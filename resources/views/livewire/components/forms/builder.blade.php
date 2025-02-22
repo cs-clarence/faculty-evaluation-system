@@ -250,7 +250,7 @@
         @if ($sectionFormIsOpen)
             <x-modal-scrim />
             <x-dialog.container wire:click.self='closeSectionForm'>
-                <x-dialog>
+                <x-dialog wire:key="section-form">
                     <x-dialog.title>
                         @isset($sectionForm->id)
                             Edit Section
@@ -283,7 +283,7 @@
         @if ($questionFormIsOpen)
             <x-modal-scrim />
             <x-dialog.container wire:click.self='closeQuestionForm'>
-                <x-dialog>
+                <x-dialog wire:key="question-form">
                     <x-dialog.title>
                         @isset($questionForm->id)
                             Edit Question
@@ -346,7 +346,7 @@
         @if ($optionFormIsOpen)
             <x-modal-scrim />
             <x-dialog.container wire:click.self='closeOptionForm'>
-                <x-dialog>
+                <x-dialog wire:key="option-form">
                     <x-dialog.title>New Option</x-dialog.title>
                     <x-dialog.content el="form">
                         <x-input type="hidden" key="optionForm.form_question_id"

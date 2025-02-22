@@ -50,7 +50,7 @@
     @if ($isFormOpen)
         <x-modal-scrim />
         <x-dialog.container wire:click.self='closeForm'>
-            <x-dialog>
+            <x-dialog el="form" wire:submit.prevent="save" wire:key='student-form'>
                 <x-dialog.title>
                     @isset($model)
                         Edit Student
@@ -58,7 +58,7 @@
                         Add New Student
                     @endisset
                 </x-dialog.title>
-                <x-dialog.content el="form" wire:submit.prevent="save">
+                <x-dialog.content>
                     <x-forms.user-form-fields :courses="$courses" :schoolYears="$schoolYears">
                         @if ($form->include_base)
                             <input type="hidden" name="role_code" value="{{ RoleCode::Student->value }}"

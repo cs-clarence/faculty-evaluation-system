@@ -35,7 +35,7 @@ class UserForm extends BaseForm
     public bool $include_base = true;
     public bool $realign_subjects = true;
     public bool $delete_subjects_from_previous_course = false;
-    public bool $active = true;
+    public ?bool $active = true;
 
     public function rules()
     {
@@ -51,15 +51,15 @@ class UserForm extends BaseForm
                 'email'                   => ['required', 'string', 'email', 'max:255', isset($this->id) ? $uniqueEmail . ',' . $this->id : $uniqueEmail],
                 'name'                    => ['required', 'string', 'max:255'],
                 'role_code'               => ['required', 'string', 'exists:roles,code'],
-                'course_id'               => [$isStudent ? 'required ' : 'nullable', 'integer', 'exists:courses,id'],
-                'student_number'          => [$isStudent ? 'required ' : 'nullable', 'string', ! isset($this->id) ? 'unique:students' :
+                'course_id'               => [$isStudent ? 'required' : 'nullable', 'integer', 'exists:courses,id'],
+                'student_number'          => [$isStudent ? 'required' : 'nullable', 'string', ! isset($this->id) ? 'unique:students' :
                     Rule::unique('students', 'student_number')
                         ->ignore($this->id, 'user_id'),
 
                 ],
-                'starting_school_year_id' => [$isStudent ? 'required ' : 'nullable', 'integer', 'exists:school_years,id'],
-                'department_id'           => [$isTeacher ? 'required ' : 'nullable', 'integer', 'exists:departments,id'],
-                'active'                  => ['required', 'boolean'],
+                'starting_school_year_id' => [$isStudent ? 'required' : 'nullable', 'integer', 'exists:school_years,id'],
+                'department_id'           => [$isTeacher ? 'required' : 'nullable', 'integer', 'exists:departments,id'],
+                'active'                  => ['nullable', 'boolean'],
             ];
         }
 
@@ -116,7 +116,7 @@ class UserForm extends BaseForm
                 }
 
                 if ($this->include_base) {
-                    UserService::update($user, $this->name, $this->email, RoleCode::from($this->role_code), $this->active);
+                    UserService::update($user, $this->name, $this->email, RoleCode::from($this->role_code), $this->active ?? false);
                     if ($this->role_code === RoleCode::Student->value) {
                         StudentService::update($user, $this->student_number, $this->course_id, $this->starting_school_year_id, $this->realign_subjects, $this->delete_subjects_from_previous_course);
                     }
@@ -130,7 +130,7 @@ class UserForm extends BaseForm
                     }
                 }
             } else {
-                $user = UserService::create($this->email, $this->name, $this->password, RoleCode::from($this->role_code), $this->active);
+                $user = UserService::create($this->email, $this->name, $this->password, RoleCode::from($this->role_code), $this->active ?? false);
 
                 if ($this->role_code === 'student') {
                     StudentService::create($user, $this->student_number, $this->course_id, $this->starting_school_year_id);

@@ -49,7 +49,7 @@
     @if ($isFormOpen)
         <x-modal-scrim />
         <x-dialog.container wire:click.self='closeForm'>
-            <x-dialog el="form" wire:submit.prevent="save">
+            <x-dialog el="form" wire:submit.prevent="save" wire:key="teacher-form">
                 <x-dialog.title>
                     @isset($model)
                         Edit Teacher

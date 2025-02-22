@@ -14,7 +14,8 @@ class AdminInitializer extends Initializer
         $roleId = Role::where('code', 'admin')->first(['id'])->id;
         if (! User::where('role_id', $roleId)->exists()) {
             User::factory()->admin()->create([
-                'email' => 'admin@gmail.com', 'password' => Hash::make('adminuser'), 'name' => 'Admin User',
+                'email'  => 'admin@gmail.com', 'password' => Hash::make('adminuser'), 'name' => 'Admin User',
+                'active' => true,
             ]);
         }
     }

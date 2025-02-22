@@ -37,71 +37,52 @@
     </div>
 
     @if ($isFormOpen)
-        <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
-            <div class="bg-white p-6 rounded-lg w-96">
-                @isset($model)
-                    <h3 class="text-lg font-semibold mb-4">Edit Section</h3>
-                @else
-                    <h3 class="text-lg font-semibold mb-4">Add New Section</h3>
-                @endisset
-                <form id="addForm" wire:submit.prevent='save'>
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self='closeForm'>
+            <x-dialog wire:key="section-form" el="form" wire:submit.prevent="save">
+                <x-dialog.title>
+                    @isset($model)
+                        Edit Section
+                    @else
+                        Add New Section
+                    @endisset
+                </x-dialog.title>
+                <x-dialog.content>
                     @csrf
                     <input type="hidden" name="id" wire:model.blur="form.id">
-                    <div class="mb-4">
-                        <label for="form.year_level" class="block text-gray-700">Year Level</label>
-                        <input name="form.name" id="form.year_level" required class="w-full px-3 py-2 border rounded-lg"
-                            type="number" wire:model.defer="form.year_level">
-                        @error('form.year_level')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="form.semester" class="block text-gray-700">Semester</label>
-                        <input name="form.semester" id="form.semester" required
-                            class="w-full px-3 py-2 border rounded-lg" type="number" wire:model.blur="form.semester">
-                        @error('form.semester')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="form.name" class="block text-gray-700">Name</label>
-                        <input type="text" name="form.name" id="form.name" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur="form.name">
-                        @error('form.name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="form.course_id" class="block text-gray-700">Course</label>
-                        <select type="text" name="form.course_id" id="form.course_id" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.blur="form.course_id">
-                            <option value="" selected>Select a course</option>
-                            @foreach ($courses as $course)
-                                <option value="{{ $course->id }}">
-                                    {{ $course->name }}
-                                    ({{ $course->code }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('form.course_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="form.code" class="block text-gray-700">Section Code</label>
-                        <input type="text" name="form.code" id="form.code" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.code">
-                        @error('form.code')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="flex justify-end gap-1">
-                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
-                            variant="text">Cancel</x-button>
-                        <x-button type="submit">Save</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                    <x-form-control>
+                        <x-form-control.label key="form.year_level">Year Level</x-form-control.label>
+                        <x-input key="form.year_level" required wire:model.live="form.year_level" />
+                        <x-form-control.error-text key="form.year_level" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="form.semester">Semester</x-form-control.label>
+                        <x-input key="form.semester" required wire:model.live="form.semester" />
+                        <x-form-control.error-text key="form.semester" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="form.name">Name</x-form-control.label>
+                        <x-input key="form.name" required wire:model.live="form.name" />
+                        <x-form-control.error-text key="form.name" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="form.course_id">Course</x-form-control.label>
+                        <x-select key="form.course_id" required :options="$courses" :label="fn($i) => $i->name" :value="fn($i) => $i->id"
+                            wire:model.live="form.course_id" empty="No Courses Available" placeholder="Select course" />
+                        <x-form-control.error-text key="form.course_id" />
+                    </x-form-control>
+                    <x-form-control>
+                        <x-form-control.label key="form.code">Section Code</x-form-control.label>
+                        <x-input key="form.code" required wire:model="form.code" />
+                        <x-form-control.error-text key="form.code" />
+                    </x-form-control>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                        variant="text">Cancel</x-button>
+                    <x-button type="submit">Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
     @endif
 </div>

@@ -45,60 +45,45 @@
 
     <!-- Add Subject Modal -->
     @if ($isFormOpen)
-        <div class="fixed inset-0 bg-gray-900/50 flex justify-center items-center" wire:click.self='closeForm'>
-            <div class="bg-white p-6 rounded-lg w-96">
-                @isset($course)
-                    <h3 class="text-lg font-semibold mb-4">Edit Course</h3>
-                @else
-                    <h3 class="text-lg font-semibold mb-4">Add New Course</h3>
-                @endisset
-
-                <!-- Add Subject Form -->
-                <form id="addSubjectForm" wire:submit="save" enctype="multipart/form-data">
+        <x-modal-scrim />
+        <x-dialog.container wire:click.self="closeForm">
+            <x-dialog el="form" wire:submit.prevent="save" wire:key="course-form">
+                <x-dialog.title>
+                    @isset($course)
+                        Edit Course
+                    @else
+                        Add New Course
+                    @endisset
+                </x-dialog.title>
+                <x-dialog.content>
                     @csrf
                     <input type="hidden" name="id" wire:model.defer="form.id">
-                    <div class="mb-4">
-                        <label for="code" class="block text-gray-700">Course Code</label>
-                        <input type="text" name="code" id="code" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.code">
-                        @error('form.code')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-form-control>
+                        <x-form-control.label key="form.name">Course Name</x-form-control.label>
+                        <x-input type="text" key="form.name" required wire:model="form.name" />
+                        <x-form-control.error-text key="form.name" />
+                    </x-form-control>
 
-                    <div class="mb-4">
-                        <label for="name" class="block text-gray-700">Course Name</label>
-                        <input type="text" name="name" id="name" required
-                            class="w-full px-3 py-2 border rounded-lg" wire:model.defer="form.name">
-                        @error('form.name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    <x-form-control>
+                        <x-form-control.label key="form.code">Course Code</x-form-control.label>
+                        <x-input type="text" key="form.code" required wire:model="form.code" />
+                        <x-form-control.error-text key="form.code" />
+                    </x-form-control>
 
-                    <div class="mb-4">
-                        <label for="subject" class="block text-gray-700">Department</label>
-                        <select id="subjectDropdown" name="department_id" class="w-full px-3 py-2 border rounded-lg"
-                            wire:model.defer="form.department_id">
-                            <option value="" selected>Select a department</option>
-                            @foreach ($departments as $department)
-                                <option value="{{ $department->id }}">
-                                    {{ $department->name }}
-                                    ({{ $department->code }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('form.department_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="flex justify-end gap-1">
-                        <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
-                            variant="text">Cancel</x-button>
-                        <x-button type="submit">Save</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                    <x-form-control>
+                        <x-form-control.label key="form.department_id">Department</x-form-control.label>
+                        <x-select key="form.department_id" required :options="$departments" :label="fn($i) => $i->name"
+                            wire:model="form.department_id" :value="fn($i) => $i->id" placeholder="Select department"
+                            empty="No Departments Available" />
+                        <x-form-control.error-text key="form.department_id" />
+                    </x-form-control>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button type="button" id="cancelBtn" wire:click='closeForm' color="neutral"
+                        variant="text">Cancel</x-button>
+                    <x-button type="submit">Save</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
     @endif
 </div>

@@ -77,7 +77,7 @@
     @if ($isFormOpen)
         <x-modal-scrim />
         <x-dialog.container wire:click.self='closeForm'>
-            <x-dialog el="form" wire:submit.prevent="save">
+            <x-dialog el="form" wire:submit.prevent="save" wire:key="account-form">
                 <x-dialog.title>
                     @isset($model)
                         @if ($form->include_base && !$form->include_password)
