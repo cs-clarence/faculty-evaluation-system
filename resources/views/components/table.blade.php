@@ -1,4 +1,12 @@
-@props(['data', 'columns', 'paginate', 'key' => 'id', 'empty' => 'No records found', 'search' => null])
+@props([
+    'data',
+    'columns',
+    'paginate',
+    'key' => 'id',
+    'empty' => 'No records found',
+    'search' => null,
+    'tableId' => 'table',
+])
 
 @php
     use Illuminate\Pagination\{LengthAwarePaginator, CursorPaginator};
@@ -73,7 +81,7 @@
 @endif
 
 <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg table table-fixed">
-    <thead class="bg-gray-200 text-gray-600">
+    <thead class="bg-gray-200 text-gray-600" id="{{ $tableId }}">
         <tr>
             @foreach ($columns as $column)
                 <th class="py-3 px-4 text-left text-sm font-semibold">{{ $column['label'] }}</th>
@@ -90,7 +98,7 @@
         @endphp
 
         @forelse($queried as $d)
-            <tr wire:key="{{ getValue($key, $d) }}">
+            <tr wire:key="{{ $tableId }}.{{ getValue($key, $d) }}">
                 @foreach ($columns as $column)
                     <td class="py-3 px-4 border-b border-current/20">
                         @if (is_callable($column['render']))

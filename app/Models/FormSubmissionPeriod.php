@@ -5,6 +5,7 @@ use App\Models\Traits\Archivable;
 use App\Models\Traits\FullTextSearchable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -87,9 +88,14 @@ class FormSubmissionPeriod extends Model
         return $this->hasOne(FormSubmissionPeriodSemester::class);
     }
 
-    public function semester()
+    public function getSemester()
     {
         return $this->formSubmissionPeriodSemester()->first()?->semester();
+    }
+
+    protected function semester(): Attribute
+    {
+        return Attribute::make(fn() => $this->getSemester()->first())->shouldCache();
     }
 
     public function scopeEvaluator(Builder $builder, RoleCode | string $roleCode)

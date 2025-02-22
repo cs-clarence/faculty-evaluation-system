@@ -45,6 +45,7 @@
     if (!function_exists('deepMerge')) {
         function deepMerge(array $array1, array $array2): array
         {
+            $array1 = [...$array1];
             foreach ($array2 as $key => $value) {
                 if (is_array($value) && isset($array1[$key]) && is_array($array1[$key])) {
                     $array1[$key] = deepMerge($array1[$key], $value);
@@ -65,10 +66,10 @@
         function evalCondition(callable|bool $condition, mixed $data): bool
         {
             if (is_callable($condition)) {
-                return $condition($data);
+                return $condition($data) ?? false;
             }
 
-            return $condition;
+            return $condition ?? false;
         }
     }
 
@@ -94,7 +95,7 @@
                     if (is_callable($maybeCallable)) {
                         return $maybeCallable(...$args);
                     } else {
-                        return $maybeCallable;
+                        return $maybeCallable ?? false;
                     }
                 }
             }

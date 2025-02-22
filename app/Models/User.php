@@ -181,23 +181,28 @@ class User extends Authenticatable
 
     public function scopeRole(Builder $builder, RoleCode $code)
     {
-        $builder->whereHas('role', function (Builder $builder) use ($code) {
+        return $builder->whereHas('role', function (Builder $builder) use ($code) {
             $builder->where('code', $code->value);
         });
     }
 
     public function scopeRoleAdmin(Builder $builder)
     {
-        $this->scopeRole($builder, RoleCode::Admin);
+        return $this->scopeRole($builder, RoleCode::Admin);
     }
 
     public function scopeRoleStudent(Builder $builder)
     {
-        $this->scopeRole($builder, RoleCode::Student);
+        return $this->scopeRole($builder, RoleCode::Student);
     }
     public function scopeRoleTeacher(Builder $builder)
     {
-        $this->scopeRole($builder, RoleCode::Teacher);
+        return $this->scopeRole($builder, RoleCode::Teacher);
+    }
+
+    public function scopeRoleDean(Builder $builder)
+    {
+        return $this->scopeRole($builder, RoleCode::Dean);
     }
 
     public function delete()

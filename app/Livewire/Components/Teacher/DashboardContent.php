@@ -9,7 +9,7 @@ class DashboardContent extends Component
     public function render()
     {
         $formSubmissions = FormSubmission::with([
-            'submissionPeriod.semester.schoolYear',
+            'submissionPeriod.formSubmissionPeriodSemester.semester.schoolYear',
         ])->whereEvaluateeId(auth()->user()->id);
 
         $formSubmissions = $formSubmissions->cursorPaginate(15);

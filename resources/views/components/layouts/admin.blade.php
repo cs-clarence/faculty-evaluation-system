@@ -12,6 +12,7 @@
         FormSubmissionPeriod,
         FormSubmission,
         User,
+        Dean,
     };
 @endphp
 
@@ -48,6 +49,11 @@
         'href' => route('admin.sections.index'),
         'title' => 'Sections',
         'condition' => Gate::allows('viewAny', Section::class),
+    ],
+    [
+        'href' => route('admin.deans.index'),
+        'title' => 'Deans',
+        'condition' => Gate::allows('viewAny', Dean::class),
     ],
     [
         'href' => route('admin.teachers.index'),

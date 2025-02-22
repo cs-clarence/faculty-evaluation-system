@@ -1,12 +1,11 @@
 <?php
-namespace App\Livewire\Pages\Admin\Teachers;
+namespace App\Livewire\Pages\Admin\Deans;
 
 use App\Livewire\Forms\UserForm;
 use App\Livewire\Traits\WithSearch;
 use App\Models\Department;
 use App\Models\RoleCode;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
@@ -21,18 +20,13 @@ class Index extends Component
 
     public function render()
     {
-        $teachers = User::roleTeacher()
-            ->with(['teacher' => fn(HasOne $teacher) => $teacher
-                    ->withCount(['teacherSubjects', 'teacherSemesters'])
-                    ->with(['department']),
-            ])
-            ->has('teacher');
+        $deans = User::roleDean()->with(['dean.department']);
 
         if ($this->shouldSearch()) {
-            $teachers = $teachers->fullTextSearch([
-                'columns'   => ['name', 'email'],
+            $deans = $deans->fullTextSearch([
+                'deans'     => ['name', 'email'],
                 'relations' => [
-                    'teacher' => [
+                    'dean' => [
                         'relations' => [
                             'department' => [
                                 'columns' => ['name', 'code'],
@@ -43,23 +37,26 @@ class Index extends Component
             ], $this->searchText);
         }
 
-        $teachers = $teachers->cursorPaginate(15);
+        $deans = $deans->cursorPaginate(15);
 
-        $exceptDepartmentIds = isset($this->model->teacher->department_id) ? [$this->model->teacher->department_id] : [];
+        $exceptDepartmentIds = isset($this->model->dean->department_id) ? [$this->model->dean->department_id] : [];
 
         $departments = Department::withoutArchived($exceptDepartmentIds)
             ->orderBy('code')
             ->orderBy('name')
             ->lazy();
 
-        return view('livewire.pages.admin.teachers.index')
-            ->with(compact('teachers', 'departments'))
-            ->layout('components.layouts.admin');
+        return view('livewire.pages.admin.deans.index')
+            ->layout('components.layouts.admin')
+            ->with([
+                'deans'       => $deans,
+                'departments' => $departments,
+            ]);
     }
 
     public function openForm()
     {
-        $this->form->role_code = RoleCode::Teacher->value;
+        $this->form->role_code = RoleCode::Dean->value;
         $this->isFormOpen      = true;
     }
 
