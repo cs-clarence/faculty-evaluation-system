@@ -5,13 +5,15 @@
     @forelse ($submissionPeriods as $submissionPeriod)
         <div class="flex flex-col gap-4">
             <h2 class="text-xl font-bold text-gray-800">{{ $submissionPeriod->formSubmissionPeriod->name }}
-                ({{ $submissionPeriod->formSubmissionPeriod->semester()->first() }})
+                ({{ $submissionPeriod->formSubmissionPeriod->semester }})
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($submissionPeriod->studentSubjects as $subject)
-                    <a href="{{ route('user.form-submission.index', [
+                    <a href="{{ route('user.submit-form.index', [
                         'formSubmissionPeriod' => $submissionPeriod->formSubmissionPeriod->id,
                         'evaluatee' => $subject->teacherSubject?->teacherSemester->teacher->user->id,
+                        'courseSubjectId' => $subject->course_subject_id,
+                        'studentSubjectId' => $subject->id,
                     ]) }}"
                         wire:navigate wire:key="pending-evaluation-{{ $subject->id }}"
                         class="block bg-white shadow-md rounded-lg p-6 hover:shadow-lg hover:bg-blue-50 transition duration-200">

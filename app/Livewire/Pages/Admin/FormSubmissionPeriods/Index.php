@@ -25,7 +25,7 @@ class Index extends Component
     {
         $formSubmissionPeriods = FormSubmissionPeriod::with([
             'form',
-            'semester' => fn(BelongsTo $buidler) => $buidler->with('schoolYear'),
+            'formSubmissionPeriodSemester.semester' => fn(BelongsTo $buidler) => $buidler->with('schoolYear'),
         ])
             ->orderBy('starts_at')
             ->orderBy('ends_at')

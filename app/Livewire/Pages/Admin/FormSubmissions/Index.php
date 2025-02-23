@@ -40,4 +40,9 @@ class Index extends Component
             ->with(compact('formSubmissions'))
             ->layout('components.layouts.admin');
     }
+
+    public function delete(FormSubmission $formSubmission)
+    {
+        $formSubmission->delete();
+    }
 }

@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Features\ChatBot\Services\ChatCompleter;
 use App\Features\ChatBot\Types\Message\Message;
+use App\Models\CourseSubject;
+use App\Models\Department;
 use App\Models\Form;
 use App\Models\FormQuestionEssayTypeConfiguration;
 use App\Models\FormQuestionOption;
@@ -10,8 +12,9 @@ use App\Models\FormQuestionType;
 use App\Models\FormSubmission;
 use App\Models\FormSubmissionAnswer;
 use App\Models\FormSubmissionPeriod;
-use App\Models\Teacher;
+use App\Models\StudentSubject;
 use App\Models\User;
+use Exception;
 use Log;
 
 class FormSubmissionService
@@ -89,7 +92,7 @@ class FormSubmissionService
             $aiResponse = json_decode($text, true);
 
             return $aiResponse;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
             $half   = self::getHalf($config->value_scale_from, $config->value_scale_to);
             $random = self::randomBetweenFloat($config->value_scale_from, $config->value_scale_to);
@@ -109,6 +112,26 @@ class FormSubmissionService
     private static function getUserId(User | int $user)
     {
         return $user instanceof User ? $user->id : $user;
+    }
+
+    private static function getUser(User | int $user)
+    {
+        return $user instanceof User ? $user : User::whereId($user)->first();
+    }
+
+    private static function getCourseSubjectId(CourseSubject | int $courseSubject)
+    {
+        return $courseSubject instanceof CourseSubject ? $courseSubject->id : $courseSubject;
+    }
+
+    private static function getStudentSubjectId(StudentSubject | int $studentSubject)
+    {
+        return $studentSubject instanceof StudentSubject ? $studentSubject->id : $studentSubject;
+    }
+
+    private static function getDepartmentId(Department | int $department)
+    {
+        return $department instanceof Department ? $department->id : $department;
     }
 
     private static function getForm(Form | int $form)
@@ -135,7 +158,7 @@ class FormSubmissionService
         $evaluateeRole = $formSubmission->submissionPeriod->evaluateeRole->display_name;
         $evaluatorRole = $formSubmission->submissionPeriod->evaluatorRole->display_name;
 
-        $newAnswers = [];
+        $formSubmission->answers()->delete();
         foreach ($form->sections as $section) {
             foreach ($section->questions as $question) {
                 $value = $answers["{$question->id}"];
@@ -149,7 +172,7 @@ class FormSubmissionService
                         $evaluateeRole
                     );
 
-                    $newAnswers[] = new FormSubmissionAnswer([
+                    $answer = FormSubmissionAnswer::create([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id'   => $question->id,
                         'value'              => $interpretation['value'],
@@ -160,15 +183,13 @@ class FormSubmissionService
                 } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
                     $option = FormQuestionOption::whereId($value)->first(['id', 'value', 'interpretation', 'label']);
 
-                    $answer = new FormSubmissionAnswer([
+                    $answer = FormSubmissionAnswer::create([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id'   => $question->id,
                         'value'              => $option->value,
                         'text'               => $option->label,
                         'interpretation'     => $option->interpretation,
                     ]);
-                    $answer->save();
-                    $answer->selectedOptions()->delete();
                     $answer->selectedOptions()->create([
                         'form_submission_answer_id' => $answer->id,
                         'form_question_option_id'   => $option->id,
@@ -176,15 +197,13 @@ class FormSubmissionService
                 } else if ($question->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
                     $options = FormQuestionOption::whereId($value)->get(['id', 'value', 'interpretation', 'label']);
 
-                    $answer = new FormSubmissionAnswer([
+                    $answer = FormSubmissionAnswer::create([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id'   => $question->id,
                         'value'              => min($options->sum('value'), 0),
                         'text'               => $options->pluck('label')->implode(', '),
                         'interpretation'     => $options->pluck('interpretation')->implode('. '),
                     ]);
-                    $answer->save();
-                    $answer->selectedOptions()->delete();
                     $answer->selectedOptions()->createMany(
                         $options->map(fn($o) => [
                             'form_submission_answer_id' => $answer->id,
@@ -196,19 +215,31 @@ class FormSubmissionService
                 }
             }
         }
-
-        if (count($answers) > 0) {
-            $formSubmission->answers()->saveMany($newAnswers);
-        }
     }
 
     public function submit(
-        Form | int $form,
         FormSubmissionPeriod | int $formSubmissionPeriod,
         User | int $evaluator,
-        Teacher | int $evaluatee,
+        User | int $evaluatee,
         array $answers,
+        CourseSubject | int | null $courseSubject = null,
+        StudentSubject | int | null $studentSubject = null,
+        Department | int | null $department = null,
     ) {
+        $evaluatee = self::getUser($evaluatee);
+        $evaluator = self::getUser($evaluator);
+        if ($evaluatee->isTeacher() && $evaluator->isTeacher() &&
+            ($evaluatee->teacher->department_id !== $evaluator->teacher->department_id)
+        ) {
+            throw new Exception('Departments do not match');
+        }
+
+        if ($evaluatee->isTeacher() && $evaluator->isDean() &&
+            ($evaluatee->teacher->department_id !== $evaluator->dean->department_id)
+        ) {
+            throw new Exception('Departments do not match');
+        }
+
         $formSubmission = new FormSubmission([
             'evaluatee_id'              => self::getUserId($evaluatee),
             'evaluator_id'              => self::getUserId($evaluator),
@@ -216,6 +247,35 @@ class FormSubmissionService
         ]);
 
         $formSubmission->save();
+        if (isset($courseSubject) || isset($studentSubject)) {
+            $formSubmission->formSubmissionSubject()->create([
+                'course_subject_id'  => isset($courseSubject)
+                ? self::getCourseSubjectId($courseSubject)
+                : (
+                    isset($studentSubject)
+                    ? ($studentSubject instanceof StudentSubject
+                        ? $studentSubject->course_subject_id
+                        : StudentSubject::whereId($studentSubject)->first(['course_subject_id'])?->course_subject_id)
+                    : null
+                ),
+                'student_subject_id' => isset($studentSubject) ? self::getStudentSubjectId($studentSubject) : null,
+            ]);
+        }
+
+        $departmentId = null;
+        if (isset($department)) {
+            $departmentId = self::getDepartmentId($department);
+        } else if ($evaluatee->isTeacher()) {
+            $departmentId = $evaluatee->teacher->department_id;
+        } else if ($evaluatee->isDean()) {
+            $departmentId = $evaluatee->dean->department_id;
+        }
+
+        if (isset($departmentId)) {
+            $formSubmission->formSubmissionDepartment()->create([
+                'department_id' => $departmentId,
+            ]);
+        }
 
         $this->save($formSubmission, $answers);
     }
@@ -224,6 +284,7 @@ class FormSubmissionService
         FormSubmission | int $formSubmission,
         array $answers,
     ) {
+        $formSubmission = $formSubmission instanceof FormSubmission ? $formSubmission : FormSubmission::whereId($formSubmission)->first();
         $this->save($formSubmission, $answers);
     }
 }

@@ -12,7 +12,7 @@ class DashboardContent extends Component
     public function render()
     {
         $activePeriods = FormSubmissionPeriod::evaluator(RoleCode::Student)
-            ->with(['semester.schoolYear', 'formSubmissionPeriodSemester'])
+            ->with(['formSubmissionPeriodSemester.semester.schoolYear'])
             ->isOpen()
             ->get();
 
@@ -28,7 +28,8 @@ class DashboardContent extends Component
                     'studentSemester',
                     'teacherSubject.teacherSemester.teacher',
                 ])
-                ->whereIn('semester_id', $activePeriodSemesterIds),
+                ->whereIn('semester_id', $activePeriodSemesterIds)
+                ->doesntHave('formSubmissionSubject'),
             'user',
         ])->first();
 

@@ -74,4 +74,9 @@ class FormSubmissionPolicy extends BasePolicy
         //
         return $this->isInRoles($user);
     }
+
+    public function viewEvaluator(User $user): Response
+    {
+        return $this->isInRoles($user, RoleCode::Admin);
+    }
 }

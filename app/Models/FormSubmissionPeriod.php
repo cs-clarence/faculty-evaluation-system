@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Models\Traits\Archivable;
 use App\Models\Traits\FullTextSearchable;
+use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -108,5 +109,26 @@ class FormSubmissionPeriod extends Model
     {
         $roleId = Role::whereCode(is_string($roleCode) ? $roleCode : $roleCode->value)->first(['id'])->id;
         return $builder->whereEvaluateeRoleId($roleId);
+    }
+
+    public function isEvaluatorRole(RoleCode $role)
+    {
+        return $this->evaluateeRole->code === $role->value;
+    }
+
+    public function isEvaluateeRole(RoleCode $role)
+    {
+        return $this->evaluateeRole->code === $role->value;
+    }
+
+    protected function canBeEdited(): Attribute
+    {
+        $now = Carbon::now();
+        return Attribute::make(fn() =>
+            $this->is_submissions_editable
+            && $this->is_open
+            && (new Carbon($this->starts_at))->lessThanOrEqualTo($now)
+            && (new Carbon($this->ends_at))->greaterThan($now)
+        );
     }
 }

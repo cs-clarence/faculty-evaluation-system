@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -13,12 +12,17 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class CourseSubject extends Pivot
 {
     public $incrementing = true;
-    protected $table = 'course_subjects';
-    protected $fillable = ['subject_id', 'course_semester_id'];
+    protected $table     = 'course_subjects';
+    protected $fillable  = ['subject_id', 'course_semester_id'];
 
     public function courseSemester(): BelongsTo
     {
         return $this->belongsTo(CourseSemester::class);
+    }
+
+    protected function course(): Attribute
+    {
+        return Attribute::make(fn() => $this->courseSemester->course);
     }
 
     public function semester(): HasOneThrough

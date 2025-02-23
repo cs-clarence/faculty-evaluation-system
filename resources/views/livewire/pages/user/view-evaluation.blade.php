@@ -9,15 +9,19 @@
             </h2>
         @endisset
         <div class="flex flex-row">
-            <div class="flex-grow">
-                <h2 class="text-sm">Evaluator ({{ $formSubmission->evaluator->role->display_name }})</h2>
-                <h2 class="text-xl">{{ $formSubmission->evaluator->name }}</h2>
-            </div>
-            <div class="flex-grow">
-                <h2 class="text-sm">Evaluatee ({{ $formSubmission->evaluatee->role->display_name }})</h2>
-                <h2 class="text-xl">
-                    {{ $formSubmission->evaluatee->name }}
-            </div>
+            @if ($options->showEvaluator)
+                <div class="flex-grow">
+                    <h2 class="text-sm">Evaluator ({{ $formSubmission->evaluator->role->display_name }})</h2>
+                    <h2 class="text-xl">{{ $formSubmission->evaluator->name }}</h2>
+                </div>
+            @endif
+            @if (!$formSubmission->evaluatee->is(auth()->user()))
+                <div class="flex-grow">
+                    <h2 class="text-sm">Evaluatee ({{ $formSubmission->evaluatee->role->display_name }})</h2>
+                    <h2 class="text-xl">
+                        {{ $formSubmission->evaluatee->name }}
+                </div>
+            @endif
             @isset($formSubmission->subject)
                 <div class="flex-grow">
                     <h2 class="text-sm">Subject</h2>
@@ -53,6 +57,6 @@
         </div>
         <x-form-submission-summary.table :$formSubmission :createQuestionLink="fn($data) => '#q.' . $data->id" />
     </div>
-    <x-forms.form-submission-form :form="$formModel" :formSubmission="$formSubmission" readonly :createWireModel="$this->getCreateWireModel()" showValues
+    <x-forms.form-submission-form :form="$formModel" :$formSubmission readonly :createWireModel="$this->getCreateWireModel()" showValues
         :createQuestionId="fn($data) => 'q.' . $data->id" showSummary />
 </div>

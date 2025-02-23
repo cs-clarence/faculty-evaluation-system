@@ -13,16 +13,17 @@
     if (!function_exists('isPaginated')) {
         function isPaginated($data)
         {
-            return $data instanceof AbstractPaginator ||
-                $data instanceof LengthAwarePaginator ||
-                $data instanceof CursorPaginator;
+            return !is_array($data) &&
+                ($data instanceof AbstractPaginator ||
+                    $data instanceof LengthAwarePaginator ||
+                    $data instanceof CursorPaginator);
         }
     }
 
     if (!function_exists('isCursorPaginated')) {
         function isCursorPaginated($data)
         {
-            return $data instanceof CursorPaginator;
+            return !is_array($data) && $data instanceof CursorPaginator;
         }
     }
     if (!function_exists('walkAndGetValue')) {
@@ -62,22 +63,24 @@
 @endphp
 
 
-@if (isPaginated($data) || isset($actions))
-    <div class="mb-2 flex flex-row">
-        @isset($actions)
-            <div class="flex flex-row gap-2">
-                {{ $actions }}
-            </div>
-        @endisset
-        <div class="grow"></div>
-        @if (isPaginated($data))
-            @if (isCursorPaginated($data))
-                {{ $data->links('components.table.livewire-simple-paginate') }}
-            @else
-                {{ $data->links('components.table.livewire-paginate') }}
+@if (!is_array($data))
+    @if (isPaginated($data) || isset($actions))
+        <div class="mb-2 flex flex-row">
+            @isset($actions)
+                <div class="flex flex-row gap-2">
+                    {{ $actions }}
+                </div>
+            @endisset
+            <div class="grow"></div>
+            @if (isPaginated($data))
+                @if (isCursorPaginated($data))
+                    {{ $data->links('components.table.livewire-simple-paginate') }}
+                @else
+                    {{ $data->links('components.table.livewire-paginate') }}
+                @endif
             @endif
-        @endif
-    </div>
+        </div>
+    @endif
 @endif
 
 <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg table table-fixed">
@@ -92,7 +95,7 @@
         @php
             $queried = $data;
 
-            if (method_exists($data, 'lazy')) {
+            if (is_object($queried) && method_exists($data, 'lazy')) {
                 $queried = $data->lazy();
             }
         @endphp

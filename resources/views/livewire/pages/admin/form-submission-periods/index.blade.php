@@ -19,9 +19,7 @@
                     ['label' => 'Evaluatee', 'render' => 'evaluateeRole'],
                     [
                         'label' => 'Semester',
-                        'render' => fn($data) => isset($data->formSubmissionPeriodSemester)
-                            ? $data->semester()->first()
-                            : 'None',
+                        'render' => fn($data) => isset($data->semester) ? $data->semester : 'None',
                     ],
                     ['label' => 'Start Date', 'render' => 'starts_at'],
                     ['label' => 'End Date', 'render' => 'ends_at'],
@@ -121,7 +119,7 @@
                     <x-form-control>
                         <x-form-control.label key="form_id">Form</x-form-control.label>
                         <x-select name="form_id" id="form_id" required :options="$forms" :label="fn($i) => $i->name"
-                            :value="fn($i) => $i->id" placeholder="Select form" empty="No Forms Available"
+                            :value="fn($i) => $i->id" placeholder="Select form" empty="No Forms Available" :disabled="isset($model) ? $model->hasDependents() : false"
                             wire:model="form.form_id" />
                         <x-form-control.error-text key="form.form_id" />
                     </x-form-control>

@@ -17,11 +17,6 @@ class FormSubmission extends Model
     protected $fillable = ['evaluator_id', 'evaluatee_id', 'form_submission_period_id'];
     protected $appends  = ['rating', 'total_weight'];
 
-    public function studentSubject()
-    {
-        return $this->belongsTo(StudentSubject::class);
-    }
-
     public function evaluator()
     {
         return $this->belongsTo(User::class, 'evaluator_id');
@@ -196,5 +191,34 @@ class FormSubmission extends Model
     protected function form(): Attribute
     {
         return Attribute::make(get: fn() => $this->submissionPeriod->form);
+    }
+
+    public function formSubmissionSubject()
+    {
+        return $this->hasOne(FormSubmissionSubject::class);
+    }
+    protected function courseSubject(): Attribute
+    {
+        return Attribute::make(fn() => $this->formSubmissionSubject?->courseSubject);
+    }
+
+    protected function studentSubject(): Attribute
+    {
+        return Attribute::make(fn() => $this->formSubmissionSubject?->studentSubject);
+    }
+
+    protected function subject(): Attribute
+    {
+        return Attribute::make(fn() => $this->formSubmissionSubject?->subject);
+    }
+
+    public function formSubmissionDepartment()
+    {
+        return $this->hasOne(FormSubmissionDepartment::class, 'form_submission_id', 'id');
+    }
+
+    protected function department(): Attribute
+    {
+        return Attribute::make(fn() => $this->formSubmissionDepartment?->department);
     }
 }

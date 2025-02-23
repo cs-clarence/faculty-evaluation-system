@@ -1,22 +1,22 @@
 <?php
-namespace App\Livewire\Pages\Admin\FormSubmissions;
+namespace App\Livewire\Pages\User;
 
 use App\Facades\Services\FileNameService;
 use App\Facades\Services\FormSubmissionExportService;
 use App\Livewire\Forms\FormSubmissionForm;
 use App\Models\Form;
 use App\Models\FormQuestion;
-use App\Models\FormSubmission as Model;
+use App\Models\FormSubmission;
+use App\Services\FormSubmissionExportOptions;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
 use Livewire\Component;
 
-class FormSubmission extends Component
+class ViewEvaluation extends Component
 {
-
-    public Model $formSubmission;
-    public Form $formModel;
     public FormSubmissionForm $form;
+    public Form $formModel;
+    public FormSubmission $formSubmission;
 
     public function mount()
     {
@@ -29,8 +29,12 @@ class FormSubmission extends Component
 
     public function render()
     {
-        return view('livewire.pages.admin.form-submissions.form-submission')
-            ->layout('components.layouts.admin');
+        return view('livewire.pages.user.view-evaluation', [
+            'formSubmission' => $this->formSubmission,
+            'formModel'      => $this->formModel,
+            'options'        => self::getOptions(),
+        ])
+            ->layout('components.layouts.user');
     }
 
     public function getCreateWireModel()
@@ -40,7 +44,6 @@ class FormSubmission extends Component
 
     private function getFileName(string $ext)
     {
-
         $date = Carbon::now()->format('Y_m_d-H_i_s');
         // replace all non print characters to underscores
         $fileName = FileNameService::createName([
@@ -52,9 +55,16 @@ class FormSubmission extends Component
         return $fileName;
     }
 
+    private static function getOptions()
+    {
+        return new FormSubmissionExportOptions(
+            showEvaluator: false
+        );
+    }
+
     public function exportExcel()
     {
-        $excel    = FormSubmissionExportService::getXlsx($this->formSubmission);
+        $excel    = FormSubmissionExportService::getXlsx($this->formSubmission, self::getOptions());
         $fileName = $this->getFileName('xlsx');
 
         return Response::streamDownload(fn() => $excel->save('php://output'), $fileName, [
@@ -64,7 +74,7 @@ class FormSubmission extends Component
 
     public function exportCsv()
     {
-        $excel    = FormSubmissionExportService::getCsv($this->formSubmission);
+        $excel    = FormSubmissionExportService::getCsv($this->formSubmission, self::getOptions());
         $fileName = $this->getFileName('csv');
 
         return Response::streamDownload(fn() => $excel->save('php://output'), $fileName, [
@@ -74,7 +84,7 @@ class FormSubmission extends Component
 
     public function exportPdf()
     {
-        $pdf = FormSubmissionExportService::getPdf($this->formSubmission);
+        $pdf = FormSubmissionExportService::getPdf($this->formSubmission, self::getOptions());
 
         // replace all non print characters to underscores
         $fileName = $this->getFileName('pdf');

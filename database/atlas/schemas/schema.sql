@@ -4,7 +4,6 @@
 
 -- Dumped from database version 16.0
 -- Dumped by pg_dump version 16.3
-
 --
 -- Name: set_order_numerator(); Type: FUNCTION; Schema: public; Owner: -
 --
@@ -450,9 +449,9 @@ CREATE TABLE public.form_submission_answers (
     form_submission_id bigint NOT NULL,
     form_question_id bigint NOT NULL,
     value double precision NOT NULL,
-    text text,
+    text character varying(10239),
     interpretation character varying(10239),
-    reason character varying(255),
+    reason character varying(10239),
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
 );
@@ -475,6 +474,36 @@ CREATE SEQUENCE public.form_submission_answers_id_seq
 --
 
 ALTER SEQUENCE public.form_submission_answers_id_seq OWNED BY public.form_submission_answers.id;
+
+
+--
+-- Name: form_submission_departments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submission_departments (
+    id bigint NOT NULL,
+    department_id bigint NOT NULL,
+    form_submission_id bigint NOT NULL
+);
+
+
+--
+-- Name: form_submission_departments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.form_submission_departments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: form_submission_departments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.form_submission_departments_id_seq OWNED BY public.form_submission_departments.id;
 
 
 --
@@ -547,21 +576,22 @@ ALTER SEQUENCE public.form_submission_periods_id_seq OWNED BY public.form_submis
 
 
 --
--- Name: form_submission_student_subject; Type: TABLE; Schema: public; Owner: -
+-- Name: form_submission_subjects; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.form_submission_student_subject (
+CREATE TABLE public.form_submission_subjects (
     id bigint NOT NULL,
-    student_subject_id bigint NOT NULL,
+    course_subject_id bigint NOT NULL,
+    student_subject_id bigint,
     form_submission_id bigint NOT NULL
 );
 
 
 --
--- Name: form_submission_student_subject_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: form_submission_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.form_submission_student_subject_id_seq
+CREATE SEQUENCE public.form_submission_subjects_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -570,10 +600,10 @@ CREATE SEQUENCE public.form_submission_student_subject_id_seq
 
 
 --
--- Name: form_submission_student_subject_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: form_submission_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.form_submission_student_subject_id_seq OWNED BY public.form_submission_student_subject.id;
+ALTER SEQUENCE public.form_submission_subjects_id_seq OWNED BY public.form_submission_subjects.id;
 
 
 --
@@ -1293,6 +1323,13 @@ ALTER TABLE ONLY public.form_submission_answers ALTER COLUMN id SET DEFAULT next
 
 
 --
+-- Name: form_submission_departments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments ALTER COLUMN id SET DEFAULT nextval('public.form_submission_departments_id_seq'::regclass);
+
+
+--
 -- Name: form_submission_period_semesters id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1307,10 +1344,10 @@ ALTER TABLE ONLY public.form_submission_periods ALTER COLUMN id SET DEFAULT next
 
 
 --
--- Name: form_submission_student_subject id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: form_submission_subjects id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.form_submission_student_subject ALTER COLUMN id SET DEFAULT nextval('public.form_submission_student_subject_id_seq'::regclass);
+ALTER TABLE ONLY public.form_submission_subjects ALTER COLUMN id SET DEFAULT nextval('public.form_submission_subjects_id_seq'::regclass);
 
 
 --
@@ -1632,6 +1669,30 @@ ALTER TABLE ONLY public.form_submission_answers
 
 
 --
+-- Name: form_submission_departments form_submission_departments_form_submission_id_department_id_un; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments
+    ADD CONSTRAINT form_submission_departments_form_submission_id_department_id_un UNIQUE (form_submission_id, department_id);
+
+
+--
+-- Name: form_submission_departments form_submission_departments_form_submission_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments
+    ADD CONSTRAINT form_submission_departments_form_submission_id_unique UNIQUE (form_submission_id);
+
+
+--
+-- Name: form_submission_departments form_submission_departments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments
+    ADD CONSTRAINT form_submission_departments_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: form_submission_period_semesters form_submission_period_semesters_form_submission_period_id_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1656,27 +1717,35 @@ ALTER TABLE ONLY public.form_submission_periods
 
 
 --
--- Name: form_submission_student_subject form_submission_student_subject_form_submission_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: form_submission_subjects form_submission_subjects_form_submission_id_course_subject_id_u; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.form_submission_student_subject
-    ADD CONSTRAINT form_submission_student_subject_form_submission_id_unique UNIQUE (form_submission_id);
-
-
---
--- Name: form_submission_student_subject form_submission_student_subject_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.form_submission_student_subject
-    ADD CONSTRAINT form_submission_student_subject_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_form_submission_id_course_subject_id_u UNIQUE (form_submission_id, course_subject_id);
 
 
 --
--- Name: form_submissions form_submissions_evaluator_id_evaluatee_id_form_submission_peri; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: form_submission_subjects form_submission_subjects_form_submission_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.form_submissions
-    ADD CONSTRAINT form_submissions_evaluator_id_evaluatee_id_form_submission_peri UNIQUE (evaluator_id, evaluatee_id, form_submission_period_id);
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_form_submission_id_unique UNIQUE (form_submission_id);
+
+
+--
+-- Name: form_submission_subjects form_submission_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: form_submission_subjects form_submission_subjects_student_subject_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_student_subject_id_unique UNIQUE (student_subject_id);
 
 
 --
@@ -1982,7 +2051,7 @@ CREATE INDEX form_sections_title_description_fulltext ON public.form_sections US
 -- Name: form_submission_answers_text_interpretation_reason_fulltext; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX form_submission_answers_text_interpretation_reason_fulltext ON public.form_submission_answers USING gin ((((to_tsvector('english'::regconfig, text) || to_tsvector('english'::regconfig, (interpretation)::text)) || to_tsvector('english'::regconfig, (reason)::text))));
+CREATE INDEX form_submission_answers_text_interpretation_reason_fulltext ON public.form_submission_answers USING gin ((((to_tsvector('english'::regconfig, (text)::text) || to_tsvector('english'::regconfig, (interpretation)::text)) || to_tsvector('english'::regconfig, (reason)::text))));
 
 
 --
@@ -2177,6 +2246,22 @@ ALTER TABLE ONLY public.form_submission_answers
 
 
 --
+-- Name: form_submission_departments form_submission_departments_department_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments
+    ADD CONSTRAINT form_submission_departments_department_id_foreign FOREIGN KEY (department_id) REFERENCES public.departments(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_departments form_submission_departments_form_submission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_departments
+    ADD CONSTRAINT form_submission_departments_form_submission_id_foreign FOREIGN KEY (form_submission_id) REFERENCES public.form_submissions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: form_submission_period_semesters form_submission_period_semesters_form_submission_period_id_fore; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2217,19 +2302,27 @@ ALTER TABLE ONLY public.form_submission_periods
 
 
 --
--- Name: form_submission_student_subject form_submission_student_subject_form_submission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: form_submission_subjects form_submission_subjects_course_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.form_submission_student_subject
-    ADD CONSTRAINT form_submission_student_subject_form_submission_id_foreign FOREIGN KEY (form_submission_id) REFERENCES public.form_submissions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_course_subject_id_foreign FOREIGN KEY (course_subject_id) REFERENCES public.course_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: form_submission_student_subject form_submission_student_subject_student_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: form_submission_subjects form_submission_subjects_form_submission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.form_submission_student_subject
-    ADD CONSTRAINT form_submission_student_subject_student_subject_id_foreign FOREIGN KEY (student_subject_id) REFERENCES public.student_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_form_submission_id_foreign FOREIGN KEY (form_submission_id) REFERENCES public.form_submissions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: form_submission_subjects form_submission_subjects_student_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submission_subjects
+    ADD CONSTRAINT form_submission_subjects_student_subject_id_foreign FOREIGN KEY (student_subject_id) REFERENCES public.student_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

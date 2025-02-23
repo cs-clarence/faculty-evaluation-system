@@ -302,4 +302,14 @@ class User extends Authenticatable
     {
         return $builder->whereActive(true);
     }
+
+    public function evaluationsReceived()
+    {
+        return $this->hasMany(FormSubmission::class, 'evaluatee_id', 'id');
+    }
+
+    public function evaluationsSubmitted()
+    {
+        return $this->hasMany(FormSubmission::class, 'evaluator_id', 'id');
+    }
 }

@@ -4,17 +4,36 @@
         <div class="col-span-1 md:col-span-3 overflow-auto">
             @php
                 $columns = [
+                    ['label' => 'Period', 'render' => 'submissionPeriod.name'],
                     ['label' => 'Evaluator Role', 'render' => 'evaluator.role.display_name'],
                     ['label' => 'Evaluator', 'render' => 'evaluator.name'],
                     ['label' => 'Evaluatee Role', 'render' => 'evaluatee.role.display_name'],
                     ['label' => 'Evaluatee', 'render' => 'evaluatee.name'],
+                    [
+                        'label' => 'Subject',
+                        'render' => fn($data) => isset($data->subject) ? $data->subject->name : 'N/A',
+                    ],
+                    [
+                        'label' => 'Department',
+                        'render' => fn($data) => isset($data->department) ? $data->department->code : 'N/A',
+                    ],
+                    ['label' => 'Semester', 'render' => 'submissionPeriod.semester'],
                     ['label' => 'Rating', 'render' => fn($value) => $value->rating . '%'],
                     [
                         'label' => 'Actions',
                         'render' => 'blade:table.actions',
                         'props' => [
-                            'mergeDefaultActions' => false,
+                            'mergeDefaultActions' => true,
                             'actions' => [
+                                'edit' => [
+                                    'condition' => false,
+                                ],
+                                'archive' => [
+                                    'condition' => false,
+                                ],
+                                'unarchive' => [
+                                    'condition' => false,
+                                ],
                                 'view' => [
                                     'order' => 0,
                                     'type' => 'link',
@@ -23,6 +42,9 @@
                                     'href' => fn($data) => route('admin.form-submissions.form-submission', [
                                         'formSubmission' => $data->id,
                                     ]),
+                                ],
+                                'delete' => [
+                                    'condition' => auth()->user()->isAdmin(),
                                 ],
                             ],
                         ],

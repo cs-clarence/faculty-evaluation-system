@@ -9,6 +9,10 @@
                         {{ $formSubmissionPeriod->semester }}
                     </h3>
                 @endisset
+                @isset($courseSubject)
+                    <h2 class="text-xl">{{ $courseSubject->course->name }}</h2>
+                    <h2 class="text-xl">{{ $courseSubject->subject->name }}</h2>
+                @endisset
                 @isset($evaluatee)
                     <h2 class="text-xl">{{ $evaluatee->name }}</h2>
                     <input type="hidden" name="form.evaluatee_id" value="{{ $evaluatee->id }}"
@@ -30,8 +34,11 @@
                 @endisset
             </div>
             <x-forms.form-submission-form :form="$formModel" :readonly="false" :createWireModel="$this->getCreateWireModel()" />
-            @error('form.questions.*')
+            @error('*')
                 <x-error-text>Some field have errors. Please check</x-error-text>
+                @foreach ($errors->all() as $error)
+                    <x-error-text>{{ $error }}</x-error-text>
+                @endforeach
             @enderror
             <div class="flex justify-end mb-16">
                 <button type="submit"

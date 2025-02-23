@@ -87,8 +87,8 @@ class RoleFactory extends Factory
                 || $roleCode === RoleCode::HumanResourcesStaff
                 || $roleCode === RoleCode::Evaluator
                 || $roleCode === RoleCode::Dean,
-                'can_be_evaluator' => $roleCode !== RoleCode::Admin,
-                'can_be_evaluatee' => $roleCode !== RoleCode::Admin,
+                'can_be_evaluator' => in_array($roleCode, [RoleCode::Student, RoleCode::Teacher, RoleCode::HumanResourcesStaff, RoleCode::Dean]),
+                'can_be_evaluatee' => $roleCode === RoleCode::Teacher,
             ];
         });
     }

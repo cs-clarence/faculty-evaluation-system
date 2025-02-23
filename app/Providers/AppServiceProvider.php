@@ -1,8 +1,11 @@
 <?php
 namespace App\Providers;
 
+use App\Facades\Services\FormSubmissionEvaluateeService;
+use App\Facades\Services\PendingEvaluationsService;
 use App\Helpers\SectionHelper;
 use App\Services\FileNameService;
+use App\Services\FormSubmissionExportService;
 use App\Services\SchoolYearService;
 use App\Services\StudentService;
 use App\Services\UserService;
@@ -13,11 +16,14 @@ use URL;
 class AppServiceProvider extends ServiceProvider
 {
     public $singletons = [
-        SectionHelper::class     => SectionHelper::class,
-        UserService::class       => UserService::class,
-        StudentService::class    => StudentService::class,
-        SchoolYearService::class => SchoolYearService::class,
-        FileNameService::class   => FileNameService::class,
+        SectionHelper::class                  => SectionHelper::class,
+        UserService::class                    => UserService::class,
+        StudentService::class                 => StudentService::class,
+        SchoolYearService::class              => SchoolYearService::class,
+        FileNameService::class                => FileNameService::class,
+        FormSubmissionEvaluateeService::class => FormSubmissionEvaluateeService::class,
+        FormSubmissionExportService::class    => FormSubmissionExportService::class,
+        PendingEvaluationsService::class      => PendingEvaluationsService::class,
     ];
     /**
      * Register any application services.

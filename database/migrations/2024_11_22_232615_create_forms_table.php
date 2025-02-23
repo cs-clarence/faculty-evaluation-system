@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\CourseSubject;
+use App\Models\Department;
 use App\Models\Form;
 use App\Models\FormQuestion;
 use App\Models\FormQuestionOption;
@@ -22,24 +24,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared(<<<SQL
-            CREATE OR REPLACE FUNCTION set_order_numerator()
-            RETURNS TRIGGER AS $$
-            DECLARE
-                current_max INTEGER;
-            BEGIN
-              IF NEW.order_numerator = 0 THEN
-                  -- Use dynamic SQL to query the maximum order_numerator value from the table
-                  EXECUTE format('SELECT COALESCE(MAX(order_numerator), 0) FROM %I', TG_TABLE_NAME)
-                    INTO current_max;
-
-                  NEW.order_numerator := current_max + 1;
-              END IF;
-              RETURN NEW;
-            END;
-            $$ LANGUAGE plpgsql;
-        SQL);
-
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -67,13 +51,6 @@ return new class extends Migration
             $table->fullText(['title', 'description']);
         });
 
-        DB::unprepared(<<<SQL
-            CREATE OR REPLACE TRIGGER set_order_numerator_form_sections
-            BEFORE INSERT ON form_sections
-            FOR EACH ROW
-            EXECUTE FUNCTION set_order_numerator();
-        SQL);
-
         Schema::create('form_questions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
@@ -96,13 +73,6 @@ return new class extends Migration
             $table->timestampsTz();
             $table->fullText(['title', 'description']);
         });
-
-        DB::unprepared(<<<SQL
-            CREATE TRIGGER set_order_numerator_form_questions
-            BEFORE INSERT ON form_questions
-            FOR EACH ROW
-            EXECUTE FUNCTION set_order_numerator();
-        SQL);
 
         Schema::create('form_question_essay_type_configurations', function (Blueprint $table) {
             $table->id();
@@ -133,13 +103,6 @@ return new class extends Migration
             $table->timestampsTz();
             $table->fullText(['label', 'interpretation']);
         });
-
-        DB::unprepared(<<<SQL
-            CREATE OR REPLACE TRIGGER set_order_numerator_form_question_options
-            BEFORE INSERT ON form_question_options
-            FOR EACH ROW
-            EXECUTE FUNCTION set_order_numerator();
-        SQL);
 
         Schema::create('form_submission_periods', function (Blueprint $table) {
             $table->id();
@@ -203,21 +166,21 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->unique([
-                'evaluator_id',
-                'evaluatee_id',
-                'form_submission_period_id',
-            ]);
-
             $table->timestampTz('archived_at')->nullable();
 
             $table->timestampsTz();
         });
 
-        Schema::create('form_submission_student_subject', function (Blueprint $table) {
+        Schema::create('form_submission_subjects', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignIdFor(CourseSubject::class, 'course_subject_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
             $table->foreignIdFor(StudentSubject::class, 'student_subject_id')
+                ->nullable()
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
@@ -228,6 +191,25 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->unique('form_submission_id');
+            $table->unique(['form_submission_id', 'course_subject_id']);
+            $table->unique('student_subject_id');
+        });
+
+        Schema::create('form_submission_departments', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignIdFor(Department::class, 'department_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(FormSubmission::class, 'form_submission_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->unique('form_submission_id');
+            $table->unique(['form_submission_id', 'department_id']);
         });
 
         Schema::create('form_submission_answers', function (Blueprint $table) {
@@ -244,9 +226,9 @@ return new class extends Migration
                 ->cascadeOnUpdate();
 
             $table->float('value');
-            $table->text('text')->nullable();
+            $table->string('text', 10239)->nullable();
             $table->string('interpretation', 10239)->nullable();
-            $table->string('reason')->nullable();
+            $table->string('reason', 10239)->nullable();
 
             $table->timestampsTz();
 
@@ -268,6 +250,45 @@ return new class extends Migration
 
             $table->timestampsTz();
         });
+
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE FUNCTION set_order_numerator()
+            RETURNS TRIGGER AS $$
+            DECLARE
+                current_max INTEGER;
+            BEGIN
+              IF NEW.order_numerator = 0 THEN
+                  -- Use dynamic SQL to query the maximum order_numerator value from the table
+                  EXECUTE format('SELECT COALESCE(MAX(order_numerator), 0) FROM %I', TG_TABLE_NAME)
+                    INTO current_max;
+
+                  NEW.order_numerator := current_max + 1;
+              END IF;
+              RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        SQL);
+
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE TRIGGER set_order_numerator_form_sections
+            BEFORE INSERT ON form_sections
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
+
+        DB::unprepared(<<<SQL
+            CREATE TRIGGER set_order_numerator_form_questions
+            BEFORE INSERT ON form_questions
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
+
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE TRIGGER set_order_numerator_form_question_options
+            BEFORE INSERT ON form_question_options
+            FOR EACH ROW
+            EXECUTE FUNCTION set_order_numerator();
+        SQL);
     }
 
     /**
@@ -275,18 +296,21 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_question_options ON form_question_options;');
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_questions ON form_questions;');
+        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_sections ON form_sections;');
+        DB::unprepared('DROP FUNCTION IF EXISTS set_order_numerator;');
         Schema::dropIfExists('form_submission_answer_selected_options');
         Schema::dropIfExists('form_submission_answers');
+        Schema::dropIfExists('form_submission_departments');
+        Schema::dropIfExists('form_submission_subjects');
         Schema::dropIfExists('form_submissions');
+        Schema::dropIfExists('form_submission_period_semesters');
         Schema::dropIfExists('form_submission_periods');
-        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_question_options ON form_question_options;');
         Schema::dropIfExists('form_question_options');
         Schema::dropIfExists('form_question_essay_type_configurations');
-        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_questions ON form_questions;');
         Schema::dropIfExists('form_questions');
-        DB::unprepared('DROP TRIGGER IF EXISTS set_order_numerator_form_sections ON form_sections;');
         Schema::dropIfExists('form_sections');
         Schema::dropIfExists('forms');
-        DB::unprepared('DROP FUNCTION IF EXISTS set_order_numerator;');
     }
 };

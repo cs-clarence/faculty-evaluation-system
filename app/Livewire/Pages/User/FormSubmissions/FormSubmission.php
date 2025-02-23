@@ -19,7 +19,7 @@ class FormSubmission extends Component
     }
     public function mount()
     {
-        $this->formSubmission->load(['submissionPeriod.formSubmissionPeriod', 'studentSubject']);
+        $this->formSubmission->load(['submissionPeriod.formSubmissionPeriodSemester', 'studentSubject']);
         $this->form->set($this->formSubmission);
         $this->formModel = Form::with(['sections.questions.options'])
             ->whereId($this->formSubmission->submissionPeriod->form_id)
