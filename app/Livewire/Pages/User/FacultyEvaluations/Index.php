@@ -26,9 +26,13 @@ class Index extends Component
     {
         $user            = Auth::user();
         $departmentId    = $user->dean->department_id;
-        $formSubmissions = FormSubmission::whereHas('formSubmissionDepartment',
-            fn($q) => $q->whereDepartmentId($departmentId)
-        )
+        $formSubmissions = FormSubmission::with([
+            'formSubmissionDepartment',
+            'formSubmissionSubject.courseSubject.subject',
+        ])
+            ->whereHas('formSubmissionDepartment',
+                fn($q) => $q->whereDepartmentId($departmentId)
+            )
             ->whereHas('submissionPeriod',
                 fn($q) => $q
                     ->whereHas('evaluateeRole',

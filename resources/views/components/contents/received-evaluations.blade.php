@@ -19,13 +19,12 @@
                     [
                         'label' => 'Subject',
                         'render' => fn($data) => isset($data->subject) ? $data->subject->name : 'N/A',
-                        'condition' => Auth::user()->isInRole(RoleCode::Student),
                     ],
                     [
                         'label' => 'Semester',
                         'render' => fn($data) => isset($data->submissionPeriod->semester)
                             ? $data->submissionPeriod->semester
-                            : 'None',
+                            : 'N/A',
                     ],
                     [
                         'label' => 'Rating',

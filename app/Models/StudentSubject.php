@@ -51,12 +51,12 @@ class StudentSubject extends Pivot
 
     public function subjectName(): Attribute
     {
-        return Attribute::make(get: fn() => $this->courseSubject?->subject?->name);
+        return Attribute::make(get: fn() => $this->courseSubject->subject->name);
     }
 
     public function subjectCode(): Attribute
     {
-        return Attribute::make(get: fn() => $this->courseSubject?->subject?->code);
+        return Attribute::make(get: fn() => $this->courseSubject->subject->code);
     }
 
     public function courseName(): Attribute

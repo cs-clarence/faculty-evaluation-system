@@ -38,11 +38,11 @@ class FormSubmissionSubject extends Model
 
     public function courseSubject()
     {
-        return $this->belongsTo(CourseSubject::class);
+        return $this->belongsTo(CourseSubject::class, 'course_subject_id', 'id');
     }
 
     public function studentSubject()
     {
-        return $this->belongsTo(StudentSubject::class);
+        return $this->belongsTo(StudentSubject::class, 'student_subject_id', 'id');
     }
 }
