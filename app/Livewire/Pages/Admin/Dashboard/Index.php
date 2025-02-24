@@ -1,6 +1,7 @@
 <?php
 namespace App\Livewire\Pages\Admin\Dashboard;
 
+use App\Facades\Services\PendingEvaluationsService;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Form;
@@ -12,6 +13,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -19,7 +21,33 @@ class Index extends Component
 {
     public function render()
     {
-        $statistics = [
+        $user       = Auth::user();
+        $statistics = [];
+
+        if ($user->role->can_be_evaluatee) {
+            $statistics[] = [
+                'label' => 'Evaluations Received',
+                'value' => FormSubmission::whereEvaluateeId($user->id)->count(),
+                'href'  => route('user.received-evaluations.index'),
+            ];
+        }
+
+        if ($user->role->can_be_evaluator) {
+            $count        = count(PendingEvaluationsService::getPendingEvaluations($user));
+            $statistics[] = [
+                'label' => 'Pending Evaluations',
+                'value' => $count,
+                'href'  => route('admin.pending-evaluations.index'),
+            ];
+
+            $statistics[] = [
+                'label' => 'Evaluations Submitted',
+                'value' => FormSubmission::whereEvaluatorId($user->id)->count(),
+                'href'  => route('admin.submitted-evaluations.index'),
+            ];
+        }
+
+        $statistics = [ ...$statistics,
             [
                 'label'     => 'Departments',
                 'value'     => Department::count(),

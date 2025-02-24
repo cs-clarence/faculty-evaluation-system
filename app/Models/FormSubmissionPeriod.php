@@ -96,7 +96,7 @@ class FormSubmissionPeriod extends Model
 
     protected function semester(): Attribute
     {
-        return Attribute::make(fn() => $this->getSemester()->first())->shouldCache();
+        return Attribute::make(fn() => $this->getSemester()?->first())->shouldCache();
     }
 
     public function scopeEvaluator(Builder $builder, RoleCode | string $roleCode)

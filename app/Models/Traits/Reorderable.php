@@ -43,7 +43,7 @@ trait Reorderable
         $this->save();
     }
 
-    public function order(): Attribute
+    protected function order(): Attribute
     {
         return new Attribute(
             get: fn() => $this->order_numerator / $this->order_denominator

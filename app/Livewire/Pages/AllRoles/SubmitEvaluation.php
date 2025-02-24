@@ -1,5 +1,5 @@
 <?php
-namespace App\Livewire\Pages\User;
+namespace App\Livewire\Pages\AllRoles;
 
 use App\Livewire\Forms\FormSubmissionForm;
 use App\Models\CourseSubject;
@@ -89,7 +89,7 @@ class SubmitEvaluation extends Component
         $users = isset($this->evaluatee) ? [] : User::whereRoleId($this->formSubmissionPeriod->evaluatee_role_id)
             ->lazy();
 
-        return view('livewire.pages.user.submit-evaluation')
+        return view('livewire.pages.all-roles.submit-evaluation')
             ->with(compact('formModel', 'users'))
             ->layout('components.layouts.user');
     }

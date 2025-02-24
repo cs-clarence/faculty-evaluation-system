@@ -1,5 +1,5 @@
 <?php
-namespace App\Livewire\Pages\User;
+namespace App\Livewire\Pages\AllRoles;
 
 use App\Facades\Services\FileNameService;
 use App\Facades\Services\FormSubmissionExportService;
@@ -9,6 +9,7 @@ use App\Models\FormQuestion;
 use App\Models\FormSubmission;
 use App\Services\FormSubmissionExportOptions;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Response;
 use Livewire\Component;
 
@@ -29,7 +30,7 @@ class ViewEvaluation extends Component
 
     public function render()
     {
-        return view('livewire.pages.user.view-evaluation', [
+        return view('livewire.pages.all-roles.view-evaluation', [
             'formSubmission' => $this->formSubmission,
             'formModel'      => $this->formModel,
             'options'        => self::getOptions(),
@@ -58,7 +59,7 @@ class ViewEvaluation extends Component
     private static function getOptions()
     {
         return new FormSubmissionExportOptions(
-            showEvaluator: false
+            showEvaluator: Gate::allows('viewEvaluator', FormSubmission::class)
         );
     }
 

@@ -6,6 +6,7 @@ use App\Models\RoleCode;
 use App\Models\Traits\Archivable;
 use App\Models\Traits\FullTextSearchable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -311,5 +312,10 @@ class User extends Authenticatable
     public function evaluationsSubmitted()
     {
         return $this->hasMany(FormSubmission::class, 'evaluator_id', 'id');
+    }
+
+    protected function departmentId(): Attribute
+    {
+        return Attribute::make(fn() => $this->dean?->department_id ?? $this->teacher?->department_id);
     }
 }

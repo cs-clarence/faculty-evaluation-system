@@ -24,7 +24,9 @@ class PendingEvaluationsService
             ->isOpen()
             ->get();
 
-        $activePeriodSemesterIds = $activePeriods->map(fn($i) => $i->formSubmissionPeriodSemester->semester_id);
+        $activePeriodSemesterIds = $activePeriods
+            ->map(fn($i) => $i->formSubmissionPeriodSemester?->semester_id)
+            ->filter(fn($d) => isset($d));
 
         $id = 1;
 
@@ -64,11 +66,13 @@ class PendingEvaluationsService
             }
         }
 
-        if ($user->isTeacher()) {
+        if ($user->isTeacher() || $user->isDean()) {
+            $deptId = $user->department_id;
             foreach ($activePeriods as $p) {
-                $teacherUsers = User::whereNot('id', $user->id)
+                $teacherUsers = User::roleTeacher()
+                    ->whereNot('id', $user->id)
                     ->whereHas('teacher',
-                        fn($t) => $t->whereDepartmentId($user->teacher->department_id))
+                        fn($t) => $t->whereDepartmentId($deptId))
                     ->whereDoesntHave('evaluationsReceived', fn($q) => $q->whereFormSubmissionPeriodId($p->id))
                     ->get();
                 foreach ($teacherUsers as $u) {
@@ -80,7 +84,21 @@ class PendingEvaluationsService
             }
         }
 
-        $activePeriodSemesterIds = $activePeriods->map(fn($i) => $i->formSubmissionPeriodSemester->semester_id);
+        if ($user->isHumanResourcesStaff()) {
+            foreach ($activePeriods as $p) {
+                $teacherUsers = User::roleTeacher()
+                    ->whereNot('id', $user->id)
+                    ->has('teacher')
+                    ->whereDoesntHave('evaluationsReceived', fn($q) => $q->whereFormSubmissionPeriodId($p->id))
+                    ->get();
+                foreach ($teacherUsers as $u) {
+                    $pendingEvalutuations[] = new PendingEvaluation(
+                        $p,
+                        evaluatee: $u
+                    );
+                }
+            }
+        }
 
         return $pendingEvalutuations;
     }

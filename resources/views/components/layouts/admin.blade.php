@@ -26,6 +26,16 @@
         'title' => 'Dashboard',
     ],
     [
+        'href' => route('admin.pending-evaluations.index'),
+        'title' => 'Pending Evaluations',
+        'condition' => auth()->user()->role->can_be_evaluator,
+    ],
+    [
+        'href' => route('admin.submitted-evaluations.index'),
+        'title' => 'Evaluations Submitted',
+        'condition' => auth()->user()->role->can_be_evaluator,
+    ],
+    [
         'href' => route('admin.school-years.index'),
         'title' => 'School Years',
         'condition' => Gate::allows('viewAny', SchoolYear::class),

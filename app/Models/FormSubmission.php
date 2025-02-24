@@ -163,9 +163,12 @@ class FormSubmission extends Model
 
     public function getSummary()
     {
-        $breakdown = [];
+        $this->load('answers.formQuestion');
 
-        foreach ($this->answers as $answer) {
+        $breakdown      = [];
+        $answersOrdered = $this->answers->sortBy(fn($d) => $d->formQuestion->order);
+
+        foreach ($answersOrdered as $answer) {
             $class                     = new stdClass;
             $class->question           = $answer->formQuestion->title;
             $class->value              = $answer->value;

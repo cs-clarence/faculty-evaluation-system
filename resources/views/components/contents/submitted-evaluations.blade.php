@@ -45,7 +45,7 @@
                                     'label' => 'View',
                                     'color' => 'primary',
                                     'type' => 'link',
-                                    'href' => fn($data) => route('user.view-evaluation', [
+                                    'href' => fn($data) => route('view-evaluation', [
                                         'formSubmission' => $data->id,
                                     ]),
                                     'condition' => true,
@@ -55,7 +55,7 @@
                                     'color' => 'secondary',
                                     'variant' => 'outlined',
                                     'type' => 'link',
-                                    'href' => fn($data) => route('user.submit-evaluation', [
+                                    'href' => fn($data) => route('submit-evaluation', [
                                         'formSubmissionPeriod' => $data->submissionPeriod->id,
                                         'formSubmissionId' => $data->id,
                                     ]),

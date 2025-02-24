@@ -16,7 +16,6 @@
                         'label' => 'Period',
                         'render' => 'submissionPeriod.name',
                     ],
-                    ['label' => 'Evaluator Role', 'render' => 'submissionPeriod.evaluatorRole.display_name'],
                     [
                         'label' => 'Subject',
                         'render' => fn($data) => isset($data->subject) ? $data->subject->name : 'N/A',
@@ -42,7 +41,7 @@
                                     'label' => 'View',
                                     'color' => 'primary',
                                     'type' => 'link',
-                                    'href' => fn($data) => route('user.view-evaluation', [
+                                    'href' => fn($data) => route('view-evaluation', [
                                         'formSubmission' => $data->id,
                                     ]),
                                     'condition' => true,

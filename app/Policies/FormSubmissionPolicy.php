@@ -77,6 +77,12 @@ class FormSubmissionPolicy extends BasePolicy
 
     public function viewEvaluator(User $user): Response
     {
-        return $this->isInRoles($user, RoleCode::Admin);
+        return $this->isInRoles($user, RoleCode::Admin, RoleCode::Dean, RoleCode::HumanResourcesStaff);
+    }
+
+    public function viewEvaluatorRole(User $user): Response
+    {
+
+        return $this->isInRoles($user, RoleCode::Admin, RoleCode::HumanResourcesStaff, RoleCode::Dean);
     }
 }

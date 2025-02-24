@@ -3,6 +3,7 @@ namespace App\Livewire\Pages\User\Dashboard;
 
 use App\Facades\Services\PendingEvaluationsService;
 use App\Models\FormSubmission;
+use App\Models\RoleCode;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -34,6 +35,23 @@ class Index extends Component
                 'label' => 'Evaluations Submitted',
                 'value' => FormSubmission::whereEvaluatorId($user->id)->count(),
                 'href'  => route('user.submitted-evaluations.index'),
+            ];
+        }
+
+        if ($user->isDean()) {
+            $statistics[] = [
+                'label' => 'Faculty Evaluations',
+                'value' => FormSubmission::whereHas('formSubmissionDepartment',
+                    fn($q) => $q->whereDepartmentId($user->dean->department_id)
+                )
+                    ->whereHas('submissionPeriod',
+                        fn($q) => $q
+                            ->whereHas('evaluateeRole',
+                                fn($q) => $q->whereCode(RoleCode::Teacher->value)
+                            )
+                    )
+                    ->count(),
+                'href'  => route('user.faculty-evaluations.index'),
             ];
         }
 

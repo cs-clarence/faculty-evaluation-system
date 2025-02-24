@@ -38,7 +38,7 @@ Route::middleware(['auth'])
         Route::get('/account-deactivated', App\Livewire\Pages\AccountDeactivated\Index::class)->name('account-deactivated.index');
     });
 
-Route::middleware(['auth:admin,hr,evaluator'])
+Route::middleware(['auth:admin,human_resources_staff,evaluator'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -55,6 +55,10 @@ Route::middleware(['auth:admin,hr,evaluator'])
             ->name('form-submissions.index');
         Route::get('/form-submissions/{formSubmission}', App\Livewire\Pages\Admin\FormSubmissions\FormSubmission::class)
             ->name('form-submissions.form-submission');
+        Route::get('/pending-evaluations', App\Livewire\Pages\Admin\PendingEvaluations\Index::class)
+            ->name('pending-evaluations.index');
+        Route::get('/submitted-evaluations', App\Livewire\Pages\Admin\SubmittedEvaluations\Index::class)
+            ->name('submitted-evaluations.index');
         Route::get('/school-years', App\Livewire\Pages\Admin\SchoolYears\Index::class)->name('school-years.index');
         Route::get('/sections', App\Livewire\Pages\Admin\Sections\Index::class)->name('sections.index');
         Route::get('/students', App\Livewire\Pages\Admin\Students\Index::class)->name('students.index');
@@ -63,15 +67,20 @@ Route::middleware(['auth:admin,hr,evaluator'])
         Route::get('/accounts', App\Livewire\Pages\Admin\Accounts\Index::class)->name('accounts.index');
     });
 
+Route::middleware(['auth'])
+    ->group(function () {
+        Route::get('/submit-evaluation/{formSubmissionPeriod}', App\Livewire\Pages\AllRoles\SubmitEvaluation::class)->name('submit-evaluation');
+        Route::get('/view-evaluation/{formSubmission}', App\Livewire\Pages\AllRoles\ViewEvaluation::class)->name('view-evaluation');
+    });
+
 Route::middleware(['auth:student,teacher,dean'])
     ->name('user.')
     ->group(function () {
         Route::get('/dashboard', App\Livewire\Pages\User\Dashboard\Index::class)->name('dashboard.index');
         Route::get('/pending-evalutations', App\Livewire\Pages\User\PendingEvaluations\Index::class)->name('pending-evaluations.index');
+        Route::get('/faculity-evalutations', App\Livewire\Pages\User\FacultyEvaluations\Index::class)->name('faculty-evaluations.index');
         Route::get('/submitted-evalutations', App\Livewire\Pages\User\SubmittedEvaluations\Index::class)->name('submitted-evaluations.index');
         Route::get('/received-evaluations', App\Livewire\Pages\User\ReceivedEvaluations\Index::class)->name('received-evaluations.index');
-        Route::get('/submit-evaluation/{formSubmissionPeriod}', App\Livewire\Pages\User\SubmitEvaluation::class)->name('submit-evaluation');
-        Route::get('/view-evaluation/{formSubmission}', App\Livewire\Pages\User\ViewEvaluation::class)->name('view-evaluation');
     });
 
 require __DIR__ . '/auth.php';

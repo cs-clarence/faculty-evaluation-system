@@ -19,7 +19,7 @@
                     ['label' => 'Evaluatee', 'render' => 'evaluateeRole'],
                     [
                         'label' => 'Semester',
-                        'render' => fn($data) => isset($data->semester) ? $data->semester : 'None',
+                        'render' => fn($data) => isset($data->semester) ? $data->semester : 'N/A',
                     ],
                     ['label' => 'Start Date', 'render' => 'starts_at'],
                     ['label' => 'End Date', 'render' => 'ends_at'],

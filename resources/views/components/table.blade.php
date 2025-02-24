@@ -60,6 +60,17 @@
     $perPage = isset($paginate) ? (is_numeric($paginate) ? $paginate : $paginate['perPage']) : 15;
 
     $data = isset($paginate) && !isPaginated($data) ? $data->cursorPaginate($perPage) : $data;
+
+    if (!function_exists('evalColCondition')) {
+        function evalColCondition($cond)
+        {
+            if (is_callable($cond)) {
+                return $cond() ?? false;
+            }
+
+            return $cond ?? true;
+        }
+    }
 @endphp
 
 
@@ -87,7 +98,9 @@
     <thead class="bg-gray-200 text-gray-600" id="{{ $tableId }}">
         <tr>
             @foreach ($columns as $column)
-                <th class="py-3 px-4 text-left text-sm font-semibold">{{ $column['label'] }}</th>
+                @if (evalColCondition($column['condition'] ?? true))
+                    <th class="py-3 px-4 text-left text-sm font-semibold">{{ $column['label'] }}</th>
+                @endif
             @endforeach
         </tr>
     </thead>
@@ -103,19 +116,21 @@
         @forelse($queried as $d)
             <tr wire:key="{{ $tableId }}.{{ getValue($key, $d) }}">
                 @foreach ($columns as $column)
-                    <td class="py-3 px-4 border-b border-current/20">
-                        @if (is_callable($column['render']))
-                            {{ $column['render']($d) }}
-                        @elseif (str_starts_with($column['render'], 'blade:'))
-                            @php
-                                $slotName = str_replace('blade:', '', $column['render']);
-                                $renderProps = $column['props'] ?? [];
-                            @endphp
-                            <x-dynamic-component :component="$slotName" :data="$d" :attributes="new Illuminate\View\ComponentAttributeBag($renderProps)" />
-                        @else
-                            {{ getValue($column['render'], $d) }}
-                        @endif
-                    </td>
+                    @if (evalColCondition($column['condition'] ?? true))
+                        <td class="py-3 px-4 border-b border-current/20">
+                            @if (is_callable($column['render']))
+                                {{ $column['render']($d) }}
+                            @elseif (str_starts_with($column['render'], 'blade:'))
+                                @php
+                                    $slotName = str_replace('blade:', '', $column['render']);
+                                    $renderProps = $column['props'] ?? [];
+                                @endphp
+                                <x-dynamic-component :component="$slotName" :data="$d" :attributes="new Illuminate\View\ComponentAttributeBag($renderProps)" />
+                            @else
+                                {{ getValue($column['render'], $d) }}
+                            @endif
+                        </td>
+                    @endif
                 @endforeach
             </tr>
         @empty

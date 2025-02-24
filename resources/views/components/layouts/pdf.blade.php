@@ -10,6 +10,7 @@
     @isset($head)
         {{ $head }}
     @endisset
+    @stack('styles')
 </head>
 
 <body>
