@@ -5,7 +5,28 @@
 @endphp
 
 <div class="contents">
-    <x-sections.header title="Faculty Evaluations" />
+    <x-sections.header title="Faculty Evaluations">
+        <div class="flex flex-row gap-1 items-center" wire:key="export-actions-{{ $searchText }}">
+            @if (isset($searchText) && $searchText !== '')
+                <x-button variant="outlined" wire:click="exportExcel" size="sm"
+                    wire:confirm="If you have filters set, the export will also be filtered. Continue?">
+                    Export Excel
+                </x-button>
+                <x-button variant="outlined" wire:click="exportCsv" size="sm"
+                    wire:confirm="If you have filters set, the export will also be filtered. Continue?">
+                    Export CSV
+                </x-button>
+            @else
+                <x-button variant="outlined" wire:click="exportExcel" size="sm">
+                    Export Excel
+                </x-button>
+                <x-button variant="outlined" wire:click="exportCsv" size="sm"
+                    wire:confirm="If you have filters set, the export will also be filtered. Continue?">
+                    Export CSV
+                </x-button>
+            @endif
+        </div>
+    </x-sections.header>
     <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="col-span-1 md:col-span-3 overflow-auto">
             @php
