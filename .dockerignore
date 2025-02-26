@@ -3,3 +3,4 @@ vendor
 _ide_helper*
 .phpstorm.meta.php
 .env*
+public/hot

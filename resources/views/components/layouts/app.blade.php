@@ -18,6 +18,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>{{ $title ?? 'Page Title' }}</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- Tailwind CSS -->
     @vite(['resources/css/app.css', 'resources/js/app.ts'])

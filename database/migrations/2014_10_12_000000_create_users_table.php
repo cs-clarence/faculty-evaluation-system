@@ -29,9 +29,8 @@ return new class extends Migration
             $table->increments('id');
             $table->string('name');
 
-            $table->unsignedInteger('role_id');
             $table->foreignIdFor(Role::class, 'role_id')
-                ->references('id')
+                ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 

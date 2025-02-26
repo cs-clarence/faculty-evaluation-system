@@ -956,6 +956,20 @@ ALTER SEQUENCE public.semesters_id_seq OWNED BY public.semesters.id;
 
 
 --
+-- Name: sessions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sessions (
+    id character varying(255) NOT NULL,
+    user_id bigint,
+    ip_address character varying(45),
+    user_agent text,
+    payload text NOT NULL,
+    last_activity integer NOT NULL
+);
+
+
+--
 -- Name: student_semesters; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1199,7 +1213,7 @@ ALTER SEQUENCE public.teachers_id_seq OWNED BY public.teachers.id;
 CREATE TABLE public.users (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
-    role_id integer NOT NULL,
+    role_id bigint NOT NULL,
     email character varying(255) NOT NULL,
     email_verified_at timestamp(0) with time zone,
     require_change_password boolean DEFAULT false NOT NULL,
@@ -1894,6 +1908,14 @@ ALTER TABLE ONLY public.semesters
 
 
 --
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: student_semesters student_semesters_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2081,6 +2103,20 @@ CREATE INDEX roles_display_name_code_fulltext ON public.roles USING gin (((to_ts
 --
 
 CREATE INDEX sections_name_code_fulltext ON public.sections USING gin (((to_tsvector('english'::regconfig, (name)::text) || to_tsvector('english'::regconfig, (code)::text))));
+
+
+--
+-- Name: sessions_last_activity_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX sessions_last_activity_index ON public.sessions USING btree (last_activity);
+
+
+--
+-- Name: sessions_user_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX sessions_user_id_index ON public.sessions USING btree (user_id);
 
 
 --

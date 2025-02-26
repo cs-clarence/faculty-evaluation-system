@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
@@ -175,7 +174,7 @@ class Index extends Component
             session()->flash('alert-danger', [
                 'text' => $v->errors()->get('file')[0],
             ]);
-            return $this->redirect(Index::class);
+            return $this->redirectRoute('admin.students.index');
         }
         try {
 
@@ -187,7 +186,7 @@ class Index extends Component
                 session()->flash('alert-danger', [
                     'text' => "Failed to upload file",
                 ]);
-                return $this->redirect(Index::class);
+                return $this->redirectRoute('admin.students.index');
             }
 
             $fType = IOFactory::identify($fpath);
@@ -199,7 +198,7 @@ class Index extends Component
                 session()->flash('alert-danger', [
                     'text' => "No 'IMPORTS' sheet found",
                 ]);
-                return $this->redirect(Index::class);
+                return $this->redirectRoute('admin.students.index');
             }
 
             $worksheet = $spreadsheet->getSheetByName('IMPORTS');
@@ -326,18 +325,16 @@ class Index extends Component
                 return $emailSends;
             });
 
-            Log::info($emailSends);
-
             $count = $data->count();
             session()->flash('alert-success', [
                 'text' => "Succesfully imported {$count} student(s)",
             ]);
-            return $this->redirect(Index::class);
+            return $this->redirectRoute('admin.students.index');
         } catch (Exception $e) {
             session()->flash('alert-danger', [
                 'text' => 'Error Occured: ' . $e->getMessage(),
             ]);
-            return $this->redirect(Index::class);
+            return $this->redirectRoute('admin.students.index');
         }
     }
 

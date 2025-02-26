@@ -5,9 +5,7 @@
 @if (session('alert-danger'))
     @once
         @push('scripts')
-            <script type="module">
-                import Toastify from "{{ Vite::asset('resources/js/toastify.ts') }}";
-
+            <script defer>
                 Toastify({
                     duration: -1,
                     className: "{!! $baseClass !!} bg-red-500 text-white",
@@ -22,9 +20,7 @@
 @if (session('alert-success'))
     @once
         @push('scripts')
-            <script type="module">
-                import Toastify from "{{ Vite::asset('resources/js/toastify.ts') }}";
-
+            <script defer>
                 Toastify({
                     duration: 3000,
                     className: "{!! $baseClass !!} bg-green-500 text-white",
@@ -39,9 +35,7 @@
 @if (session('alert-warning'))
     @once
         @push('scripts')
-            <script type="module">
-                import Toastify from "{{ Vite::asset('resources/js/toastify.ts') }}";
-
+            <script defer>
                 Toastify({
                     duration: -1,
                     className: "{!! $baseClass !!} bg-yellow-500 text-white",
@@ -56,9 +50,7 @@
 @if (session('alert-info'))
     @once
         @push('scripts')
-            <script type="module">
-                import Toastify from "{{ Vite::asset('resources/js/toastify.ts') }}";
-
+            <script defer>
                 Toastify({
                     duration: 3000,
                     className: "{!! $baseClass !!} bg-blue-500 text-white",
