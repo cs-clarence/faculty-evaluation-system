@@ -24,7 +24,10 @@
                     </x-button>
                 </x-dialog.actions>
             @else
-                <p class="text-gray-600">You are not allow to update these information</p>
+                <p class="text-gray-600">
+                    You are not allowed to update these information.
+                    Please contact the administrator your user details are incorrect.
+                </p>
             @endcan
         </form>
         <form class="max-w-[420px] w-full bg-white p-6 rounded-md shadow-md flex flex-col gap-2"
