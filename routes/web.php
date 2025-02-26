@@ -34,8 +34,16 @@ Route::get('/evaluation-form', [EvaluationFormController::class, 'index'])->name
 
 Route::middleware(['auth'])
     ->group(function () {
-        Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)->name('account-archived.index');
-        Route::get('/account-deactivated', App\Livewire\Pages\AccountDeactivated\Index::class)->name('account-deactivated.index');
+        Route::get('/account-archived', App\Livewire\Pages\AccountArchived\Index::class)
+            ->name('account-archived.index');
+        Route::get('/account-deactivated', App\Livewire\Pages\AccountDeactivated\Index::class)
+            ->name('account-deactivated.index');
+        Route::get('/account-settings', App\Livewire\Pages\AllRoles\AccountSettings::class)
+            ->name('account-settings');
+        Route::get('/submit-evaluation/{formSubmissionPeriod}', App\Livewire\Pages\AllRoles\SubmitEvaluation::class)
+            ->name('submit-evaluation');
+        Route::get('/view-evaluation/{formSubmission}', App\Livewire\Pages\AllRoles\ViewEvaluation::class)
+            ->name('view-evaluation');
     });
 
 Route::middleware(['auth:admin,human_resources_staff,evaluator'])
@@ -65,12 +73,6 @@ Route::middleware(['auth:admin,human_resources_staff,evaluator'])
         Route::get('/teachers', App\Livewire\Pages\Admin\Teachers\Index::class)->name('teachers.index');
         Route::get('/deans', App\Livewire\Pages\Admin\Deans\Index::class)->name('deans.index');
         Route::get('/accounts', App\Livewire\Pages\Admin\Accounts\Index::class)->name('accounts.index');
-    });
-
-Route::middleware(['auth'])
-    ->group(function () {
-        Route::get('/submit-evaluation/{formSubmissionPeriod}', App\Livewire\Pages\AllRoles\SubmitEvaluation::class)->name('submit-evaluation');
-        Route::get('/view-evaluation/{formSubmission}', App\Livewire\Pages\AllRoles\ViewEvaluation::class)->name('view-evaluation');
     });
 
 Route::middleware(['auth:student,teacher,dean'])

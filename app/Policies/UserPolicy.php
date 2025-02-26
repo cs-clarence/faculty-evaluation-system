@@ -73,4 +73,14 @@ class UserPolicy extends BasePolicy
         //
         return $this->isInRoles($user);
     }
+
+    public function updateEmail(User $user, User $other): Response
+    {
+        return $this->isInRoles($user, RoleCode::Admin);
+    }
+
+    public function updateName(User $user, User $other): Response
+    {
+        return $this->isInRoles($user, RoleCode::Admin);
+    }
 }

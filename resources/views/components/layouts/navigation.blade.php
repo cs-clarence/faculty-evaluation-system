@@ -36,7 +36,7 @@
 
     <!-- Sidebar -->
     <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-blue-900 text-white p-4 sidebar-closed">
-        <div class="flex flex-col h-full">
+        <div class="flex flex-col h-full gap-4">
             <!-- Logo and Name -->
             <div class="flex items-center space-x-4 mb-8">
                 <div class="logo-image">
@@ -46,13 +46,13 @@
             </div>
 
             <!-- Navigation Links -->
-            <ul class="flex-1 space-y-4">
+            <ul class="flex-1 flex flex-col flex-grow gap-4">
                 @foreach ($links as $link)
                     @php($condition = $link['condition'] ?? true)
                     @if (is_callable($condition) ? $condition() : $condition)
                         <li>
                             <a href="{{ $link['href'] }}" @if ($link['use_wire_navigate'] ?? true) wire:navigate @endif
-                                class="flex items-center space-x-2 hover:text-gray-300">
+                                class="flex items-center gap-2 hover:text-gray-300">
                                 <i class='bx bx-user'></i>
                                 <span>{{ $link['title'] }}</span>
                             </a>
@@ -61,12 +61,21 @@
                 @endforeach
             </ul>
 
+
+            <div class="flex-grow">
+            </div>
+
+            <a href="{{ route('account-settings') }}" wire:navigate class="flex items-center gap-2 hover:text-gray-300">
+                <x-icon>account_circle</x-icon>
+                <span>Account Settings</span>
+            </a>
+
             <!-- Logout -->
             <form method="POST" action="{{ route('logout') }}" class="mt-auto">
                 @csrf
                 <button type="submit" onclick="event.preventDefault(); this.closest('form').submit();"
-                    class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
-                    <i class="uil uil-signout"></i>
+                    class="flex items-center gap-2 hover:text-gray-300 cursor-pointer">
+                    <x-icon>logout</x-icon>
                     <span>Logout</span>
                 </button>
             </form>
