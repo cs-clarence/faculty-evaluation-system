@@ -2,6 +2,7 @@
 namespace App\Livewire\Pages\Admin\Students;
 
 use App\Facades\Services\UserService;
+use App\Jobs\SendGeneratedPasswordEmail;
 use App\Livewire\Forms\UserForm;
 use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
@@ -324,6 +325,11 @@ class Index extends Component
                 }
                 return $emailSends;
             });
+
+            // This should be a background job since it can take long
+            foreach ($emailSends as $email => $password) {
+                SendGeneratedPasswordEmail::dispatch($email, $password);
+            }
 
             $count = $data->count();
             session()->flash('alert-success', [
