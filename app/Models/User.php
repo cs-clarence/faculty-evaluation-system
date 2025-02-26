@@ -43,6 +43,7 @@ class User extends Authenticatable
         'email',
         'role_id',
         'password',
+        'require_change_password',
         'active',
     ];
     protected $table = 'users';

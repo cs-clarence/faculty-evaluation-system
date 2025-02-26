@@ -35,6 +35,7 @@
     @else
         Blank Page
     @endisset
+    <x-toaster />
 </body>
 @livewireScriptConfig
 @stack('scripts')

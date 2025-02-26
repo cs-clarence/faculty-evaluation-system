@@ -1,11 +1,6 @@
 <?php
 namespace App\Livewire\Forms;
 
-use App\Facades\Services\DeanService;
-use App\Facades\Services\EvaluatorService;
-use App\Facades\Services\HumanResourcesStaffService;
-use App\Facades\Services\StudentService;
-use App\Facades\Services\TeacherService;
 use App\Facades\Services\UserService;
 use App\Models\Role;
 use App\Models\RoleCode;
@@ -14,6 +9,7 @@ use DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
+use stdClass;
 
 /**
  * @extends parent<User>
@@ -22,20 +18,21 @@ class UserForm extends BaseForm
 {
     #[Locked]
     public ?int $id;
-    public ?string $email;
-    public ?string $name;
-    public ?string $password;
-    public ?string $password_confirmation;
-    public ?string $role_code;
-    public ?string $student_number;
+    public ?string $email = null;
+    public ?string $name = null;
+    public ?string $password = null;
+    public ?string $password_confirmation = null;
+    public ?string $role_code = null;
+    public ?string $student_number = null;
     public ?int $course_id = null;
-    public ?int $department_id;
+    public ?int $department_id = null;
     public ?int $starting_school_year_id = null;
     public bool $include_password = true;
     public bool $include_base = true;
     public bool $realign_subjects = true;
     public bool $delete_subjects_from_previous_course = false;
     public ?bool $active = true;
+    public ?bool $require_change_password = false;
 
     public function rules()
     {
@@ -116,40 +113,45 @@ class UserForm extends BaseForm
                 }
 
                 if ($this->include_base) {
-                    UserService::update($user, $this->name, $this->email, RoleCode::from($this->role_code), $this->active ?? false);
+                    $extras = new stdClass;
+
                     if ($this->role_code === RoleCode::Student->value) {
-                        StudentService::update($user, $this->student_number, $this->course_id, $this->starting_school_year_id, $this->realign_subjects, $this->delete_subjects_from_previous_course);
+                        $extras->studentNumber                    = $this->student_number;
+                        $extras->courseId                         = $this->course_id;
+                        $extras->startingSchoolYearId             = $this->starting_school_year_id;
+                        $extras->realignSubjects                  = $this->realign_subjects;
+                        $extras->deleteSubjectsFromPreviousCourse = $this->delete_subjects_from_previous_course;
                     }
 
-                    if ($this->role_code === RoleCode::Teacher->value) {
-                        TeacherService::update($user, $this->department_id);
+                    if ($this->role_code === RoleCode::Teacher->value || $this->role_code === RoleCode::Dean->value) {
+                        $extras->departmentId = $this->department_id;
                     }
 
-                    if ($this->role_code === RoleCode::Dean->value) {
-                        DeanService::update($user, $this->department_id);
-                    }
+                    UserService::update(
+                        $user,
+                        $this->name,
+                        $this->email,
+                        RoleCode::from($this->role_code),
+                        $this->active ?? false,
+                        $this->require_change_password,
+                        $extras
+                    );
                 }
             } else {
-                $user = UserService::create($this->email, $this->name, $this->password, RoleCode::from($this->role_code), $this->active ?? false);
+                $extras = new stdClass;
 
-                if ($this->role_code === 'student') {
-                    StudentService::create($user, $this->student_number, $this->course_id, $this->starting_school_year_id);
-                }
-                if ($this->role_code === 'teacher') {
-                    TeacherService::create($user, $this->department_id);
-                }
-
-                if ($this->role_code === RoleCode::Dean->value) {
-                    DeanService::create($user, $this->department_id);
+                if ($this->role_code === RoleCode::Student->value) {
+                    $extras->studentNumber        = $this->student_number;
+                    $extras->courseId             = $this->course_id;
+                    $extras->startingSchoolYearId = $this->starting_school_year_id;
                 }
 
-                if ($this->role_code === RoleCode::Evaluator->value) {
-                    EvaluatorService::create($user);
+                if ($this->role_code === RoleCode::Teacher->value || $this->role_code === RoleCode::Dean->value) {
+                    $extras->departmentId = $this->department_id;
                 }
 
-                if ($this->role_code === RoleCode::HumanResourcesStaff->value) {
-                    HumanResourcesStaffService::create($user);
-                }
+                $user = UserService::create($this->email, $this->name, $this->password, RoleCode::from($this->role_code), $this->active ?? false, $this->require_change_password, $extras);
+
             }
         });
     }

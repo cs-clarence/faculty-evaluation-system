@@ -1202,6 +1202,7 @@ CREATE TABLE public.users (
     role_id integer NOT NULL,
     email character varying(255) NOT NULL,
     email_verified_at timestamp(0) with time zone,
+    require_change_password boolean DEFAULT false NOT NULL,
     password character varying(255) NOT NULL,
     remember_token character varying(100),
     archived_at timestamp(0) with time zone,

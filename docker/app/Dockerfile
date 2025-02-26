@@ -32,9 +32,9 @@ ARG ENV
 ENV ENV=$ENV
 
 RUN set -ex \
-    && apk --no-cache add postgresql-dev postgresql-libs icu-dev nginx supervisor \
+    && apk --no-cache add postgresql-dev postgresql-libs icu-dev nginx supervisor libzip-dev zip \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install pdo pgsql pdo_pgsql intl \
+    && docker-php-ext-install pdo pgsql pdo_pgsql intl zip \
     && docker-php-ext-enable pdo_pgsql intl opcache \
     && apk del postgresql-dev
 

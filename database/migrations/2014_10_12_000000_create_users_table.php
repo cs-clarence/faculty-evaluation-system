@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,10 +30,14 @@ return new class extends Migration
             $table->string('name');
 
             $table->unsignedInteger('role_id');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignIdFor(Role::class, 'role_id')
+                ->references('id')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->string('email')->unique();
             $table->timestampTz('email_verified_at')->nullable();
+            $table->boolean('require_change_password')->default(false);
             $table->string('password');
             $table->rememberToken();
             $table->timestampTz('archived_at')->nullable();

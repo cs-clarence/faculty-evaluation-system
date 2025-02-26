@@ -1,11 +1,21 @@
 @php
     use App\Models\RoleCode;
 @endphp
-<div class="contents">
+<div class="contents" x-data="{ showImportDialog: false, toggleImportDialog() { this.showImportDialog = !this.showImportDialog; } }">
     <x-sections.header title="Students">
-        <x-button id="addSubjectBtn" wire:click='openForm'>
-            Add Student
-        </x-button>
+        <div class="flex flex-row gap-1">
+            <x-button id="addSubjectBtn" wire:click='openForm'>
+                Add Student
+            </x-button>
+            <x-button variant="outlined" x-on:click="toggleImportDialog()">
+                <x-icon>upload</x-icon>
+                Import
+            </x-button>
+            <x-button variant="outlined" wire:click="downloadImportTemplate">
+                <x-icon>Download</x-icon>
+                Download Template
+            </x-button>
+        </div>
     </x-sections.header>
 
     <!-- Main Dashboard Content -->
@@ -101,4 +111,31 @@
             </x-dialog>
         </x-dialog.container>
     @endif
+
+    <div class="contents" x-show="showImportDialog">
+        <x-modal-scrim />
+        <x-dialog.container x-on:click.self="toggleImportDialog()">
+            <x-dialog el="form" wire:submit.prevent="import" wire:key='student-form'>
+                <x-dialog.title>
+                    Import Students
+                </x-dialog.title>
+                <x-dialog.content>
+                    <x-form-control>
+                        <x-file-drop
+                            accept="*.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            :multiple="false">
+                            <x-slot:input wire:model="import_file">
+                            </x-slot:input>
+                        </x-file-drop>
+                        <x-form-control.error-text key="import_file" />
+                    </x-form-control>
+                </x-dialog.content>
+                <x-dialog.actions>
+                    <x-button type="button" x-on:click="toggleImportDialog()" variant="text"
+                        color="neutral">Cancel</x-button>
+                    <x-button type="submit">Upload</x-button>
+                </x-dialog.actions>
+            </x-dialog>
+        </x-dialog.container>
+    </div>
 </div>

@@ -37,3 +37,4 @@ declare global {
 //     enabledTransports: ['ws', 'wss'],
 // });
 import "./livewire";
+import "./toastify";
