@@ -26,11 +26,11 @@
             @else
                 <p class="text-gray-600">
                     You are not allowed to update these information.
-                    Please contact the administrator your user details are incorrect.
+                    Please contact the administrator if your user details are incorrect.
                 </p>
             @endcan
         </form>
-        <form class="max-w-[420px] w-full bg-white p-6 rounded-md shadow-md flex flex-col gap-2"
+        <form class="max-w-[420px] h-max max-h-max w-full bg-white p-6 rounded-md shadow-md flex flex-col gap-2"
             wire:submit="updatePassword">
             <h2 class="text-lg font-bold">Password</h2>
             <x-form-control>
