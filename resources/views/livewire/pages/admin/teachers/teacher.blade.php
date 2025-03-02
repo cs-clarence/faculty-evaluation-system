@@ -181,8 +181,8 @@
                             <x-form-control.label key="subjectForm.section_ids">
                                 Sections
                             </x-form-control.label>
-                            <x-combobox multiple :options="$sections" :value="fn($data) => $data->id" :label="fn($data) => $data->name . ' (' . $data->code . ')'"
-                                wire:model.live="subjectForm.section_ids" empty="No Sections Found"
+                            <x-combobox multiple :options="$sections" :value="fn($data) => $data->id" :label="fn($data) => $data->code"
+                                wire:model="subjectForm.section_ids" empty="No Sections Found"
                                 placeholder="Select Section" />
                             <x-form-control.error-text key="subjectForm.section_ids" />
                             <x-form-control.error-text key="subjectForm.section_ids" />
