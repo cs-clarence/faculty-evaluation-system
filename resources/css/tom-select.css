@@ -2,7 +2,7 @@
     @apply pl-0 h-max relative;
 
     & > .ts-control {
-        @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-2;
+        @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-1;
 
         & > .item {
             @apply max-w-9/10 text-ellipsis overflow-hidden whitespace-nowrap break-words;
@@ -21,7 +21,11 @@
 
     &.multi {
         & > .ts-control > .item {
-            @apply text-black p-2 border border-gray-400;
+            @apply text-black py-2 pl-3 pr-8 border border-gray-400 rounded-lg relative cursor-pointer;
+
+            &.active {
+                @apply bg-blue-100;
+            }
         }
     }
 
