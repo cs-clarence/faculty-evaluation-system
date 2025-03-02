@@ -55,4 +55,9 @@ class Subject extends Model
 
         return false;
     }
+
+    public function __tostring()
+    {
+        return "{$this->name} ({$this->code})";
+    }
 }

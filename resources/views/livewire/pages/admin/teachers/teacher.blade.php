@@ -18,7 +18,6 @@
                     <x-accordion.item :key="$semester->id">
                         <x-accordion.item-header>
                             <h2 class="text-xl" x-on:click="toggle()">
-                                {{ Number::ordinal($semester->year_level) }} Year -
                                 {{ $semester->semester }}
                                 <span class="text-lg text-gray-400">({{ $semester->teacherSubjects()->count() }}
                                     Subject(s))
@@ -31,10 +30,6 @@
                                 </x-button>
 
                                 @if (!$semester->hasDependents())
-                                    <x-button wire:click.stop='editSemester({{ $semester->id }})' :disabled="$semester->hasDependents()"
-                                        color="secondary">
-                                        Edit
-                                    </x-button>
                                     <x-button wire:click.stop='deleteSemester({{ $semester->id }})' :disabled="$semester->hasDependents()"
                                         wire:confirm='Are you sure you want to delete this semester?' color="danger">
                                         Delete
@@ -48,8 +43,11 @@
                                     ['label' => 'Subject Code', 'render' => 'subject.code'],
                                     ['label' => 'Subject Name', 'render' => 'subject.name'],
                                     [
-                                        'label' => 'Section',
-                                        'render' => fn($data) => $data->semesterSection?->section->code ?? 'None',
+                                        'label' => 'Sections',
+                                        'render' => fn($data) => isset($data->semesterSections) &&
+                                        count($data->semesterSections) > 0
+                                            ? $data->semesterSections->pluck('section.code')->join(', ')
+                                            : 'None',
                                     ],
                                     [
                                         'label' => 'Actions',
@@ -57,16 +55,16 @@
                                         'props' => [
                                             'actions' => [
                                                 'edit' => [
-                                                    'wire:click' => fn($d) => "editStudentSubject({$d->id})",
+                                                    'wire:click' => fn($d) => "editSubject({$d->id})",
                                                 ],
                                                 'archive' => [
-                                                    'wire:click' => fn($d) => "archiveStudentSubject({$d->id})",
+                                                    'wire:click' => fn($d) => "archiveSubject({$d->id})",
                                                 ],
                                                 'unarchive' => [
-                                                    'wire:click' => fn($d) => "unarchiveStudentSubject({$d->id})",
+                                                    'wire:click' => fn($d) => "unarchiveSubject({$d->id})",
                                                 ],
                                                 'delete' => [
-                                                    'wire:click' => fn($d) => "deleteStudentSubject({$d->id})",
+                                                    'wire:click' => fn($d) => "deleteSubject({$d->id})",
                                                 ],
                                             ],
                                         ],
@@ -86,8 +84,8 @@
         </div>
         @if ($semesterFormIsOpen)
             <x-modal-scrim />
-            <x-dialog.container>
-                <x-dialog wire:submit="saveSemester" el="form">
+            <x-dialog.container wire:click.self="closeSemesterForm">
+                <x-dialog wire:submit="saveSemester" el="form" wire:key="semester-form">
                     <x-dialog.title>
                         @isset($semesterForm->id)
                             @if (!$semesterForm->include_base && $semesterForm->include_subjects)
@@ -100,7 +98,11 @@
                         @endisset
                     </x-dialog.title>
                     <x-dialog.content>
-                        @if ($semesterForm->include_subjects)
+                        <input type="hidden" name="semesterForm.teacher_id" wire:model="semesterForm.teacher_id"
+                            value="{{ $teacher->id ?? null }}" />
+                        <input type="hidden" name="semesterForm.id" wire:model="semesterForm.id"
+                            value="{{ $semesterForm->id ?? null }}" />
+                        @if ($semesterForm->include_base)
                             <x-form-control>
                                 <x-form-control.label key="semesterForm.semester_id">
                                     Semester
@@ -110,16 +112,20 @@
                                     placeholder="Select a Semester" />
                                 <x-form-control.error-text key="semesterForm.semester_id" />
                             </x-form-control>
+                        @endif
+
+                        @if ($semesterForm->include_subjects)
                             <x-form-control>
-                                <x-form-control.label key="semesterForm.course_id">
+                                <x-form-control.label key="semesterForm.course_ids">
                                     Course
                                 </x-form-control.label>
-                                <x-combobox :options="$courses" :value="fn($data) => $data->id" :label="fn($data) => $data->name . ' (' . $data->code . ')'"
-                                    wire:model.live="semesterForm.course_id" empty="No Courses Found"
+                                <x-combobox multiple :options="$courses" :value="fn($data) => $data->id" :label="fn($data) => $data->name . ' (' . $data->code . ')'"
+                                    wire:model.live="semesterForm.course_ids" empty="No Courses Found"
                                     placeholder="Select a Course" />
-                                <x-form-control.error-text key="semesterForm.course_id" />
+                                <x-form-control.error-text key="semesterForm.course_ids" />
+                                <x-form-control.error-text key="semesterForm.course_ids.*" />
                             </x-form-control>
-                            @isset($semesterForm->course_id)
+                            @if (isset($semesterForm->course_ids) && count($semesterForm->course_ids) > 0)
                                 <x-form-control>
                                     <x-form-control.label key="semesterForm.course_subject_ids">
                                         Subjects
@@ -130,14 +136,63 @@
                                     <x-form-control.error-text key="semesterForm.course_subject_ids.*" />
                                     <x-form-control.error-text key="semesterForm.course_subject_ids" />
                                 </x-form-control>
-                            @endisset
+                            @endif
                         @endif
                     </x-dialog.content>
                     <x-dialog.actions>
                         <x-button wire:click="closeSemesterForm" color="neutral" variant="text" type="button">
                             Cancel
                         </x-button>
-                        <x-button wire:click="closeSemesterForm">
+                        <x-button type="submit">
+                            Save
+                        </x-button>
+                    </x-dialog.actions>
+                </x-dialog>
+            </x-dialog.container>
+        @endif
+        @if ($subjectFormIsOpen)
+            <x-modal-scrim />
+            <x-dialog.container wire:click.self="closeSubjectForm">
+                <x-dialog wire:submit="saveSubject" el="form" wire:key="subject-form">
+                    <x-dialog.title>
+                        @isset($subjectForm->id)
+                            Edit Subject
+                        @else
+                            Add Subject
+                        @endisset
+                    </x-dialog.title>
+                    <x-dialog.content>
+                        <input type="hidden" name="subjectForm.course_subject_id"
+                            wire:model="subjectForm.course_subject_id"
+                            value="{{ $subjectForm->course_subject_id ?? null }}" />
+                        <input type="hidden" name="subjectForm.id" wire:model="subjectForm.id"
+                            value="{{ $subjectForm->id ?? null }}" />
+                        <input type="hidden" name="subjectForm.teacher_semester_id"
+                            wire:model="subjectForm.teacher_semester_id"
+                            value="{{ $subjectForm->teacher_semester_id ?? null }}" />
+
+                        <x-form-control>
+                            <x-form-control.label key="subject">
+                                Subject
+                            </x-form-control.label>
+                            <x-input key="subject" disabled :value="$subject->subject" />
+                        </x-form-control>
+                        <x-form-control>
+                            <x-form-control.label key="subjectForm.section_ids">
+                                Sections
+                            </x-form-control.label>
+                            <x-combobox multiple :options="$sections" :value="fn($data) => $data->id" :label="fn($data) => $data->name . ' (' . $data->code . ')'"
+                                wire:model.live="subjectForm.section_ids" empty="No Sections Found"
+                                placeholder="Select Section" />
+                            <x-form-control.error-text key="subjectForm.section_ids" />
+                            <x-form-control.error-text key="subjectForm.section_ids" />
+                        </x-form-control>
+                    </x-dialog.content>
+                    <x-dialog.actions>
+                        <x-button wire:click="closeSubjectForm" color="neutral" variant="text" type="button">
+                            Cancel
+                        </x-button>
+                        <x-button type="submit">
                             Save
                         </x-button>
                     </x-dialog.actions>

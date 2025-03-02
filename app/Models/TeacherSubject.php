@@ -1,7 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Models\Traits\Archivable;
 use Awobaz\Compoships\Compoships;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -9,13 +11,13 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class TeacherSubject extends Pivot
 {
-    use Compoships;
+    use Compoships, Archivable;
     protected $table    = 'teacher_subjects';
-    protected $fillable = ['teacher_semester_id', 'semester_section_id', 'course_subject_id'];
+    protected $fillable = ['teacher_semester_id', 'course_subject_id'];
 
-    public function semesterSection()
+    public function semesterSections()
     {
-        return $this->belongsTo(SemesterSection::class);
+        return $this->belongsToMany(SemesterSection::class, 'teacher_subject_semester_sections', 'teacher_subject_id', 'semester_section_id', 'id', 'id');
     }
 
     public function teacherSemester()
@@ -23,8 +25,18 @@ class TeacherSubject extends Pivot
         return $this->belongsTo(TeacherSemester::class);
     }
 
-    public function teacher()
+    public function hasDependents()
     {
+        return false;
+    }
 
+    public function courseSubject()
+    {
+        return $this->belongsTo(CourseSubject::class);
+    }
+
+    protected function subject(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->courseSubject->subject)->shouldCache();
     }
 }

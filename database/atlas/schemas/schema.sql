@@ -1010,6 +1010,8 @@ CREATE TABLE public.student_semesters (
     student_id bigint NOT NULL,
     semester_id bigint NOT NULL,
     semester_section_id bigint,
+    course_semester_id bigint NOT NULL,
+    year_level integer NOT NULL,
     archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -1172,6 +1174,39 @@ ALTER SEQUENCE public.teacher_semesters_id_seq OWNED BY public.teacher_semesters
 
 
 --
+-- Name: teacher_subject_semester_sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.teacher_subject_semester_sections (
+    id bigint NOT NULL,
+    teacher_subject_id bigint NOT NULL,
+    semester_section_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: teacher_subject_semester_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.teacher_subject_semester_sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: teacher_subject_semester_sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.teacher_subject_semester_sections_id_seq OWNED BY public.teacher_subject_semester_sections.id;
+
+
+--
 -- Name: teacher_subjects; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1179,7 +1214,6 @@ CREATE TABLE public.teacher_subjects (
     id bigint NOT NULL,
     teacher_semester_id bigint NOT NULL,
     course_subject_id bigint NOT NULL,
-    semester_section_id bigint NOT NULL,
     archived_at timestamp(0) with time zone,
     created_at timestamp(0) with time zone,
     updated_at timestamp(0) with time zone
@@ -1507,6 +1541,13 @@ ALTER TABLE ONLY public.subjects ALTER COLUMN id SET DEFAULT nextval('public.sub
 --
 
 ALTER TABLE ONLY public.teacher_semesters ALTER COLUMN id SET DEFAULT nextval('public.teacher_semesters_id_seq'::regclass);
+
+
+--
+-- Name: teacher_subject_semester_sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subject_semester_sections ALTER COLUMN id SET DEFAULT nextval('public.teacher_subject_semester_sections_id_seq'::regclass);
 
 
 --
@@ -2035,6 +2076,30 @@ ALTER TABLE ONLY public.teacher_semesters
 
 
 --
+-- Name: teacher_semesters teacher_semesters_teacher_id_semester_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_semesters
+    ADD CONSTRAINT teacher_semesters_teacher_id_semester_id_unique UNIQUE (teacher_id, semester_id);
+
+
+--
+-- Name: teacher_subject_semester_sections teacher_subject_semester_sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subject_semester_sections
+    ADD CONSTRAINT teacher_subject_semester_sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: teacher_subject_semester_sections teacher_subject_semester_sections_teacher_subject_id_semester_s; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subject_semester_sections
+    ADD CONSTRAINT teacher_subject_semester_sections_teacher_subject_id_semester_s UNIQUE (teacher_subject_id, semester_section_id);
+
+
+--
 -- Name: teacher_subjects teacher_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2481,6 +2546,14 @@ ALTER TABLE ONLY public.semesters
 
 
 --
+-- Name: student_semesters student_semesters_course_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.student_semesters
+    ADD CONSTRAINT student_semesters_course_semester_id_foreign FOREIGN KEY (course_semester_id) REFERENCES public.course_semesters(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: student_semesters student_semesters_semester_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2569,19 +2642,27 @@ ALTER TABLE ONLY public.teacher_semesters
 
 
 --
+-- Name: teacher_subject_semester_sections teacher_subject_semester_sections_semester_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subject_semester_sections
+    ADD CONSTRAINT teacher_subject_semester_sections_semester_section_id_foreign FOREIGN KEY (semester_section_id) REFERENCES public.semester_sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: teacher_subject_semester_sections teacher_subject_semester_sections_teacher_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.teacher_subject_semester_sections
+    ADD CONSTRAINT teacher_subject_semester_sections_teacher_subject_id_foreign FOREIGN KEY (teacher_subject_id) REFERENCES public.teacher_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: teacher_subjects teacher_subjects_course_subject_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.teacher_subjects
     ADD CONSTRAINT teacher_subjects_course_subject_id_foreign FOREIGN KEY (course_subject_id) REFERENCES public.course_subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: teacher_subjects teacher_subjects_semester_section_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.teacher_subjects
-    ADD CONSTRAINT teacher_subjects_semester_section_id_foreign FOREIGN KEY (semester_section_id) REFERENCES public.sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

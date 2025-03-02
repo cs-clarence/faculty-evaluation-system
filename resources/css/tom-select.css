@@ -2,29 +2,44 @@
     @apply pl-0 h-max relative;
 
     & > .ts-control {
-        @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-1;
+        @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-1 cursor-text;
 
         & > .item {
-            @apply max-w-9/10 text-ellipsis overflow-hidden whitespace-nowrap break-words;
+            @apply text-ellipsis overflow-hidden whitespace-nowrap break-words;
         }
 
         & > input {
-            @apply bg-inherit text-inherit ring-0 border-none outline-none focus:border-none focus:outline-none focus:ring-0 p-0 m-0 flex-grow;
+            @apply bg-inherit text-inherit ring-0 border-none outline-none focus:border-none focus:outline-none focus:ring-0 p-0 m-0 flex-grow max-w-full;
+        }
+    }
+
+    &:is(.has-items):not(.input-active) {
+        & > .ts-control {
+            input {
+                @apply h-0;
+            }
         }
     }
 
     &.single {
         & > .ts-control > .item {
-            @apply text-black;
+            @apply text-black max-w-9/10;
         }
     }
 
     &.multi {
-        & > .ts-control > .item {
-            @apply text-black py-2 pl-3 pr-8 border border-gray-400 rounded-lg relative cursor-pointer;
+        & > .ts-control {
+            @apply flex flex-col flex-wrap gap-1 items-start;
+            & > .item {
+                @apply text-black py-2 pl-3 pr-8 border border-gray-400 rounded-lg relative cursor-pointer w-max max-w-[calc(100%_-_12px)];
 
-            &.active {
-                @apply bg-blue-100;
+                &.active {
+                    @apply bg-blue-100;
+                }
+            }
+
+            & > input {
+                @apply w-full;
             }
         }
     }
