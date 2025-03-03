@@ -52,9 +52,20 @@ class CourseSubject extends Pivot
         return new Attribute(get: fn() => isset($this->archived_at));
     }
 
-    public function hasDependents()
+    public function studentSubjects()
     {
-        return false;
+        return $this->hasMany(StudentSubject::class, "course_subject_id", 'id');
     }
 
+    public function hasDependents()
+    {
+        if (isset($this->student_subjects_count) && $this->student_subjects_count > 0) {
+            return true;
+        }
+        if ($this->studentSubjects()->count() > 0) {
+            return true;
+        }
+
+        return false;
+    }
 }

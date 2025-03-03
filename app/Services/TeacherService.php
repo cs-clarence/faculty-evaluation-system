@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\Teacher;
@@ -17,7 +16,7 @@ class TeacherService
         $userId = self::getUserId($user);
 
         $teacher = new Teacher([
-            'user_id' => $userId,
+            'user_id'       => $userId,
             'department_id' => $department_id,
         ]);
 

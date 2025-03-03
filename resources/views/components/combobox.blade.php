@@ -78,6 +78,7 @@
         'id' => $key,
         'name' => $key,
         'x-on:clear-inputs.window' => "\$el.value = ''",
+        'x-init' => 'new TomSelect($el)',
     ];
 @endphp
 

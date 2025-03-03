@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
-        return view('auth/login');
+        return view('auth.login');
     });
 });
 
@@ -70,7 +70,11 @@ Route::middleware(['auth:admin,human_resources_staff,evaluator'])
         Route::get('/school-years', App\Livewire\Pages\Admin\SchoolYears\Index::class)->name('school-years.index');
         Route::get('/sections', App\Livewire\Pages\Admin\Sections\Index::class)->name('sections.index');
         Route::get('/students', App\Livewire\Pages\Admin\Students\Index::class)->name('students.index');
+        Route::get('/students/{student}', App\Livewire\Pages\Admin\Students\Student::class)
+            ->name('students.student');
         Route::get('/teachers', App\Livewire\Pages\Admin\Teachers\Index::class)->name('teachers.index');
+        Route::get('/teachers/{teacher}', App\Livewire\Pages\Admin\Teachers\Teacher::class)
+            ->name('teachers.teacher');
         Route::get('/deans', App\Livewire\Pages\Admin\Deans\Index::class)->name('deans.index');
         Route::get('/accounts', App\Livewire\Pages\Admin\Accounts\Index::class)->name('accounts.index');
     });

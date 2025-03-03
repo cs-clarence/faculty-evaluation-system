@@ -1,0 +1,67 @@
+.ts-wrapper {
+    @apply pl-0 h-max relative;
+
+    & > .ts-control {
+        @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-2;
+
+        & > .item {
+            @apply max-w-9/10 text-ellipsis overflow-hidden whitespace-nowrap break-words;
+        }
+
+        & > input {
+            @apply bg-inherit text-inherit ring-0 border-none outline-none focus:border-none focus:outline-none focus:ring-0 p-0 m-0 flex-grow;
+        }
+    }
+
+    &.single {
+        & > .ts-control > .item {
+            @apply text-black;
+        }
+    }
+
+    &.multi {
+        & > .ts-control > .item {
+            @apply text-black p-2 border border-gray-400;
+        }
+    }
+
+    &.has-items {
+        & > .ts-control > input {
+            @apply placeholder:opacity-0;
+        }
+    }
+
+    & > .ts-dropdown {
+        @apply text-black absolute bg-white w-full top-[100%] left-0 z-100 overflow-y-auto max-h-[30dvh] shadow-lg rounded-lg;
+        & > .ts-dropdown-content {
+            & > :is(.option, .no-results) {
+                @apply px-4 py-2 text-black w-full;
+            }
+            & > .option {
+                @apply cursor-pointer;
+            }
+            & > .option.active {
+                @apply cursor-pointer bg-blue-100 text-black;
+            }
+            & > .option.selected {
+                @apply cursor-pointer bg-blue-500 text-white;
+            }
+            & > .no-results {
+                @apply cursor-not-allowed;
+            }
+        }
+    }
+}
+
+.ts-hidden-accessible {
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+}
+/*# sourceMappingURL=tom-select.css.map */

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\Traits\Archivable;
@@ -39,7 +38,7 @@ class Student extends Model
 
     public function studentSemesters()
     {
-        return $this->hasMany(StudentSemester::class);
+        return $this->hasMany(StudentSemester::class, 'student_id', 'id');
     }
 
     public function studentSubjects()

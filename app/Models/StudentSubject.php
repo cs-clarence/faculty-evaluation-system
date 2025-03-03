@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Models\Traits\Archivable;
 use Awobaz\Compoships\Compoships;
 use Awobaz\Compoships\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class StudentSubject extends Pivot
 {
-    use Compoships;
+    use Compoships, Archivable;
     public $incrementing = true;
     //
     protected $table = 'student_subjects';
@@ -81,5 +82,10 @@ class StudentSubject extends Pivot
         return Attribute::make(get: fn() =>
             $this->courseSubject?->courseSemester?->course?->department?->code
         );
+    }
+
+    public function hasDependents()
+    {
+        return false;
     }
 }

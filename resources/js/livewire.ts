@@ -3,7 +3,7 @@ import {
     Alpine,
 } from "../../vendor/livewire/livewire/dist/livewire.esm";
 
-type Data = {
+type EditableTextData = {
     edit: boolean;
     text: string;
     savedText: string;
@@ -11,10 +11,19 @@ type Data = {
     editable: boolean;
 };
 
-type DispatchFn = (eventType: string, detail: unknown) => void;
+type DispatchFn = (eventType: string, detail?: unknown) => void;
+
+type AccordionData = {
+    openKey: string | undefined;
+};
+
+type AccordionItemData = {
+    key: string | undefined;
+    $dispatch: DispatchFn;
+};
 
 document.addEventListener("alpine:init", () => {
-    Alpine.data("editableText", (data: Data) => ({
+    Alpine.data("editableText", (data: EditableTextData) => ({
         ...data,
         _privateEdit: data.edit,
         get edit(): boolean {
@@ -60,6 +69,40 @@ document.addEventListener("alpine:init", () => {
         },
         get rows(): number {
             return this.text.split("\n").length;
+        },
+    }));
+    Alpine.data("accordion", (data: AccordionData) => ({
+        ...data,
+        isOpen(key: string): boolean {
+            return this.openKey === key;
+        },
+        open(key: string) {
+            this.openKey = key;
+        },
+        toggle(key: string) {
+            if (this.openKey === key) {
+                this.openKey = undefined;
+            } else {
+                this.openKey = key;
+            }
+        },
+        reset() {
+            this.openKey = undefined;
+        },
+    }));
+    Alpine.data("accordionItem", (data: AccordionItemData) => ({
+        __data: data,
+        get key() {
+            return this.__data.key;
+        },
+        init($dispatch: DispatchFn) {
+            this.__data.$dispatch = $dispatch;
+        },
+        open($dispatch?: DispatchFn) {
+            ($dispatch ?? this.__data.$dispatch)("open", { key: this.key });
+        },
+        toggle($dispatch?: DispatchFn) {
+            ($dispatch ?? this.__data.$dispatch)("toggle", { key: this.key });
         },
     }));
 });

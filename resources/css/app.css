@@ -2,8 +2,11 @@
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css" layer(utilities);
 @import "toastify-js/src/toastify.css" layer(components);
+@import "https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.css"
+    layer(components);
+@import "./tom-select.css" layer(components);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 @plugin '@tailwindcss/forms';
 

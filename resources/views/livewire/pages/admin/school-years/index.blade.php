@@ -21,10 +21,10 @@
                         'props' => [
                             'actions' => [
                                 'archive' => [
-                                    'condition' => fn($data) => false,
+                                    'condition' => false,
                                 ],
                                 'unarchive' => [
-                                    'condition' => fn($data) => false,
+                                    'condition' => false,
                                 ],
                             ],
                         ],
@@ -54,8 +54,7 @@
                         Year Start
                     </x-form-control.label>
                     <x-input key="form.year_start" type="text" required type="number"
-                        wire:model.blur="form.year_start">
-                    </x-input>
+                        wire:model.blur="form.year_start" :disabled="$schoolYear->hasDependents()" />
                     <x-form-control.error-text key="form.year_start" />
                 </x-form-control>
                 {{-- <div class="mb-4">

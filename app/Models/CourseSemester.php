@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,8 +34,19 @@ class CourseSemester extends Model
         return $this->hasMany(CourseSubject::class);
     }
 
+    public function studentSemesters()
+    {
+        return $this->hasMany(StudentSemester::class, 'course_semester_id', 'id');
+    }
+
     public function hasDependents()
     {
+        foreach ($this->courseSubjects as $cs) {
+            if ($cs->hasDependents()) {
+                return true;
+            }
+        }
+
         return false;
     }
 }

@@ -36,7 +36,9 @@ class Section extends Model
 
     public function hasDependents()
     {
-        $semesterSectionsCount = isset($this->semester_sections_count) ? $this->semester_sections_count : $this->semesterSections()->count();
+        $semesterSectionsCount = isset($this->semester_sections_count)
+        ? $this->semester_sections_count
+        : $this->semesterSections()->count();
 
         if ($semesterSectionsCount > 0) {
             return true;

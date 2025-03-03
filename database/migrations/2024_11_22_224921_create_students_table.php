@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Course;
+use App\Models\CourseSemester;
 use App\Models\CourseSubject;
 use App\Models\SchoolYear;
 use App\Models\Semester;
@@ -48,19 +49,26 @@ return new class extends Migration
 
             $table->foreignIdFor(Student::class, 'student_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(Semester::class, 'semester_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(SemesterSection::class, 'semester_section_id')
                 ->nullable()
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignIdFor(CourseSemester::class, 'course_semester_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->integer('year_level');
 
             $table->timestampTz('archived_at')->nullable();
 

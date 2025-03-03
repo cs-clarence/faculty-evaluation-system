@@ -2,7 +2,7 @@
     "name": "@repo/root",
     "private": true,
     "type": "module",
-    "packageManager": "bun@1.2.3",
+    "packageManager": "bun@1.2.4",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -35,15 +35,15 @@
         "@rencedm112/tsconfig": "^3.0.6",
         "@rencedm112/with-env": "^0.0.43",
         "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/vite": "^4.0.8",
+        "@tailwindcss/vite": "^4.0.9",
         "@types/alpinejs": "^3.13.11",
         "@types/toastify-js": "^1.12.3",
         "autoprefixer": "^10.4.20",
-        "axios": "^1.7.9",
+        "axios": "^1.8.1",
         "laravel-vite-plugin": "^1.2.0",
         "postcss": "^8.5.3",
-        "tailwindcss": "^4.0.8",
-        "typescript": "^5.7.3",
+        "tailwindcss": "^4.0.9",
+        "typescript": "^5.8.2",
         "vite": "^6.2.0"
     },
     "dependencies": {

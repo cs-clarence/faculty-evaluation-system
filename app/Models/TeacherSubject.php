@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class TeacherSubject extends Pivot
 {
     use Compoships;
-    protected $table = 'teacher_subjects';
+    protected $table    = 'teacher_subjects';
+    protected $fillable = ['teacher_semester_id', 'semester_section_id', 'course_subject_id'];
 
     public function semesterSection()
     {

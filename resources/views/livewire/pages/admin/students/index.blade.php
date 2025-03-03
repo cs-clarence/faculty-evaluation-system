@@ -40,8 +40,17 @@
                             'render' => 'blade:table.actions',
                             'props' => [
                                 'actions' => [
-                                    'edit_password' => [
+                                    'view' => [
                                         'order' => 1.1,
+                                        'label' => 'View',
+                                        'type' => 'link',
+                                        'color' => 'primary',
+                                        'href' => fn($data) => route('admin.students.student', [
+                                            'student' => $data->student->id,
+                                        ]),
+                                    ],
+                                    'edit_password' => [
+                                        'order' => 1.2,
                                         'label' => 'Edit Password',
                                         'color' => 'primary',
                                         'wire:click' => fn($data) => "editPassword({$data->id})",
@@ -116,7 +125,7 @@
 
         <div class="contents" x-show="showImportDialog">
             <x-modal-scrim />
-            <x-dialog.container x-on:click.self="toggleImportDialog()">
+            <x-dialog.container x-on:click.self="toggleImportDialog(); $dispatch('clear-inputs')">
                 <x-dialog el="form" wire:submit.prevent="import" wire:key='student-form'>
                     <x-dialog.title>
                         Import Students
@@ -126,15 +135,15 @@
                             <x-file-drop
                                 accept="*.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                 :multiple="false">
-                                <x-slot:input wire:model="import_file">
+                                <x-slot:input wire:model="import_file" x-ref="xInput">
                                 </x-slot:input>
                             </x-file-drop>
                             <x-form-control.error-text key="import_file" />
                         </x-form-control>
                     </x-dialog.content>
                     <x-dialog.actions>
-                        <x-button type="button" x-on:click="toggleImportDialog()" variant="text"
-                            color="neutral">Cancel</x-button>
+                        <x-button type="button" x-on:click="toggleImportDialog(); $dispatch('clear-inputs')"
+                            variant="text" color="neutral">Cancel</x-button>
                         <x-button type="submit">Upload</x-button>
                     </x-dialog.actions>
                 </x-dialog>

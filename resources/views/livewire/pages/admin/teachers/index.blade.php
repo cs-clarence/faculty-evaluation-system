@@ -26,8 +26,16 @@
                         'render' => 'blade:table.actions',
                         'props' => [
                             'actions' => [
-                                'edit_password' => [
+                                'View' => [
                                     'order' => 1.1,
+                                    'label' => 'View',
+                                    'type' => 'link',
+                                    'href' => fn($data) => route('admin.teachers.teacher', [
+                                        'teacher' => $data->teacher->id,
+                                    ]),
+                                ],
+                                'edit_password' => [
+                                    'order' => 1.2,
                                     'label' => 'Edit Password',
                                     'color' => 'primary',
                                     'wire:click' => fn($data) => "editPassword({$data->id})",

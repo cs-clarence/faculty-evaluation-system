@@ -22,7 +22,17 @@
                     ['label' => 'Section Name', 'render' => 'name'],
                     ['label' => 'Section Code', 'render' => 'code'],
                     ['label' => 'Course', 'render' => 'course.name'],
-                    ['label' => 'Actions', 'render' => 'blade:table.actions'],
+                    [
+                        'label' => 'Actions',
+                        'render' => 'blade:table.actions',
+                        'props' => [
+                            'actions' => [
+                                'edit' => [
+                                    'condition' => fn($data) => !$data->hasDependents(),
+                                ],
+                            ],
+                        ],
+                    ],
                 ];
                 $paginate = [
                     'perPage' => 15,
