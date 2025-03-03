@@ -33,11 +33,19 @@ class StudentSubject extends Pivot
         return $this->belongsTo(CourseSubject::class);
     }
 
-    public function teacherSubject()
+    public function getTeacher()
     {
-        return $this->hasOne(TeacherSubject::class,
-            ['semester_section_id', 'course_subject_id'],
-            ['semester_section_id', 'course_subject_id']);
+        return Teacher::whereHas('teacherSubjects',
+            fn($q) => $q->where('course_subject_id', $this->id)
+                ->whereHas('semesterSections', fn($q2) => $q2->where('semester_section_id', $this->semester_section_id))
+        )
+            ->whereHas('teacherSemesters', fn($q) => $q->where('semester_id', $this->studentSemester->semester_id))
+            ->first();
+    }
+
+    protected function teacher(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->getTeacher());
     }
 
     protected function subject(): Attribute

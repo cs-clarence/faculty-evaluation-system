@@ -80,6 +80,10 @@
         'x-on:clear-inputs.window' => "\$el.value = ''",
         'x-init' => 'new TomSelect($el)',
     ];
+
+    if (isset($key)) {
+        $base['wire:key'] = $key . '-' . rand(0, 1000);
+    }
 @endphp
 
 <select {{ $attributes->merge($base) }}>

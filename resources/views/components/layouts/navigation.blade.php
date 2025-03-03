@@ -35,7 +35,8 @@
 
 
     <!-- Sidebar -->
-    <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-blue-900 text-white p-4 sidebar-closed">
+    <nav id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-blue-900 text-white p-4 sidebar-closed"
+        wire:key="sidebar">
         <div class="flex flex-col h-full gap-4">
             <!-- Logo and Name -->
             <div class="flex items-center space-x-4 mb-8">

@@ -1,8 +1,3 @@
-@php
-    use Illuminate\Support\Number;
-@endphp
-
-
 <div class="contents">
     <x-layouts.loader>
         <div class="container mx-auto p-4">
@@ -31,7 +26,8 @@
 
                                 @if (!$semester->hasDependents())
                                     <x-button wire:click.stop='deleteSemester({{ $semester->id }})' :disabled="$semester->hasDependents()"
-                                        wire:confirm='Are you sure you want to delete this semester?' color="danger">
+                                        variant="outlined" wire:confirm='Are you sure you want to delete this semester?'
+                                        color="danger">
                                         Delete
                                     </x-button>
                                 @endif
@@ -123,7 +119,6 @@
                                     wire:model.live="semesterForm.course_ids" empty="No Courses Found"
                                     placeholder="Select a Course" />
                                 <x-form-control.error-text key="semesterForm.course_ids" />
-                                <x-form-control.error-text key="semesterForm.course_ids.*" />
                             </x-form-control>
                             @if (isset($semesterForm->course_ids) && count($semesterForm->course_ids) > 0)
                                 <x-form-control>
@@ -131,9 +126,9 @@
                                         Subjects
                                     </x-form-control.label>
                                     <x-combobox multiple :options="$courseSubjects" :value="fn($data) => $data->id" :label="fn($data) => $data->subject->name . ' (' . $data->subject->code . ')'"
-                                        wire:model="semesterForm.course_subject_ids" placeholder="Select subjects" />
+                                        wire:model="semesterForm.course_subject_ids" placeholder="Select subjects"
+                                        empty="No subjects found" />
 
-                                    <x-form-control.error-text key="semesterForm.course_subject_ids.*" />
                                     <x-form-control.error-text key="semesterForm.course_subject_ids" />
                                 </x-form-control>
                             @endif
@@ -184,7 +179,6 @@
                             <x-combobox multiple :options="$sections" :value="fn($data) => $data->id" :label="fn($data) => $data->code"
                                 wire:model="subjectForm.section_ids" empty="No Sections Found"
                                 placeholder="Select Section" />
-                            <x-form-control.error-text key="subjectForm.section_ids" />
                             <x-form-control.error-text key="subjectForm.section_ids" />
                         </x-form-control>
                     </x-dialog.content>

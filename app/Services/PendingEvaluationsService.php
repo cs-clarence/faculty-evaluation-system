@@ -39,7 +39,6 @@ class PendingEvaluationsService
                             'courseSemester.course.department',
                         ],
                         'studentSemester',
-                        'teacherSubject.teacherSemester.teacher',
                     ])
                     ->whereIn('semester_id', $activePeriodSemesterIds)
                     ->doesntHave('formSubmissionSubject'),
@@ -57,6 +56,8 @@ class PendingEvaluationsService
                     $pe = new PendingEvaluation(
                         $p,
                         $s,
+                        $s->courseSubject,
+                        $s->teacher?->user,
                     );
 
                     $pe->id = $id++;

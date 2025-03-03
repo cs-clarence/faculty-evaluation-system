@@ -113,7 +113,7 @@ class FormSubmissionPeriod extends Model
 
     public function isEvaluatorRole(RoleCode $role)
     {
-        return $this->evaluateeRole->code === $role->value;
+        return $this->evaluatorRole->code === $role->value;
     }
 
     public function isEvaluateeRole(RoleCode $role)

@@ -1,6 +1,7 @@
 <?php
 namespace App\Livewire\Pages\AllRoles;
 
+use App\Facades\Services\FormSubmissionEvaluateeService;
 use App\Livewire\Forms\FormSubmissionForm;
 use App\Models\CourseSubject;
 use App\Models\Form;
@@ -86,8 +87,11 @@ class SubmitEvaluation extends Component
         ])->whereId($this->formSubmissionPeriod->form_id)
             ->first();
 
-        $users = isset($this->evaluatee) ? [] : User::whereRoleId($this->formSubmissionPeriod->evaluatee_role_id)
-            ->lazy();
+        $users = isset($this->evaluatee) ? [] : FormSubmissionEvaluateeService::getAvailableEvaluatees(
+            $this->formSubmissionPeriod,
+            \Illuminate\Support\Facades\Auth::user(),
+            $this->courseSubject ?? $this->courseSubjectId
+        )->lazy();
 
         return view('livewire.pages.all-roles.submit-evaluation')
             ->with(compact('formModel', 'users'))

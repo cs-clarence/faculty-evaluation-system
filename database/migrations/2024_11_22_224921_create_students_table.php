@@ -72,7 +72,7 @@ return new class extends Migration
 
             $table->timestampTz('archived_at')->nullable();
 
-            $table->unique(['student_id', 'semester_id']);
+            $table->unique(['student_id', 'semester_id', 'year_level']);
 
             $table->timestampsTz();
         });

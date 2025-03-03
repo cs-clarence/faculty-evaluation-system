@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Number;
 
 /**
  * @mixin IdeHelperCourseSemester
@@ -48,5 +49,14 @@ class CourseSemester extends Model
         }
 
         return false;
+    }
+
+    public function __tostring()
+    {
+        $yl         = Number::ordinal($this->year_level);
+        $sem        = Number::ordinal($this->semester);
+        $courseCode = $this->course->code;
+
+        return "{$courseCode}, {$yl} Year - {$sem} Semester";
     }
 }

@@ -22,7 +22,7 @@ services:
       - database
 
   database:
-    image: postgres:alpine
+    image: postgres:16-alpine
     restart: unless-stopped
     env_file:
       - path: .env

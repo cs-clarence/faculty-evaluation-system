@@ -2012,11 +2012,11 @@ ALTER TABLE ONLY public.student_semesters
 
 
 --
--- Name: student_semesters student_semesters_student_id_semester_id_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: student_semesters student_semesters_student_id_semester_id_year_level_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.student_semesters
-    ADD CONSTRAINT student_semesters_student_id_semester_id_unique UNIQUE (student_id, semester_id);
+    ADD CONSTRAINT student_semesters_student_id_semester_id_year_level_unique UNIQUE (student_id, semester_id, year_level);
 
 
 --
@@ -2704,6 +2704,3 @@ ALTER TABLE ONLY public.users
 --
 -- PostgreSQL database dump
 --
-
--- Dumped from database version 16.0
--- Dumped by pg_dump version 16.3
