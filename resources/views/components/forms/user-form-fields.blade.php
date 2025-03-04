@@ -56,7 +56,7 @@
     @php($courseIdName = $courseId->attributes['name'] ?? 'form.course_id')
     <x-form-control>
         <x-form-control.label :key="$courseIdName">Course</x-form-control.label>
-        <x-select :key="$courseIdName" :options="$courses" :value="fn($option) => $option->id" :label="fn($option) => $option->name" :attributes="$courseId->attributes->merge(['title' => 'Courses must have semesters with first year level'])"
+        <x-combobox :key="$courseIdName" :options="$courses" :value="fn($option) => $option->id" :label="fn($option) => $option->name" :attributes="$courseId->attributes->merge(['title' => 'Courses must have semesters with first year level'])"
             empty="No courses with semesters are available" placeholder="Select course" />
         <x-form-control.error-text :key="$courseIdName" />
     </x-form-control>
@@ -65,7 +65,7 @@
     @php($startingSchoolYearIdName = $startingSchoolYearId->attributes['name'] ?? 'form.starting_school_year_id')
     <x-form-control>
         <x-form-control.label :key="$startingSchoolYearIdName">Starting School Year</x-form-control.label>
-        <x-select :key="$startingSchoolYearIdName" :options="$schoolYears" :value="fn($option) => $option->id" :label="fn($option) => $option->year_start . ' - ' . $option->year_end" :attributes="$startingSchoolYearId->attributes"
+        <x-combobox :key="$startingSchoolYearIdName" :options="$schoolYears" :value="fn($option) => $option->id" :label="fn($option) => $option->year_start . ' - ' . $option->year_end" :attributes="$startingSchoolYearId->attributes"
             placeholder="Select school year" empty="No school years are available" />
         <x-form-control.error-text :key="$startingSchoolYearIdName" />
     </x-form-control>
@@ -108,7 +108,7 @@
     @php($departmentIdName = $departmentId->attributes['name'] ?? 'form.department_id')
     <x-form-control>
         <x-form-control.label :key="$departmentIdName">Department</x-form-control.label>
-        <x-select :key="$departmentIdName" :options="$departments" :value="fn($option) => $option->id" :label="fn($option) => $option->name" :attributes="$departmentId->attributes"
+        <x-combobox :key="$departmentIdName" :options="$departments" :value="fn($option) => $option->id" :label="fn($option) => $option->name" :attributes="$departmentId->attributes"
             placeholder="Select department" />
         <x-form-control.error-text :key="$departmentIdName" />
     </x-form-control>

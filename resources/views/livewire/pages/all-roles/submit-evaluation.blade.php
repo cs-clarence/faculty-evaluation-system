@@ -25,7 +25,7 @@
                             <x-form-control.label key="form.evaluatee_id">
                                 {{ $evaluateeRole }}
                             </x-form-control.label>
-                            <x-select key="form.evaluatee_id" wire:model="form.evaluatee_id"
+                            <x-combobox key="form.evaluatee_id" wire:model="form.evaluatee_id"
                                 empty="No {{ $evaluateeRole }} found" placeholder="Select {{ $evaluateeRole }}"
                                 :options="$users" value="id" label="name" />
                             <x-form-control.error-text key="form.evaluatee_id" />

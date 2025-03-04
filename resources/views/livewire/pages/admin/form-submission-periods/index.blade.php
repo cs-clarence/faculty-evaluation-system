@@ -90,7 +90,7 @@
                     </x-form-control>
                     <x-form-control>
                         <x-form-control.label key="form.evaluatee_role_id">Evaluatee</x-form-control.label>
-                        <x-select key="form.evaluatee_role_id" required :options="$evaluateeRoles" :label="fn($i) => $i->display_name"
+                        <x-combobox key="form.evaluatee_role_id" required :options="$evaluateeRoles" :label="fn($i) => $i->display_name"
                             :disabled="isset($model) ? $model->hasDependents() : false" :value="fn($i) => $i->id" placeholder="Select evaluatee"
                             empty="No Evaluatees Available" wire:model.change="form.evaluatee_role_id" />
                         <x-form-control.error-text key="form.evaluatee_role_id" />
@@ -99,7 +99,7 @@
                         <x-form-control>
                             <x-form-control.label key="ends_at"
                                 class="block text-gray-700">Semester</x-form-control.label>
-                            <x-select name="ends_at" id="semester_id" required wire:model="form.semester_id"
+                            <x-combobox name="ends_at" id="semester_id" required wire:model="form.semester_id"
                                 :disabled="isset($model) ? $model->hasDependents() : false" :options="$semesters" :label="fn($i) => $i->__tostring()" :value="fn($i) => $i->id"
                                 placeholder="Select semester" empty="No Semesters Available" />
                             <x-form-control.error-text key="form.semester_id" />
@@ -118,7 +118,7 @@
                     </x-form-control>
                     <x-form-control>
                         <x-form-control.label key="form_id">Form</x-form-control.label>
-                        <x-select name="form_id" id="form_id" required :options="$forms" :label="fn($i) => $i->name"
+                        <x-combobox name="form_id" id="form_id" required :options="$forms" :label="fn($i) => $i->name"
                             :value="fn($i) => $i->id" placeholder="Select form" empty="No Forms Available" :disabled="isset($model) ? $model->hasDependents() : false"
                             wire:model="form.form_id" />
                         <x-form-control.error-text key="form.form_id" />

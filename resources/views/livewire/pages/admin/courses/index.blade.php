@@ -72,7 +72,7 @@
 
                     <x-form-control>
                         <x-form-control.label key="form.department_id">Department</x-form-control.label>
-                        <x-select key="form.department_id" required :options="$departments" :label="fn($i) => $i->name"
+                        <x-combobox key="form.department_id" required :options="$departments" :label="fn($i) => $i->name"
                             wire:model="form.department_id" :value="fn($i) => $i->id" placeholder="Select department"
                             empty="No Departments Available" />
                         <x-form-control.error-text key="form.department_id" />

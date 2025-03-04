@@ -77,7 +77,7 @@
                     </x-form-control>
                     <x-form-control>
                         <x-form-control.label key="form.course_id">Course</x-form-control.label>
-                        <x-select key="form.course_id" required :options="$courses" :label="fn($i) => $i->name" :value="fn($i) => $i->id"
+                        <x-combobox key="form.course_id" required :options="$courses" :label="fn($i) => $i->name" :value="fn($i) => $i->id"
                             wire:model.live="form.course_id" empty="No Courses Available" placeholder="Select course" />
                         <x-form-control.error-text key="form.course_id" />
                     </x-form-control>
