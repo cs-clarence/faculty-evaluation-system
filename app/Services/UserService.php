@@ -87,28 +87,48 @@ class UserService
         ]);
 
         if ($roleCode === RoleCode::Student) {
-            $this->studentService->update($user,
-                $extras->studentNumber,
-                $extras->courseId,
-                $extras->startingSchoolYearId,
-                $extras->realignSubjects,
-                $extras->deleteSubjectsFromPreviousCourse,
-            );
+            if (isset($user->student)) {
+                $this->studentService->update($user,
+                    $extras->studentNumber,
+                    $extras->courseId,
+                    $extras->startingSchoolYearId,
+                    $extras->realignSubjects,
+                    $extras->deleteSubjectsFromPreviousCourse,
+                );
+            } else {
+                $this->studentService->create($user,
+                    $extras->studentNumber,
+                    $extras->courseId,
+                    $extras->startingSchoolYearId,
+                );
+            }
         }
         if ($roleCode === RoleCode::Teacher) {
-            $this->teacherService->update($user, $extras->departmentId);
+            if (isset($user->teacher)) {
+                $this->teacherService->update($user, $extras->departmentId);
+            } else {
+                $this->teacherService->create($user, $extras->departmentId);
+            }
         }
 
         if ($roleCode === RoleCode::Dean) {
-            $this->deanService->update($user, $extras->departmentId);
+            if (isset($user->dean)) {
+                $this->deanService->update($user, $extras->departmentId);
+            } else {
+                $this->deanService->create($user, $extras->departmentId);
+            }
         }
 
         if ($roleCode === RoleCode::Evaluator) {
-            // $this->evaluatorService->create($user);
+            if (! isset($user->evaluator)) {
+                $this->evaluatorService->create($user);
+            }
         }
 
         if ($roleCode === RoleCode::HumanResourcesStaff) {
-            // $this->humanResourcesStaffService->create($user);
+            if (! isset($user->humanResourcesStaff)) {
+                $this->humanResourcesStaffService->create($user);
+            }
         }
 
         return $user;

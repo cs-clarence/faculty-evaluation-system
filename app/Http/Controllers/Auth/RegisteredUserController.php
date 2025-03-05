@@ -1,11 +1,6 @@
 <?php
 namespace App\Http\Controllers\Auth;
 
-use App\Facades\Services\DeanService;
-use App\Facades\Services\EvaluatorService;
-use App\Facades\Services\HumanResourcesStaffService;
-use App\Facades\Services\StudentService;
-use App\Facades\Services\TeacherService;
 use App\Facades\Services\UserService;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -21,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use stdClass;
 
 class RegisteredUserController extends Controller
 {
@@ -75,38 +71,21 @@ class RegisteredUserController extends Controller
             'role_code'               => ['required', 'string', 'exists:roles,code'],
         ]);
 
+        $extraArgs                       = new stdClass;
+        $extraArgs->departmentId         = $valid['department_id'] ?? null;
+        $extraArgs->studentNumber        = $valid['student_number'] ?? null;
+        $extraArgs->courseId             = $valid['course_id'] ?? null;
+        $extraArgs->startingSchoolYearId = $valid['starting_school_year_id'] ?? null;
+
         $user = UserService::create(
             $valid['email'],
             $valid['name'],
             $valid['password'],
             RoleCode::from($valid['role_code']),
             false,
+            true,
+            $extraArgs,
         );
-
-        if ($isStudent) {
-            StudentService::create(
-                $user,
-                $valid['student_number'],
-                $valid['course_id'],
-                $valid['starting_school_year_id']
-            );
-        }
-
-        if ($roleCode === RoleCode::Teacher->value) {
-            TeacherService::create($user, $valid['department_id']);
-        }
-
-        if ($roleCode === RoleCode::Dean->value) {
-            DeanService::create($user, $valid['department_id']);
-        }
-
-        if ($roleCode === RoleCode::Evaluator->value) {
-            EvaluatorService::create($user);
-        }
-
-        if ($roleCode === RoleCode::HumanResourcesStaff->value) {
-            HumanResourcesStaffService::create($user);
-        }
 
         event(new Registered($user));
 
