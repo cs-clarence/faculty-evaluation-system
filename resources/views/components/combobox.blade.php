@@ -83,6 +83,8 @@
 
     if (isset($key)) {
         $base['wire:key'] = $key . '-' . rand(0, 1000);
+    } else {
+        $base['wire:key'] = 'select-' . rand(0, 1000);
     }
 @endphp
 

@@ -1,6 +1,18 @@
 .ts-wrapper {
     @apply pl-0 h-max relative;
 
+    &.disabled {
+        @apply cursor-not-allowed opacity-50;
+
+        & > .ts-control {
+            @apply cursor-not-allowed;
+
+            & > input {
+                @apply cursor-not-allowed;
+            }
+        }
+    }
+
     & > .ts-control {
         @apply border-0 bg-inherit text-inherit flex flex-row flex-wrap gap-1 cursor-text;
 
