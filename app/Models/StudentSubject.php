@@ -41,7 +41,7 @@ class StudentSubject extends Pivot
                 $q->where('semester_id', $this->studentSemester->semester_id)
                     ->whereHas('teacherSubjects',
                         fn($q) =>
-                        $q->where('course_subject_id', $this->id)
+                        $q->where('course_subject_id', $this->course_subject_id)
                             ->whereHas('semesterSections',
                                 fn($q2) =>
                                 $q2->where('semester_section_id', $this->semester_section_id))
