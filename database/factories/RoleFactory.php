@@ -62,9 +62,9 @@ class RoleFactory extends Factory
         return $this->roleCode(RoleCode::Teacher);
     }
 
-    public function evaluator()
+    public function registrar()
     {
-        return $this->roleCode(RoleCode::Evaluator);
+        return $this->roleCode(RoleCode::Registrar);
     }
     public function humanResourcesStaff()
     {
@@ -85,7 +85,7 @@ class RoleFactory extends Factory
                 'code'             => $roleCode->value,
                 'hidden'           => $roleCode === RoleCode::Admin
                 || $roleCode === RoleCode::HumanResourcesStaff
-                || $roleCode === RoleCode::Evaluator
+                || $roleCode === RoleCode::Registrar
                 || $roleCode === RoleCode::Dean,
                 'can_be_evaluator' => in_array($roleCode, [RoleCode::Student, RoleCode::Teacher, RoleCode::HumanResourcesStaff, RoleCode::Dean]),
                 'can_be_evaluatee' => $roleCode === RoleCode::Teacher,

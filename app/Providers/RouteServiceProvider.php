@@ -22,7 +22,7 @@ class RouteServiceProvider extends ServiceProvider
     public static function getDashboard(string $roleCode)
     {
         return match ($roleCode) {
-            RoleCode::Admin->value, RoleCode::HumanResourcesStaff->value, RoleCode::Evaluator->value =>
+            RoleCode::Admin->value, RoleCode::HumanResourcesStaff->value, RoleCode::Registrar->value =>
             route('admin.dashboard.index'),
             default => route('user.dashboard.index'),
         };

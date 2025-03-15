@@ -46,7 +46,7 @@ Route::middleware(['auth'])
             ->name('view-evaluation');
     });
 
-Route::middleware(['auth:admin,human_resources_staff,evaluator'])
+Route::middleware(['auth:admin,human_resources_staff,registrar'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {

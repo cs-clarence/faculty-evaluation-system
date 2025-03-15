@@ -14,7 +14,7 @@ class SectionPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Section::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::HumanResourcesStaff);
+        parent::__construct(Section::class, RoleCode::Admin, RoleCode::Registrar, RoleCode::HumanResourcesStaff);
     }
 
     /**

@@ -6,18 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin IdeHelperEvaluator
+ * @mixin IdeHelperRegistrar
  */
-class Evaluator extends Model
+class Registrar extends Model
 {
-    /** @use HasFactory<\Database\Factories\EvaluatorFactory> */
+    /** @use HasFactory<\Database\Factories\RegistrarFactory> */
     use HasFactory;
     use Archivable {
         archive as baseArchive;
         unarchive as baseUnarchive;
     }
 
-    protected $table = 'evaluators';
+    protected $table = 'registrars';
 
     protected $fillable = [
         'user_id',

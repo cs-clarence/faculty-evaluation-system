@@ -1,10 +1,10 @@
 <?php
 namespace App\Services;
 
-use App\Models\Evaluator;
+use App\Models\Registrar;
 use App\Models\User;
 
-class EvaluatorService
+class RegistrarService
 {
     private static function getUserId(User | int $user)
     {
@@ -15,7 +15,7 @@ class EvaluatorService
     {
         $userId = self::getUserId($user);
 
-        $evaluator = new Evaluator([
+        $evaluator = new Registrar([
             'user_id' => $userId,
         ]);
 

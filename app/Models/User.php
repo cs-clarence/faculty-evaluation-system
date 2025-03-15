@@ -100,9 +100,9 @@ class User extends Authenticatable
         return $this->hasOne(Dean::class);
     }
 
-    public function evaluator()
+    public function registrar()
     {
-        return $this->hasOne(Evaluator::class);
+        return $this->hasOne(Registrar::class);
     }
 
     public function humanResourcesStaff()
@@ -131,16 +131,16 @@ class User extends Authenticatable
             $dean->baseArchive();
         }
 
-        $evaluator = $this->evaluator;
+        $registrar = $this->registrar;
 
-        if (isset($evaluator)) {
-            $evaluator->baseArchive();
+        if (isset($registrar)) {
+            $registrar->baseArchive();
         }
 
         $humanResourcesStaff = $this->humanResourcesStaff;
 
         if (isset($humanResourcesStaff)) {
-            $evaluator->baseArchive();
+            $humanResourcesStaff->baseArchive();
         }
 
         $this->baseArchive();
@@ -212,7 +212,7 @@ class User extends Authenticatable
         $teacherId             = $this->teacher()->first(['id'])?->id;
         $studentId             = $this->student()->first(['id'])?->id;
         $deanId                = $this->dean()->first(['id'])?->id;
-        $evaluatorId           = $this->evaluator()->first(['id'])?->id;
+        $registrarId           = $this->registrar()->first(['id'])?->id;
         $humanResourcesStaffId = $this->humanResourcesStaff()->first(['id'])?->id;
         $userId                = $this->id;
 
@@ -228,8 +228,8 @@ class User extends Authenticatable
             Dean::whereId($deanId)->delete();
         }
 
-        if (isset($evaluatorId)) {
-            Evaluator::whereId($evaluatorId)->delete();
+        if (isset($registrarId)) {
+            Registrar::whereId($registrarId)->delete();
         }
 
         if (isset($humanResourcesStaffId)) {
@@ -278,9 +278,9 @@ class User extends Authenticatable
         return $this->isInRole(RoleCode::Dean);
     }
 
-    public function isEvaluator()
+    public function isRegistrar()
     {
-        return $this->isInRole(RoleCode::Evaluator);
+        return $this->isInRole(RoleCode::Registrar);
     }
 
     public function isHumanResourcesStaff()

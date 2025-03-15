@@ -13,7 +13,7 @@ class UserService
         private TeacherService $teacherService,
         private DeanService $deanService,
         private HumanResourcesStaffService $humanResourcesStaffService,
-        private EvaluatorService $evaluatorService
+        private RegistrarService $registrarService,
     ) {
 
     }
@@ -53,8 +53,8 @@ class UserService
             $this->deanService->create($user, $extras->departmentId);
         }
 
-        if ($roleCode === RoleCode::Evaluator) {
-            $this->evaluatorService->create($user);
+        if ($roleCode === RoleCode::Registrar) {
+            $this->registrarService->create($user);
         }
 
         if ($roleCode === RoleCode::HumanResourcesStaff) {
@@ -119,9 +119,9 @@ class UserService
             }
         }
 
-        if ($roleCode === RoleCode::Evaluator) {
+        if ($roleCode === RoleCode::Registrar) {
             if (! isset($user->evaluator)) {
-                $this->evaluatorService->create($user);
+                $this->registrarService->create($user);
             }
         }
 

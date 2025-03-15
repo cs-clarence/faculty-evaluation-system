@@ -14,7 +14,7 @@ class StudentPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(Student::class, RoleCode::Admin, RoleCode::Evaluator);
+        parent::__construct(Student::class, RoleCode::Admin, RoleCode::Registrar);
     }
 
     /**

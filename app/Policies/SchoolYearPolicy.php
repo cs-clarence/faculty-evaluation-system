@@ -14,7 +14,7 @@ class SchoolYearPolicy extends BasePolicy
 {
     public function __construct()
     {
-        parent::__construct(SchoolYear::class, RoleCode::Admin, RoleCode::Evaluator, RoleCode::HumanResourcesStaff);
+        parent::__construct(SchoolYear::class, RoleCode::Admin, RoleCode::Registrar, RoleCode::HumanResourcesStaff);
     }
 
     /**

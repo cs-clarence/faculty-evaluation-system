@@ -196,38 +196,6 @@ ALTER SEQUENCE public.departments_id_seq OWNED BY public.departments.id;
 
 
 --
--- Name: evaluators; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.evaluators (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    archived_at timestamp(0) with time zone,
-    created_at timestamp(0) with time zone,
-    updated_at timestamp(0) with time zone
-);
-
-
---
--- Name: evaluators_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.evaluators_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: evaluators_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.evaluators_id_seq OWNED BY public.evaluators.id;
-
-
---
 -- Name: failed_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -817,6 +785,38 @@ ALTER SEQUENCE public.personal_access_tokens_id_seq OWNED BY public.personal_acc
 
 
 --
+-- Name: registrars; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.registrars (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    archived_at timestamp(0) with time zone,
+    created_at timestamp(0) with time zone,
+    updated_at timestamp(0) with time zone
+);
+
+
+--
+-- Name: registrars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.registrars_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: registrars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.registrars_id_seq OWNED BY public.registrars.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1348,13 +1348,6 @@ ALTER TABLE ONLY public.departments ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: evaluators id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.evaluators ALTER COLUMN id SET DEFAULT nextval('public.evaluators_id_seq'::regclass);
-
-
---
 -- Name: failed_jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1471,6 +1464,13 @@ ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.m
 --
 
 ALTER TABLE ONLY public.personal_access_tokens ALTER COLUMN id SET DEFAULT nextval('public.personal_access_tokens_id_seq'::regclass);
+
+
+--
+-- Name: registrars id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.registrars ALTER COLUMN id SET DEFAULT nextval('public.registrars_id_seq'::regclass);
 
 
 --
@@ -1641,14 +1641,6 @@ ALTER TABLE ONLY public.departments
 
 ALTER TABLE ONLY public.departments
     ADD CONSTRAINT departments_pkey PRIMARY KEY (id);
-
-
---
--- Name: evaluators evaluators_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.evaluators
-    ADD CONSTRAINT evaluators_pkey PRIMARY KEY (id);
 
 
 --
@@ -1905,6 +1897,14 @@ ALTER TABLE ONLY public.personal_access_tokens
 
 ALTER TABLE ONLY public.personal_access_tokens
     ADD CONSTRAINT personal_access_tokens_token_unique UNIQUE (token);
+
+
+--
+-- Name: registrars registrars_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.registrars
+    ADD CONSTRAINT registrars_pkey PRIMARY KEY (id);
 
 
 --
@@ -2322,14 +2322,6 @@ ALTER TABLE ONLY public.deans
 
 
 --
--- Name: evaluators evaluators_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.evaluators
-    ADD CONSTRAINT evaluators_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: form_question_essay_type_configurations form_question_essay_type_configurations_form_question_id_foreig; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2511,6 +2503,14 @@ ALTER TABLE ONLY public.form_submissions
 
 ALTER TABLE ONLY public.human_resources_staff
     ADD CONSTRAINT human_resources_staff_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: registrars registrars_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.registrars
+    ADD CONSTRAINT registrars_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Policies;
 
-use App\Models\Evaluator;
+use App\Models\Registrar;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class EvaluatorPolicy
 {
@@ -19,7 +17,7 @@ class EvaluatorPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Evaluator $evaluator): bool
+    public function view(User $user, Registrar $evaluator): bool
     {
         return false;
     }
@@ -35,7 +33,7 @@ class EvaluatorPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Evaluator $evaluator): bool
+    public function update(User $user, Registrar $evaluator): bool
     {
         return false;
     }
@@ -43,7 +41,7 @@ class EvaluatorPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Evaluator $evaluator): bool
+    public function delete(User $user, Registrar $evaluator): bool
     {
         return false;
     }
@@ -51,7 +49,7 @@ class EvaluatorPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Evaluator $evaluator): bool
+    public function restore(User $user, Registrar $evaluator): bool
     {
         return false;
     }
@@ -59,7 +57,7 @@ class EvaluatorPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Evaluator $evaluator): bool
+    public function forceDelete(User $user, Registrar $evaluator): bool
     {
         return false;
     }

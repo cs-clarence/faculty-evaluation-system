@@ -24,7 +24,7 @@ class AccountSettings extends Component
 
         if ($this->userModel->isAdmin()
             || $this->userModel->isHumanResourcesStaff()
-            || $this->userModel->isEvaluator()) {
+            || $this->userModel->isRegistrar()) {
             return $view->layout('components.layouts.admin');
         } else {
             return $view->layout('components.layouts.user');
