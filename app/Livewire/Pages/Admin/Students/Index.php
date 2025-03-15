@@ -6,6 +6,7 @@ use App\Jobs\SendGeneratedPasswordEmail;
 use App\Livewire\Forms\UserForm;
 use App\Livewire\Traits\WithSearch;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Import\StudentImport;
 use App\Models\RoleCode;
 use App\Models\SchoolYear;
@@ -34,18 +35,66 @@ class Index extends Component
     public ?User $model;
     public UserForm $form;
 
+    public ?int $filter_department_id = null;
+    public ?int $filter_course_id     = null;
+
     #[Validate(['file', 'required', 'max:10240'])]
     public UploadedFile|File|null $import_file = null;
 
     public function render()
     {
+        $courses = Course::withoutArchived()
+            ->has('courseSubjects')
+            ->orderBy('department_id')
+            ->orderBy('code')
+            ->orderBy('name')
+            ->get();
+
+        $schoolYears = SchoolYear::active()
+            ->orderByDesc('year_start')
+            ->orderByDesc('year_end')
+            ->lazy();
+
+        $departmentFilters  = Department::has('courses')->get();
+        $courseFilters      = $courses;
+        $selectedDepartment = isset($this->filter_department_id)
+        ? $departmentFilters->where('id', $this->filter_department_id)->first()
+        : null;
+
+        if (isset($this->filter_department_id)) {
+        }
+
+        if (isset($selectedDepartment)) {
+            $courseFilters = $selectedDepartment->courses()
+                ->has('courseSemesters')
+                ->get();
+        }
+
+        $selectedCourse = $courseFilters->where('id', $this->filter_course_id)->first();
+
         $students = User::roleStudent()
             ->with([
                 'student' => fn(HasOne $student) =>
                 $student->with(['studentSubjects', 'studentSemesters', 'course'])
                     ->withCount(['studentSubjects', 'studentSemesters']),
-            ])
-            ->has('student');
+            ]);
+
+        if (isset($selectedDepartment) || isset($selectedCourse)) {
+            $courseIds = [];
+            if (! isset($selectedCourse)) {
+                $courseIds = $courseFilters->pluck('id');
+            } else {
+                $courseIds = [$selectedCourse->id];
+
+            }
+
+            $students = $students->whereHas(
+                'student',
+                fn($q) => $q->whereIn('course_id', $courseIds)
+            );
+        } else {
+            $students = $students->has('student');
+        }
 
         if ($this->shouldSearch()) {
             $students = $students->fullTextSearch([
@@ -65,20 +114,15 @@ class Index extends Component
 
         $students = $students->cursorPaginate(15);
 
-        $courses = Course::withoutArchived()
-            ->has('courseSubjects')
-            ->orderBy('department_id')
-            ->orderBy('code')
-            ->orderBy('name')
-            ->lazy();
-
-        $schoolYears = SchoolYear::active()
-            ->orderByDesc('year_start')
-            ->orderByDesc('year_end')
-            ->lazy();
-
-        return view('livewire.pages.admin.students.index')
-            ->with(compact('students', 'courses', 'schoolYears'))
+        return view('livewire.pages.admin.students.index',
+            [
+                'departmentFilters' => $departmentFilters,
+                'courseFilters'     => $courseFilters,
+                'courses'           => $courses,
+                'schoolYears'       => $schoolYears,
+                'students'          => $students,
+            ]
+        )
             ->layout('components.layouts.admin');
     }
 
@@ -86,6 +130,13 @@ class Index extends Component
     {
         $this->form->role_code = RoleCode::Student->value;
         $this->isFormOpen      = true;
+    }
+
+    public function resetFilters()
+    {
+        $this->filter_department_id = null;
+        $this->filter_course_id     = null;
+        $this->searchText           = null;
     }
 
     public function closeForm()

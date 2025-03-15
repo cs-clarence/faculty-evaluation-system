@@ -18,6 +18,7 @@ class Index extends Component
     public bool $isFormOpen = false;
     public ?User $model;
     public UserForm $form;
+    public ?int $filter_department_id = null;
 
     public function render()
     {
@@ -25,8 +26,16 @@ class Index extends Component
             ->with(['teacher' => fn(HasOne $teacher) => $teacher
                     ->withCount(['teacherSubjects', 'teacherSemesters'])
                     ->with(['department']),
-            ])
-            ->has('teacher');
+            ]);
+
+        if (isset($this->filter_department_id)) {
+            $teachers = $teachers->whereHas(
+                'teacher',
+                fn($q) => $q->where('department_id', $this->filter_department_id)
+            );
+        } else {
+            $teachers = $teachers->has('teacher');
+        }
 
         if ($this->shouldSearch()) {
             $teachers = $teachers->fullTextSearch([
@@ -52,8 +61,10 @@ class Index extends Component
             ->orderBy('name')
             ->lazy();
 
+        $departmentFilters = $departments;
+
         return view('livewire.pages.admin.teachers.index')
-            ->with(compact('teachers', 'departments'))
+            ->with(compact('teachers', 'departments', 'departmentFilters'))
             ->layout('components.layouts.admin');
     }
 
@@ -105,5 +116,11 @@ class Index extends Component
     public function unarchive(User $model)
     {
         $model->unarchive();
+    }
+
+    public function resetFilters()
+    {
+        $this->filter_department_id = null;
+        $this->searchText           = null;
     }
 }

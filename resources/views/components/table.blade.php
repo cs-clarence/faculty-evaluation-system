@@ -78,7 +78,7 @@
     @if (isPaginated($data) || isset($actions))
         <div class="mb-2 flex flex-row">
             @isset($actions)
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-row gap-2 items-center">
                     {{ $actions }}
                 </div>
             @endisset

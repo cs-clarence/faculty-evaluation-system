@@ -21,7 +21,7 @@
         </x-sections.header>
 
         <!-- Main Dashboard Content -->
-        <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="main-dash grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
             <!-- Total Users and Completed Tasks -->
 
             <!-- Responsive Table -->
@@ -63,6 +63,16 @@
                 <x-table :data="$students" :columns="$columns">
                     <x-slot:actions>
                         <x-search wire:input.debounce.500ms="search(search)" :value="$searchText" />
+                        <x-combobox key="filter_department_id" wire:model.live="filter_department_id" :options="$departmentFilters ?? []"
+                            :value="fn($i) => $i->id" :label="fn($i) => $i->name" placeholder="Filter by Department" class="min-w-80"
+                            placeholder="Filter by Department" empty="No Departments Available" />
+                        <x-combobox key="filter_course_id" wire:model.live="filter_course_id" :options="$courseFilters ?? []"
+                            class="min-w-80" :value="fn($i) => $i->id" :label="fn($i) => $i->name" placeholder="Filter by Course"
+                            empty="No Courses Available" />
+
+                        <x-button wire:click="resetFilters" size="sm" variant="outlined" color="neutral">
+                            Reset
+                        </x-button>
                     </x-slot:actions>
                 </x-table>
             </div>
