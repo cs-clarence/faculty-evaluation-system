@@ -35,22 +35,31 @@ class StudentSubject extends Pivot
 
     public function getTeacher()
     {
-        return Teacher::whereHas('teacherSubjects',
-            fn($q) => $q->where('course_subject_id', $this->id)
-                ->whereHas('semesterSections', fn($q2) => $q2->where('semester_section_id', $this->semester_section_id))
-        )
-            ->whereHas('teacherSemesters', fn($q) => $q->where('semester_id', $this->studentSemester->semester_id))
+        return Teacher::query()
+            ->whereHas('teacherSemesters',
+                fn($q) =>
+                $q->where('semester_id', $this->studentSemester->semester_id)
+                    ->whereHas('teacherSubjects',
+                        fn($q) =>
+                        $q->where('course_subject_id', $this->id)
+                            ->whereHas('semesterSections',
+                                fn($q2) =>
+                                $q2->where('semester_section_id', $this->semester_section_id))
+                    )
+            )
             ->first();
     }
 
     protected function teacher(): Attribute
     {
-        return Attribute::make(get: fn() => $this->getTeacher());
+        return Attribute::make(get: fn() => $this->getTeacher())
+            ->shouldCache();
     }
 
     protected function subject(): Attribute
     {
-        return Attribute::make(fn() => $this->courseSubject->subject)->shouldCache();
+        return Attribute::make(fn() => $this->courseSubject->subject)
+            ->shouldCache();
     }
 
     public function formSubmissionSubject(): HasOne

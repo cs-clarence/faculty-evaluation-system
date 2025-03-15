@@ -54,15 +54,6 @@ class SubmitEvaluation extends Component
             $this->form->set($fs);
         }
 
-        if (isset($this->courseSubjectId)) {
-            $this->courseSubject = CourseSubject::whereId($this->courseSubjectId)->first();
-            $submission          = FormSubmissionSubject::whereCourseSubjectId($this->courseSubjectId)->first()?->formSubmission;
-            if (isset($submission)) {
-                $this->evaluatee = $submission->evaluatee;
-                $this->form->id  = $submission->id;
-            }
-        }
-
         if (isset($this->studentSubjectId)) {
             $submission = FormSubmissionSubject::whereStudentSubjectId($this->studentSubjectId)->first()?->formSubmission;
             if (isset($submission)) {
