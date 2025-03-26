@@ -85,4 +85,9 @@ class FormSubmissionPolicy extends BasePolicy
 
         return $this->isInRoles($user, RoleCode::Admin, RoleCode::HumanResourcesStaff, RoleCode::Dean);
     }
+
+    public function export(User $user)
+    {
+        return $this->isInRoles($user, RoleCode::Admin, RoleCode::Dean, RoleCode::HumanResourcesStaff, RoleCode::Registrar, RoleCode::Teacher);
+    }
 }

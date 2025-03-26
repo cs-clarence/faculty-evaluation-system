@@ -40,20 +40,22 @@
     <div class="bg-white shadow-md rounded-lg p-6 flex flex-col gap-6 border-2 border-gray-300">
         <div class="flex flex-row gap-3 items-center">
             <h3 class="font-semibold text-xl">Summary</h3>
-            <div class="flex flex-row gap-1 items-center">
-                <x-button variant="outlined" size="sm" wire:click="exportPdf">
-                    <x-icon>picture_as_pdf</x-icon>
-                    Export PDF
-                </x-button>
-                <x-button variant="outlined" size="sm" wire:click="exportExcel">
-                    <x-icon>data_table</x-icon>
-                    Export Excel
-                </x-button>
-                <x-button variant="outlined" size="sm" wire:click="exportCsv">
-                    <x-icon>data_table</x-icon>
-                    Export CSV
-                </x-button>
-            </div>
+            @can('export', $formSubmission)
+                <div class="flex flex-row gap-1 items-center">
+                    <x-button variant="outlined" size="sm" wire:click="exportPdf">
+                        <x-icon>picture_as_pdf</x-icon>
+                        Export PDF
+                    </x-button>
+                    <x-button variant="outlined" size="sm" wire:click="exportExcel">
+                        <x-icon>data_table</x-icon>
+                        Export Excel
+                    </x-button>
+                    <x-button variant="outlined" size="sm" wire:click="exportCsv">
+                        <x-icon>data_table</x-icon>
+                        Export CSV
+                    </x-button>
+                </div>
+            @endcan
         </div>
         <x-form-submission-summary.table :$formSubmission :createQuestionLink="fn($data) => '#q.' . $data->id" />
     </div>

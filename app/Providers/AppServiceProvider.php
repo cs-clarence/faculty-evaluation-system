@@ -5,6 +5,7 @@ use App\Facades\Services\FormSubmissionEvaluateeService;
 use App\Facades\Services\PendingEvaluationsService;
 use App\Helpers\SectionHelper;
 use App\Services\DeanService;
+use App\Services\EvaluationSummaryService;
 use App\Services\FileNameService;
 use App\Services\FormSubmissionExportService;
 use App\Services\HumanResourcesStaffService;
@@ -32,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         FormSubmissionExportService::class    => FormSubmissionExportService::class,
         PendingEvaluationsService::class      => PendingEvaluationsService::class,
         RegistrarService::class               => RegistrarService::class,
+        EvaluationSummaryService::class       => EvaluationSummaryService::class,
     ];
     /**
      * Register any application services.
