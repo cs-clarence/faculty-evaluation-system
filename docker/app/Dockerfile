@@ -50,4 +50,5 @@ FROM build-main-base AS build-main-development
 
 
 FROM build-main-${ENV}
+RUN  if [ "$ENV" = "development" ]; then echo "Building in development mode"; else chmod -R 755 /var/www/html; fi
 CMD [ "supervisord", "-c", "/etc/supervisor/supervisord.conf" ]
