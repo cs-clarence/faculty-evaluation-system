@@ -36,8 +36,8 @@
                     <div class="flex flex-col gap-3" id="{{ $questionId }}">
                         <h4 class="font-semibold text-lg">{{ $question->title }}</h4>
                         @if ($question->type === Type::Essay->value)
-                            <textarea @disabled($readonly) class="w-full px-3 py-2 border rounded-lg min-h-32" rows="4"
-                                wire:model="{{ $wireModel }}" name="{{ $questionName }}"></textarea>
+                            <x-textarea :key="$questionId" wire:model="{{ $wireModel }}" rows="4" maxlength="255"
+                                name="{{ $questionName }}"></x-textarea>
                         @elseif ($question->type === Type::MultipleChoicesSingleSelect->value)
                             <fieldset class="flex flex-col gap-2">
                                 @forelse ($question->options->sortByDesc('value') as $option)
@@ -80,20 +80,20 @@
                                 @endforelse
                             </fieldset>
                         @endif
-                        @if ($showValues && isset($formSubmission))
+                        @if ($showValues && isset($formSubmission) && $question->type === Type::Essay->value)
                             @php($value = $formSubmission->getValue($question->id))
-                            @php($interpretation = $formSubmission->getInterpretation($question->id))
-                            @php($reason = $formSubmission->getReason($question->id))
                             @isset($value)
                                 <p class="text-gray-500 text">
                                     Value: {{ $value }} ({{ $formSubmission->getWeightedValue($question->id) }}%)
                                 </p>
                             @endisset
+                            @php($interpretation = $formSubmission->getInterpretation($question->id))
                             @isset($interpretation)
                                 <p class="text-gray-500 text">
                                     Interpretation: {{ $interpretation }}
                                 </p>
                             @endisset
+                            @php($reason = $formSubmission->getReason($question->id))
                             @isset($reason)
                                 <p class="text-gray-500 text">
                                     Reason: {{ $reason }}

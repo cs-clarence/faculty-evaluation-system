@@ -59,7 +59,7 @@ class FormSubmissionForm extends BaseForm
             foreach ($section->questions as $question) {
                 $key = "questions.{$question->id}";
                 if ($question->type === FormQuestionType::Essay->value) {
-                    $additional[$key] = ["required", "string", "max:1025"];
+                    $additional[$key] = ["required", "string", "max:255"];
                 } else if ($question->type === FormQuestionType::MultipleChoicesSingleSelect->value) {
                     $additional[$key] = ['required', 'integer', 'exists:form_question_options,id'];
                 } else if ($question->type === FormQuestionType::MultipleChoicesMultipleSelect->value) {
