@@ -2,7 +2,6 @@ services:
   app:
     restart: unless-stopped
     image: rencedm112/spcf-tes:latest
-    pull_policy: always
     networks:
       - main-network
     environment:
@@ -30,7 +29,6 @@ services:
 
   database-migrator:
     image: rencedm112/spcf-tes-database-migrator:latest
-    pull_policy: always
     restart: on-failure
     command:
       - migrate
