@@ -72,6 +72,7 @@ class Index extends Component
     {
         $this->form->role_code = RoleCode::Teacher->value;
         $this->isFormOpen      = true;
+        $this->form->prefill();
     }
 
     public function closeForm()

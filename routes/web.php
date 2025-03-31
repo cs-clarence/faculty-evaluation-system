@@ -40,6 +40,8 @@ Route::middleware(['auth'])
             ->name('account-deactivated.index');
         Route::get('/account-settings', App\Livewire\Pages\AllRoles\AccountSettings::class)
             ->name('account-settings');
+        Route::get('/evaluation-summaries', App\Livewire\Pages\AllRoles\EvaluationSummaries\Index::class)
+            ->name('evaluation-summaries');
         Route::get('/submit-evaluation/{formSubmissionPeriod}', App\Livewire\Pages\AllRoles\SubmitEvaluation::class)
             ->name('submit-evaluation');
         Route::get('/view-evaluation/{formSubmission}', App\Livewire\Pages\AllRoles\ViewEvaluation::class)

@@ -37,7 +37,7 @@
                         <h4 class="font-semibold text-lg">{{ $question->title }}</h4>
                         @if ($question->type === Type::Essay->value)
                             <x-textarea :key="$questionId" wire:model="{{ $wireModel }}" rows="4" maxlength="255"
-                                name="{{ $questionName }}"></x-textarea>
+                                name="{{ $questionName }}" :$readonly></x-textarea>
                         @elseif ($question->type === Type::MultipleChoicesSingleSelect->value)
                             <fieldset class="flex flex-col gap-2">
                                 @forelse ($question->options->sortByDesc('value') as $option)
@@ -84,7 +84,7 @@
                             @php($value = $formSubmission->getValue($question->id))
                             @isset($value)
                                 <p class="text-gray-500 text">
-                                    Value: {{ $value }} ({{ $formSubmission->getWeightedValue($question->id) }}%)
+                                    Value: {{ $value }}
                                 </p>
                             @endisset
                             @php($interpretation = $formSubmission->getInterpretation($question->id))

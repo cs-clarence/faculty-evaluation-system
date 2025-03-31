@@ -130,6 +130,7 @@ class Index extends Component
     {
         $this->form->role_code = RoleCode::Student->value;
         $this->isFormOpen      = true;
+        $this->form->prefill();
     }
 
     public function resetFilters()

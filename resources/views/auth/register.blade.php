@@ -1,5 +1,8 @@
 @php
     use App\Models\RoleCode;
+    use Carbon\Carbon;
+
+    $currentYear = Carbon::now()->year;
 @endphp
 <x-layouts.guest>
     <form method="POST" action="{{ route('register') }}">
@@ -24,7 +27,7 @@
         <div class="mt-4">
             <x-input-label for="name" :value="__('Full Name')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"
-                required autofocus autocomplete="name" />
+                required autofocus autocomplete="name" placeholder="First Name, Middle Name, Last Name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
@@ -32,7 +35,7 @@
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
-                required autocomplete="username" />
+                required autocomplete="username" placeholder="Must be a valid email" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -42,7 +45,7 @@
                 <div>
                     <x-input-label for="student_number" :value="__('Student Number')" />
                     <x-text-input id="student_number" class="block w-full" type="text" name="student_number"
-                        :value="old('student_number')" />
+                        :value="old('student_number')" placeholder="10 Digit Number" />
                     <x-input-error :messages="$errors->get('student_number')" class="mt-2" />
                 </div>
             </div>
@@ -63,7 +66,7 @@
                 <select id="starting_school_year_id" name="starting_school_year_id" class="block w-full">
                     <option value="" disabled selected>Select School Year</option>
                     @forelse ($schoolYears as $schoolYear)
-                        <option value="{{ $schoolYear->id }}">{{ $schoolYear }}</option>
+                        <option value="{{ $schoolYear->id }}" @selected($currentYear === $schoolYear->year_start)>{{ $schoolYear }}</option>
                     @empty
                         <option value="" disabled>No school years</option>
                     @endforelse
@@ -91,7 +94,7 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
             <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="new-password" />
+                autocomplete="new-password" placeholder="Minimum of 8 characters" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
@@ -99,7 +102,8 @@
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
             <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" />
+                name="password_confirmation" required autocomplete="new-password"
+                placeholder="Minimum of 8 characters" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 

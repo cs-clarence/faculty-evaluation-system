@@ -10,6 +10,7 @@ use App\Models\RoleCode;
 use App\Models\SchoolYear;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Closure;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,7 +65,13 @@ class RegisteredUserController extends Controller
             'name'                    => ['required', 'string', 'max:255'],
             'email'                   => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password'                => ['required', 'confirmed', Password::default()],
-            'student_number'          => $isStudent ? ['required', 'string', 'unique:students,student_number'] : [],
+            'student_number'          => $isStudent ? ['required', 'string', 'unique:students,student_number',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if (! preg_match('/\\d{10}/', $value)) {
+                        $fail("The :attribute must be a 10 digit number.");
+                    }
+                },
+            ] : [],
             'course_id'               => $isStudent ? ['required', 'integer', 'exists:courses,id'] : [],
             'starting_school_year_id' => $isStudent ? ['required', 'integer', 'exists:school_years,id'] : [],
             'department_id'           => $hasDepartment ? ['required', 'integer', 'exists:departments,id'] : [],

@@ -74,7 +74,7 @@
 @endphp
 
 
-@if (!is_array($data))
+@if (!is_array($data) || isset($actions))
     @if (isPaginated($data) || isset($actions))
         <div class="mb-2 flex flex-row">
             @isset($actions)

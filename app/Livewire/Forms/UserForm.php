@@ -4,7 +4,10 @@ namespace App\Livewire\Forms;
 use App\Facades\Services\UserService;
 use App\Models\Role;
 use App\Models\RoleCode;
+use App\Models\SchoolYear;
 use App\Models\User;
+use Carbon\Carbon;
+use Closure;
 use DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -34,6 +37,13 @@ class UserForm extends BaseForm
     public ?bool $active = true;
     public ?bool $require_change_password = false;
 
+    public function prefill()
+    {
+        if (! isset($this->starting_school_year_id)) {
+            $this->starting_school_year_id = SchoolYear::whereYearStart(Carbon::now()->year)->first(['id'])?->id;
+        }
+    }
+
     public function rules()
     {
         $isStudent = $this->role_code === 'student';
@@ -49,7 +59,14 @@ class UserForm extends BaseForm
                 'name'                    => ['required', 'string', 'max:255'],
                 'role_code'               => ['required', 'string', 'exists:roles,code'],
                 'course_id'               => [$isStudent ? 'required' : 'nullable', 'integer', 'exists:courses,id'],
-                'student_number'          => [$isStudent ? 'required' : 'nullable', 'string', ! isset($this->id) ? 'unique:students' :
+                'student_number'          => [$isStudent ? 'required' : 'nullable', 'string',
+                    function (string $attribute, mixed $value, Closure $fail) {
+                        if (! preg_match('/\\d{10}/', $value)) {
+                            $fail("The :attribute must be a 10 digit number.");
+                        }
+                    },
+
+                    ! isset($this->id) ? 'unique:students' :
                     Rule::unique('students', 'student_number')
                         ->ignore($this->id, 'user_id'),
 

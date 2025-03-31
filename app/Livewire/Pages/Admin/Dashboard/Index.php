@@ -1,6 +1,7 @@
 <?php
 namespace App\Livewire\Pages\Admin\Dashboard;
 
+use App\Facades\Services\EvaluationSummaryService;
 use App\Facades\Services\PendingEvaluationsService;
 use App\Models\Course;
 use App\Models\Department;
@@ -48,6 +49,12 @@ class Index extends Component
         }
 
         $statistics = [ ...$statistics,
+            [
+                'label'     => 'Evaluation Summaries',
+                'value'     => count(EvaluationSummaryService::getSummaries()),
+                'href'      => route('evaluation-summaries'),
+                'condition' => Gate::allows('viewSummaries', FormSubmission::class),
+            ],
             [
                 'label'     => 'Departments',
                 'value'     => Department::count(),

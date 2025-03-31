@@ -20,6 +20,10 @@ class CourseSubject extends Pivot
         return $this->belongsTo(CourseSemester::class);
     }
 
+    /**
+     * Summary of course
+     * @return Attribute<Course>
+     */
     protected function course(): Attribute
     {
         return Attribute::make(fn() => $this->courseSemester->course);
@@ -67,5 +71,10 @@ class CourseSubject extends Pivot
         }
 
         return false;
+    }
+
+    public function __tostring()
+    {
+        return $this->subject->__tostring() . ' - ' . $this->course->code;
     }
 }

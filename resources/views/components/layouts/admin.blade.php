@@ -36,6 +36,11 @@
         'condition' => auth()->user()->role->can_be_evaluator,
     ],
     [
+        'href' => route('evaluation-summaries'),
+        'title' => 'Evaluation Summaries',
+        'condition' => Gate::allows('viewSummaries', FormSubmission::class),
+    ],
+    [
         'href' => route('admin.school-years.index'),
         'title' => 'School Years',
         'condition' => Gate::allows('viewAny', SchoolYear::class),

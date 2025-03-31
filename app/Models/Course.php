@@ -50,4 +50,9 @@ class Course extends Model
 
         return false;
     }
+
+    public function __tostring()
+    {
+        return $this->name;
+    }
 }

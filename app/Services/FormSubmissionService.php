@@ -31,21 +31,39 @@ class FormSubmissionService
             You are a helpful assistant. You evaluate essay type answers to questions
             and determine the value from the scale from {$scaleFrom} to {$scaleTo}.
             The value can be a float value.
-            You also determine the interpretation of the answer where it's Good or Bad.
+            You also determine the interpretation of the answer where it's Good or Neutral or Bad.
             Also express the reason why you decided to give that score.
             You can only answer in json encoded format.
             The questions are answered by a {$evaluator} used to evaluate a {$evaluatee}.
             The value should the score of the {$evaluatee} in relation to the question
-            used to evaluate them.
+            used to evaluate them. Also, check the submitted answer if it's applicable to the question.
+            If not applicable or inadequate, indicate valid: false in the json response.
+            If the answer is similar to N/A, Nothing, or None (user did not provide an answer),
+            give the median value and the interpretation as Neutral.
+            The median value is calculated based on discrete integers in the range.
+            For example: 1 to 5 is (1, 2, 3, 4, 5), median value is 3.
 
             Examples:
             Question: What are the characteristics that you like to your teacher?
+            Value Range: 1-5
             Essay Answer: The teacher really knows how to teach.
             Your Response:
             {
-                "value": 3.73,
+                "value": 4,
                 "interpretation": "Good",
-                "reason": "The teacher really knows how to teach."
+                "reason": "The teacher really knows how to teach.",
+                "valid": true
+            }
+
+            Question: What are the characteristics that you like to your teacher?
+            Value Range: 1-5
+            Essay Answer: None
+            Your Response:
+            {
+                "value": 3,
+                "interpretation": "Neutral",
+                "reason": "The student did not provide an answer.",
+                "valid": false
             }
         TXT);
     }
@@ -60,7 +78,12 @@ class FormSubmissionService
 
     private static function randomBetweenFloat(float $min, float $max)
     {
-        return $min + mt_rand() / mt_getrandmax() * ($max - $min);
+        return round($min + mt_rand() / mt_getrandmax() * ($max - $min), 2);
+    }
+
+    private static function getMidPoint(float $min, float $max)
+    {
+        return $min + (($max - $min) / 2);
     }
 
     private static function getHalf(float $min, float $max)
@@ -172,10 +195,12 @@ class FormSubmissionService
                         $evaluateeRole
                     );
 
+                    $isNeutral = $interpretation['interpretation'] === 'Neutral';
+
                     $answer = FormSubmissionAnswer::create([
                         'form_submission_id' => $formSubmission->id,
                         'form_question_id'   => $question->id,
-                        'value'              => $interpretation['value'],
+                        'value'              => $isNeutral ? self::getMidPoint($question->essayTypeConfiguration->value_scale_from, $question->essayTypeConfiguration->value_scale_to) : $interpretation['value'],
                         'text'               => $value,
                         'interpretation'     => $interpretation['interpretation'],
                         'reason'             => $interpretation['reason'],

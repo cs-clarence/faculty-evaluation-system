@@ -101,8 +101,6 @@ class FormSubmissionExportService
         }
         $sheet->setCellValue($col . $row, 'Score')->mergeCells($col . $row . ':' . self::nextChar($col) . $row);
         $col = self::nextChar($col, 2);
-        $sheet->setCellValue($col . $row, 'Weighted Score')->mergeCells($col . $row . ':' . self::nextChar($col) . $row);
-        $col = self::nextChar($col, 2);
         if ($showReason) {
             $sheet->setCellValue($col . $row, 'Reason');
             $col = self::nextChar($col);
@@ -113,10 +111,6 @@ class FormSubmissionExportService
         $col = 'A';
         $col = $showText ? self::nextChar($col) : $col;
         $col = $showInterpretation ? self::nextChar($col) : $col;
-        $col = self::nextChar($col);
-        $sheet->setCellValue($col . $row, 'Value');
-        $col = self::nextChar($col);
-        $sheet->setCellValue($col . $row, 'Out Of');
         $col = self::nextChar($col);
         $sheet->setCellValue($col . $row, 'Value');
         $col = self::nextChar($col);
@@ -144,10 +138,6 @@ class FormSubmissionExportService
             $col++;
             $sheet->setCellValue($col . $row, $breakdown->max_value);
             $col++;
-            $sheet->setCellValue($col . $row, $breakdown->weighted_value);
-            $col++;
-            $sheet->setCellValue($col . $row, $breakdown->max_weighted_value);
-            $col++;
             if ($showReason) {
                 $sheet->setCellValue($col . $row, $breakdown->reason);
             }
@@ -159,13 +149,9 @@ class FormSubmissionExportService
         $sheet->setCellValue($col . $row, 'Total')->mergeCells($col . $row . ':' . chr(ord($col) + ($showText ? 1 : 0) + ($showInterpretation ? 1 : 0)) . $row);
         $sheet->getStyle($col . $row)->getAlignment()->setHorizontal('right');
         $col = chr(ord($col) + ($showText ? 1 : 0) + ($showInterpretation ? 1 : 0) + 1);
-        $sheet->setCellValue($col . $row, $formSubmission->total_value);
+        $sheet->setCellValue($col . $row, $formSubmission->total_value . " ({$formSubmission->rating}%)");
         $col++;
-        $sheet->setCellValue($col . $row, $formSubmission->form->total_max_value);
-        $col++;
-        $sheet->setCellValue($col . $row, $formSubmission->rating . '%');
-        $col++;
-        $sheet->setCellValue($col . $row, '100%');
+        $sheet->setCellValue($col . $row, $formSubmission->form->total_max_value . ' (100%)');
 
         $highestCol = $sheet->getHighestColumn();
         $sheet->getStyle('A' . $row . ':' . $highestCol . $row)->getFont()->setBold(true);

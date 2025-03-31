@@ -37,14 +37,11 @@
                 <th class="{{ $thClass }}" rowspan="2">Interpretation</th>
             @endif
             <th class="{{ $thClass }}" colspan="2">Score</th>
-            <th class="{{ $thClass }}" colspan="2">Weighted Score</th>
             @if ($showReason)
                 <th class="{{ $thClass }}" rowspan="2">Reason</th>
             @endif
         </tr>
         <tr class="{{ $trClass }}">
-            <th class="{{ $thClass }}">Value</th>
-            <th class="{{ $thClass }}">Out Of</th>
             <th class="{{ $thClass }}">Value</th>
             <th class="{{ $thClass }}">Out Of</th>
         </tr>
@@ -69,8 +66,6 @@
                 @endif
                 <td class="{{ $tdClass }}">{{ $breakdown->value }}</td>
                 <td class="{{ $tdClass }}">{{ $breakdown->max_value }}</td>
-                <td class="{{ $tdClass }}">{{ $breakdown->weighted_value }}</td>
-                <td class="{{ $tdClass }}">{{ $breakdown->max_weighted_value }}</td>
                 @if ($showReason)
                     <td class="{{ $tdClass }} max-w-[400px]">{{ $breakdown->reason }}</td>
                 @endif
@@ -84,16 +79,10 @@
                 Total
             </th>
             <th class="{{ $tdClass }}">
-                {{ $formSubmission->total_value }}
+                {{ $formSubmission->total_value }} ({{ $formSubmission->rating }}%)
             </th>
             <th class="{{ $tdClass }}">
-                {{ $formSubmission->form->total_max_value }}
-            </th>
-            <th class="{{ $tdClass }}">
-                {{ $formSubmission->rating }}%
-            </th>
-            <th class="{{ $tdClass }}">
-                100%
+                {{ $formSubmission->form->total_max_value }} (100%)
             </th>
             @if ($showReason)
                 <th class="{{ $tdClass }}"></th>
