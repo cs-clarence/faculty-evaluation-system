@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use App\Facades\Services\SchoolYearService;
@@ -13,11 +12,15 @@ class SchoolYearInitializer extends Initializer
      */
     public function run(): void
     {
+        if (env('APP_ENV') === 'production') {
+            return;
+        }
+
         $start = 2018;
         $until = 2026;
 
         for ($i = $start; $i <= $until; $i++) {
-            if (!SchoolYear::whereYearStart($i)->exists()) {
+            if (! SchoolYear::whereYearStart($i)->exists()) {
                 SchoolYearService::create($i, 2);
             }
         }

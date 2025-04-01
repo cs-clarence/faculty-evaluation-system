@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use App\Models\Subject;
@@ -44,8 +43,11 @@ class SubjectInitializer extends Initializer
 
     public function run(): void
     {
+        if (env('APP_ENV') === 'production') {
+            return;
+        }
         foreach (self::$defaults as $subject) {
-            if (!Subject::whereCode($subject['code'])->exists()) {
+            if (! Subject::whereCode($subject['code'])->exists()) {
                 Subject::create($subject);
             }
         }

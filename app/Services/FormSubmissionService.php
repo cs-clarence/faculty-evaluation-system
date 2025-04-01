@@ -98,7 +98,6 @@ class FormSubmissionService
         string $evaluator,
         string $evaluatee,
     ) {
-
         $systemMessage = self::createSystemMessage($config, $evaluator, $evaluatee);
         $userMessage   = self::createUserMessage(
             $question,

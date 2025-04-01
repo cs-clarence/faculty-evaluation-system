@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use Database\Initializers\Base\Initializer;
@@ -11,6 +10,8 @@ class TeacherInitializer extends Initializer
      */
     public function run(): void
     {
-        //
+        if (env('APP_ENV') === 'production') {
+            return;
+        }
     }
 }

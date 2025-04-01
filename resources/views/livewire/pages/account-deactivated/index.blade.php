@@ -1,5 +1,4 @@
 <div class="contents">
-    <h1 class="text-3xl font-bold text-white mb-4">Account Deactivated</h1>
     <p class="text-gray-300 text-lg mb-4">
         Congratulations! You’ve successfully registered. To activate your account, please request approval from an
         admin. Once

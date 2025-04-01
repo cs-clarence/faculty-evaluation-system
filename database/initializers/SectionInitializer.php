@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use App\Facades\Helpers\SectionHelper;
@@ -14,23 +13,26 @@ class SectionInitializer extends Initializer
      */
     public function run(): void
     {
-        $yearLevels = [1, 2, 3, 4];
-        $semesters = [1, 2, 3];
+        if (env('APP_ENV') === 'production') {
+            return;
+        }
+        $yearLevels   = [1, 2, 3, 4];
+        $semesters    = [1, 2, 3];
         $sectionNames = ['A', 'B', 'C', 'D'];
-        $courses = Course::all();
+        $courses      = Course::all();
 
         foreach ($courses as $course) {
             foreach ($yearLevels as $yearLevel) {
                 foreach ($semesters as $semester) {
                     foreach ($sectionNames as $sectionName) {
                         $code = SectionHelper::generateCode($course->id, $yearLevel, $semester, $sectionName);
-                        if (!Section::whereCode($code)->exists()) {
+                        if (! Section::whereCode($code)->exists()) {
                             Section::create([
-                                'course_id' => $course->id,
+                                'course_id'  => $course->id,
                                 'year_level' => $yearLevel,
-                                'semester' => $semester,
-                                'name' => $sectionName,
-                                'code' => $code,
+                                'semester'   => $semester,
+                                'name'       => $sectionName,
+                                'code'       => $code,
                             ]);
                         }
                     }

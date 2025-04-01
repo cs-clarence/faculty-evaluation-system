@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Initializers;
 
 use App\Models\Department;
@@ -43,8 +42,11 @@ class DepartmentInitializer extends Initializer
 
     public function run(): void
     {
+        if (env('APP_ENV') === 'production') {
+            return;
+        }
         foreach ($this->defaults as $department) {
-            if (!Department::where('code', $department['code'])->exists()) {
+            if (! Department::where('code', $department['code'])->exists()) {
                 Department::create($department);
             }
         }
