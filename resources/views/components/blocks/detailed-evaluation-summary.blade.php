@@ -13,8 +13,4 @@
         <h4 class="text-xs text-gray-700">TOTAL EVALUATIONS</h4>
         <p>{{ $detailedEvaluationSummary->totalEvaluations }}</p>
     </div>
-    <div class="flex flex-col gap-1">
-        <h4 class="text-xs text-gray-700">QUESTION SUMMARIES</h4>
-        <p>{{ $detailedEvaluationSummary->totalEvaluations }}</p>
-    </div>
 </div>
