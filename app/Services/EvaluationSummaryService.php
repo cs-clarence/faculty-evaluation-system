@@ -191,7 +191,7 @@ class EvaluationSummaryService
                 return $data->submissionPeriod->formSubmissionPeriodSemester->semester_id;
             },
             function ($data) {
-                return $data->formSubmissionSubject->course_subject_id;
+                return $data->formSubmissionSubject?->course_subject_id;
             },
         ]);
 
@@ -217,11 +217,11 @@ class EvaluationSummaryService
                 $semester = $semestersMap[$semesterId];
 
                 foreach ($bySemester as $courseSubjectId => $byCourseSubjects) {
-                    if (! isset($courseSubjectsMap[$courseSubjectId])) {
+                    if (isset($courseSubjectId) && $courseSubjectId !== '' && ! isset($courseSubjectsMap[$courseSubjectId])) {
                         $courseSubjectsMap[$courseSubjectId] = CourseSubject::whereId($courseSubjectId)->first();
                     }
 
-                    $courseSubject = $courseSubjectsMap[$courseSubjectId];
+                    $courseSubject = isset($courseSubjectId) && $courseSubjectId !== '' ? $courseSubjectsMap[$courseSubjectId] : null;
 
                     $summaries[] = self::getSummary($id, $user, $semester, $courseSubject, $byCourseSubjects);
 
@@ -251,9 +251,9 @@ class EvaluationSummaryService
         $q = $q->whereEvaluateeId(self::getUserId($evaluatee))
             ->whereHas('submissionPeriod', fn($q) => $q->whereHas('formSubmissionPeriodSemester', fn($q) => $q->whereSemesterId($semester->id)));
 
-        if (isset($courseSubject)) {
-
+        if (isset($courseSubject) && isset($courseSubject->id)) {
             $q = $q->whereHas('formSubmissionSubject', fn($q) => $q->whereCourseSubjectId($courseSubject->id));
+            Log::info($q->toSql());
         }
 
         $all = $q->get();
